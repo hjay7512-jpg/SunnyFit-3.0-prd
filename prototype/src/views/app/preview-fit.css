@@ -1,0 +1,11 @@
+/* Browser display surface; phone contents retain their source dimensions. */
+.app-review{height:100dvh;min-height:0;grid-template-rows:minmax(0,1fr);overflow:hidden}
+.app-review .review-rail{height:100%;min-height:0;overflow-y:auto}
+.app-review .phone-stage{height:100%;min-height:0;min-width:0;box-sizing:border-box;overflow:hidden;padding:24px 32px;justify-content:center}
+.app-review .phone-frame{flex:none;zoom:var(--demo-preview-scale,1)}
+.app-review .phone-caption{flex:none;line-height:20px;margin:12px 0 0}
+.customer-mode.app-review{height:100dvh;min-height:0}
+.customer-mode .phone-stage{width:min(430px,100%);padding:0;justify-content:flex-start}
+.customer-mode .phone-frame.native-frame{min-height:0}
+@media(min-width:701px){.customer-mode .phone-frame{height:var(--canvas-height,812px)}.customer-mode .phone-frame.home-frame{width:375px}}
+@media(max-width:700px){.app-review:not(.customer-mode) .review-rail{height:auto;max-height:96px;flex:none}.app-review:not(.customer-mode) .phone-stage{flex:1;height:auto;padding:8px}}

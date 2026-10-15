@@ -1,0 +1,47 @@
+{
+  "provider": "Lucide",
+  "retrievedAt": "2026-10-14T01:31:41.033Z",
+  "icons": {
+    "users-round": {
+      "file": "users-round.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/users-round.svg",
+      "sha256": "8b41ee3ada1609e25a410d64056aa333952cf27d770f0c379a100065270de7f7"
+    },
+    "crown": {
+      "file": "crown.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/crown.svg",
+      "sha256": "544c1b6181749ae4b4c98861a5a6ed1242940239cda97cc13c74e84a03fd68c0"
+    },
+    "shopping-bag": {
+      "file": "shopping-bag.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/shopping-bag.svg",
+      "sha256": "24a161961b559234b7a31af904dab18b437507336ba2decff3fe6b7772495896"
+    },
+    "receipt-text": {
+      "file": "receipt-text.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/receipt-text.svg",
+      "sha256": "35b44cd6ce443dc58119380750d6bc12b6dbead1cac23e7ac3dc578d52795bf4"
+    },
+    "heart-pulse": {
+      "file": "heart-pulse.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/heart-pulse.svg",
+      "sha256": "103d6b99ac9ab53c5861317673880ae5d6e2491efa7a40e8b89ecac449842df2"
+    },
+    "settings": {
+      "file": "settings.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/settings.svg",
+      "sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b"
+    },
+    "user-round-plus": {
+      "file": "user-round-plus.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/user-round-plus.svg",
+      "sha256": "03c10a74bcc653585368a82cc565c6f153d0174c52daad052d63fd30ce11d588"
+    },
+    "circle-question-mark": {
+      "file": "circle-question-mark.svg",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/dab294f313897bacaa968b725b3259fa37c17bd1/icons/circle-question-mark.svg",
+      "sha256": "975db087da041530dbf59ba1e61a7b99c3519fad43dae6375e42ccc74ba63924"
+    }
+  },
+  "revision": "dab294f313897bacaa968b725b3259fa37c17bd1"
+}

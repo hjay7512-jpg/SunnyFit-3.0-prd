@@ -1,0 +1,58 @@
+{
+  "name": "sunnyfit-commercialization-admin-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.cjs",
+    "serve": "node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js serve --host 127.0.0.1 --port 8080",
+    "api": "node server/index.cjs",
+    "build": "node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js build",
+    "start": "node server/index.cjs",
+    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs",
+    "test:consumer": "node scripts/optimized-demo-check.cjs",
+    "test:layout": "node scripts/check-demo-layout.cjs",
+    "test:foundation": "node --test tests/demo-runtime.test.cjs && node scripts/demo-foundation-check.cjs",
+    "test:components": "node scripts/component-interaction-check.cjs",
+    "test:home-ui": "node scripts/home-ui-check.cjs",
+    "test:toolbar": "node scripts/toolbar-check.cjs",
+    "test:profile": "node scripts/profile-menu-check.cjs",
+    "test:preview-fit": "node scripts/preview-fit-check.cjs",
+    "test:home-states": "node scripts/home-state-check.cjs",
+    "test:native-ui": "node scripts/native-pages-check.cjs",
+    "test:plan-states": "node scripts/plan-state-check.cjs",
+    "test:commerce-ui": "node scripts/commerce-ui-check.cjs",
+    "test:ai-ui": "node scripts/ai-ui-check.cjs",
+    "test:ai-ball": "node --test tests/ai-ball-motion.test.mjs && node scripts/ai-ball-check.cjs",
+    "demo:optimized": "powershell.exe -NoProfile -File scripts/open-demo.ps1",
+    "demo:lab": "powershell.exe -NoProfile -File scripts/open-lab.ps1",
+    "demo:components": "powershell.exe -NoProfile -File scripts/open-lab.ps1 -Components",
+    "test:browser": "node scripts/browser-check.cjs",
+    "test:entitlement-ui": "node scripts/entitlement-model-check.cjs",
+    "test:business-review": "node scripts/business-review-check.cjs",
+    "review": "powershell.exe -NoProfile -File scripts/open-review.ps1",
+    "review:serve": "node scripts/review-viewer.cjs",
+    "seed": "node server/seed.cjs",
+    "test:mvp": "node scripts/mvp-commercialization-check.cjs",
+    "build:pages": "node scripts/build-pages.cjs",
+    "test:pages": "node scripts/pages-check.cjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "1.8.0",
+    "axios": "0.21.4",
+    "element-ui": "2.15.14",
+    "sql.js": "1.15.0",
+    "vue": "2.6.10",
+    "vue-router": "3.1.0",
+    "vuex": "3.1.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "4.5.19",
+    "@vue/cli-service": "4.5.19",
+    "esbuild": "0.28.2",
+    "playwright-core": "1.64.0",
+    "vue-template-compiler": "2.6.10"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

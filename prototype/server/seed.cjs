@@ -1,0 +1,8 @@
+const path = require('node:path')
+const fs = require('node:fs')
+const { createStore } = require('./store.cjs')
+const filename = path.resolve(process.env.DEMO_DB_PATH || path.join(__dirname, '../runtime/sunnyfit-admin.sqlite'))
+fs.mkdirSync(path.dirname(filename), { recursive: true })
+const store = createStore(filename)
+console.log(`Seed ready: ${store.catalog().length} catalog items, ${store.list().length} suits. Existing data preserved.`)
+store.close()

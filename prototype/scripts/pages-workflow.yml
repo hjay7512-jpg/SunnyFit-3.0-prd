@@ -1,0 +1,51 @@
+name: Deploy pages and SunnyFit prototype
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sunnyfit-github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: prototype/package-lock.json
+      - name: Install prototype dependencies
+        run: npm ci --prefix prototype --no-audit --no-fund
+      - name: Validate shared business rules
+        run: npm test --prefix prototype
+      - name: Build standalone review prototype
+        run: npm run build:pages --prefix prototype
+        env:
+          DEMO_PUBLIC_PATH: /${{ github.event.repository.name }}/prototype/
+      - name: Preserve existing pages and add prototype
+        run: node prototype/scripts/assemble-pages.cjs
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publish prototype and existing pages
+        id: deployment
+        uses: actions/deploy-pages@v4

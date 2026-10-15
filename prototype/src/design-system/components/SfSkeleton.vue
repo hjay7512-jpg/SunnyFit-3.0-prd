@@ -1,0 +1,2 @@
+<template><div class="sf-skeleton" role="status" :aria-label="label"><div v-if="image" class="sf-skeleton__image"></div><div v-for="i in lines" :key="i" class="sf-skeleton__line" :style="{width:i===lines?'65%':'100%'}"></div><span class="sf-visually-hidden">{{ label }}</span></div></template>
+<script>export default {name:'SfSkeleton',props:{lines:{type:Number,default:3},image:Boolean,label:{type:String,default:'Loading content'}}}</script>

@@ -1,0 +1,30 @@
+/* V3 material adaptation of the existing commerce business prototype. */
+.consumer-pages{color:var(--sf-text);font-family:var(--sf-font-family);font-size:14px;line-height:22px}
+.consumer-pages .consumer-card{margin-bottom:12px;min-width:0;padding:16px}
+.consumer-pages .consumer-card p{margin:8px 0 0;font-size:14px;line-height:22px;color:var(--sf-text)}
+.consumer-pages .consumer-caption,.consumer-pages .consumer-card .consumer-caption{font-size:12px;line-height:20px;color:var(--sf-text-secondary)}
+.consumer-pages .sf-card__header{flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.consumer-pages .sf-card__header h3{flex:1 1 150px;font-size:18px;line-height:26px;font-weight:590}
+.consumer-pages .sf-card__header .sf-badge{white-space:normal;overflow-wrap:anywhere;max-width:100%}
+.consumer-pages .consumer-order__price{font-weight:590}
+.consumer-pages .benefit-list>div{font-size:14px;line-height:22px;margin-bottom:8px;overflow-wrap:anywhere}
+.consumer-pages .benefit-list .sf-card__header{display:flex;margin-bottom:12px}
+.consumer-pages .offer-card{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+.consumer-pages .consumer-offer__info{min-width:0}
+.consumer-pages .consumer-offer__info strong{display:block;font-size:18px;line-height:26px;font-weight:590;overflow-wrap:anywhere}
+.consumer-pages .consumer-offer__info span,.consumer-pages .consumer-offer__info small{display:block;font-size:12px;line-height:20px;color:var(--sf-text-secondary);margin-top:6px;overflow-wrap:anywhere}
+.consumer-pages .offer-card>b{font-size:24px;line-height:32px;font-weight:590;overflow-wrap:anywhere}
+.consumer-pages .sf-button{min-width:44px;min-height:48px;max-width:100%;font-size:14px;line-height:22px}
+.consumer-pages .offer-card .sf-button{grid-column:1}
+.consumer-pages .credits-hero{background:var(--sf-content-surface);border-color:var(--sf-content-edge);padding:24px 18px 20px;text-align:center}
+.consumer-pages .credits-hero>span{font-size:14px;line-height:22px;color:var(--sf-text-secondary)}
+.consumer-pages .credits-hero>strong{display:block;font-size:52px;line-height:64px;font-weight:590;color:var(--sf-action);margin:8px 0;overflow-wrap:anywhere}
+.consumer-pages .credits-hero p{font-size:12px;line-height:20px;color:var(--sf-text-secondary)}
+.consumer-pages .credits-hero .expiry-chip{margin-top:12px;font-size:12px;line-height:20px}
+.consumer-pages .consumer-credits-offer{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.consumer-pages .consumer-credits-offer>.consumer-offer__info{flex:1 1 170px}
+.consumer-pages .consumer-credits-offer>.sf-button{flex:0 0 auto;padding:10px 14px}
+.consumer-pages .consumer-secondary{margin:12px 0}
+.consumer-pages .mobile-batch strong{font-size:14px;line-height:22px}
+.consumer-pages .mobile-batch span{font-size:12px;line-height:20px;color:var(--sf-text-secondary)}
+.consumer-pages .mobile-batch>b{font-size:16px;line-height:24px;overflow-wrap:anywhere}

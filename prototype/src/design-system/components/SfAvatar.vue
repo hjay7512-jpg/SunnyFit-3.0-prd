@@ -1,0 +1,2 @@
+<template><span class="sf-avatar" :style="{width:size+'px',height:size+'px'}" role="img" :aria-label="name"><img v-if="src&&!failed" :src="src" alt="" @error="failed=true"/><span v-else aria-hidden="true">{{ initials }}</span></span></template>
+<script>export default {name:'SfAvatar',props:{name:{type:String,required:true},src:String,size:{type:Number,default:48}},data(){return {failed:false}},watch:{src(){this.failed=false}},computed:{initials(){return this.name.trim().split(/\s+/).slice(0,2).map(s=>Array.from(s)[0]).join('').toUpperCase()||'SF'}}}</script>

@@ -1,0 +1,3 @@
+<template><button type="button" class="sf-round-action" :style="{width:size+'px',height:size+'px'}" :data-action="action" :data-content-id="contentId" :aria-label="label||text" :disabled="disabled" @click.stop="$emit('action')"><img v-for="src in layers" :key="src" :src="src" alt="" data-source-asset="true"><span>{{ text }}</span></button></template>
+<script>export default {name:'SfRoundAction',props:{text:{type:String,default:'Go'},label:String,action:{type:String,default:'start-course'},contentId:String,size:{type:Number,default:48},layers:{type:Array,default:()=>[]},disabled:Boolean}}</script>
+</script>

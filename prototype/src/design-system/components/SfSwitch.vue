@@ -1,0 +1,2 @@
+<template><label class="sf-switch-row" :class="{'is-disabled':disabled}"><span><strong>{{ label }}</strong><small v-if="description">{{ description }}</small></span><button type="button" role="switch" class="sf-switch" :aria-checked="value?'true':'false'" :aria-label="label" :disabled="disabled" @click="$emit('input',!value)"><span></span></button></label></template>
+<script>export default {name:'SfSwitch',props:{value:Boolean,label:{type:String,required:true},description:String,disabled:Boolean}}</script>

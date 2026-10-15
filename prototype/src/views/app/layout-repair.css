@@ -1,0 +1,40 @@
+/* Review navigation follows the existing SunnyFit Admin palette. */
+.app-review:not(.customer-mode){grid-template-columns:300px minmax(0,1fr)}
+.app-review .review-rail{width:300px;flex-basis:300px;padding:24px 20px;background:#304156;color:#bfcbd9;border-right:0;font-family:'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',Arial,sans-serif}
+.review-rail h1,.review-rail .review-back{color:#fff}.review-rail .review-back{margin-bottom:24px}
+.review-rail .review-kicker{color:#409eff;letter-spacing:1px}.review-rail .review-intro,.review-rail>label,.review-rail .review-tools{color:#bfcbd9}
+.review-rail .review-pages{gap:0;margin:20px -20px}
+.review-rail .review-pages button{border-radius:0;min-height:44px;padding:12px 24px;color:#bfcbd9;background:#1f2d3d}
+.review-rail .review-pages button:hover{background:#001528}.review-rail .review-pages button.selected{background:#001528;color:#409eff}
+.review-rail .review-note{background:#2b3a4c;border-radius:4px;padding:16px}.review-rail .review-note h3{color:#fff}.review-rail .review-note p{color:#bfcbd9}
+.review-rail .review-tools a{color:#409eff}.review-rail .review-checkbox{align-items:flex-start;margin:10px 0}.review-rail .review-checkbox input{flex-shrink:0;margin-top:4px}
+.phone-frame{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif}
+.phone-frame button,.phone-frame select{font-family:inherit}
+.phone-frame .mobile-card{padding:16px;overflow-wrap:anywhere}
+.phone-frame .mobile-card.row-group{padding:0}
+.phone-frame .mobile-card h2{font-size:22px;line-height:30px;margin:0 0 12px}.phone-frame .mobile-card h3{font-size:18px;line-height:26px;margin:0 0 12px}
+.phone-frame .mobile-card p{line-height:22px;margin:10px 0}
+.phone-frame .mobile-row>span:first-child{flex:1;min-width:0;margin-top:0}.phone-frame .mobile-row>span:last-child{flex:0 0 20px;margin-top:0;text-align:right}
+.phone-frame .mobile-row strong{font-size:15px;line-height:22px}.phone-frame .mobile-row small{font-size:12px;line-height:18px}
+.phone-frame .offer-card{grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}.phone-frame .offer-card>div{min-width:0}
+.phone-frame .offer-card b{font-size:20px;line-height:28px}.phone-frame .offer-card .mobile-primary{grid-column:auto;height:auto}
+.phone-frame .credits-offer>div:first-child{flex:1;min-width:0}.phone-frame .credits-offer button{min-height:44px}
+.phone-frame .mobile-primary,.phone-frame .mobile-secondary{height:auto;line-height:22px;white-space:normal;overflow-wrap:anywhere}
+.phone-frame .mobile-sheet h2{padding-right:40px;line-height:30px}.phone-frame .mobile-sheet{overflow-wrap:anywhere}
+.source-visual .insight-generate{top:174px;left:12px;width:319px;min-height:44px;height:auto;padding:6px 12px;line-height:20px}
+.source-visual .regenerate-insight{height:auto;min-height:32px;top:676px;line-height:18px}
+.source-visual .coach-credit-hint{top:660px;height:auto;min-height:32px;line-height:16px;padding:2px 0}
+.source-visual .coach-greeting{max-width:100%;width:auto;overflow-wrap:anywhere}
+.source-visual.visual-result,.result-composition{height:1350px}.result-chart{top:716px}.result-course{top:1215px}.result-footer{top:1291px}
+/* Retain the course artwork while variable content determines the body height. */
+.source-visual.visual-course{height:auto;min-height:812px;overflow:visible}
+.visual-course .sf-2157eee53c{height:auto;min-height:812px;padding-bottom:110px}
+.visual-course .course-body{position:relative;padding:429px 16px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.visual-course .course-body>div{position:relative;inset:auto;transform:none;width:100%;grid-column:1 / -1;order:3}
+.visual-course .course-body>.sf-85d4f01201{order:0}.visual-course .course-body>.sf-63b35875ef{order:1;grid-column:1;gap:12px;justify-content:space-between}
+.visual-course .course-body>.sf-366ccdb33c{order:2;grid-column:2;min-height:66px}
+.visual-course .sf-31871ac64f{white-space:normal;overflow-wrap:anywhere;width:100%}.visual-course .sf-f484469514,.visual-course .sf-36166ab8e0{width:100%}
+.visual-course .course-body>div>div:first-child:not(.sf-f484469514){max-width:100%}
+.visual-course .sf-3c3484924e{top:auto;bottom:34px}.visual-course .sf-27427f97dc{top:auto;bottom:42px}
+.visual-course .sf-f47671fcfb,.visual-course .sf-6a0b0e9411{top:auto;bottom:0}
+@media(max-width:760px){.app-review .review-rail{width:100%;max-width:500px;flex-basis:auto}.review-rail .review-pages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:20px 0}.review-rail .review-pages button{padding:10px 12px}}
