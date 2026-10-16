@@ -564,6 +564,36 @@ function createCommerce({ db, now, transaction, audit, fail, suitDetail, catalog
 
   return {
     configDetail,
+    assignScopeContents(input) {
+      return atomic(() => {
+        const entitlementCode = { course: 'course_access', world_tour: 'world_tour_access', training_program: 'training_program_access', movement: 'movement_access', limited_challenge: 'challenge_access' }[input.contentType]
+        if (!entitlementCode) fail(400, 'INVALID_CONTENT_TYPE', 'Choose one content library.')
+        const target = entitlementModel.scopes(entitlementCode, true).find(scope => scope.code === input.scope)
+        if (!target) fail(400, 'INVALID_CONTENT_SCOPE', 'Choose an active scope belonging to this content type.')
+        if (target.revision !== input.scopeRevision) fail(409, 'CONFIG_CHANGED', 'The scope changed. Reload before adding content.')
+        if (!Array.isArray(input.items) || !input.items.length || input.items.length > 100 || new Set(input.items.map(item => item.id)).size !== input.items.length) fail(400, 'INVALID_SELECTION', 'Choose 1–100 unique items from this content library.')
+        const prepared = input.items.map(item => {
+          const row = configRow('content', item.id); revisionCheck(row, item.revision)
+          const published = liveConfig(row)
+          if (!published) fail(400, 'CONTENT_NOT_PUBLISHED', 'Only published library content can be associated.')
+          if (published.contentType !== input.contentType || published.entitlementCode !== entitlementCode) fail(400, 'CONTENT_TYPE_MISMATCH', 'All selected content must belong to the chosen content library.')
+          const previousScope = published.contentScope || (published.tier === 'free' ? published.freeScope || 'free_content' : 'premium_content')
+          if (item.fromScope !== previousScope) fail(409, 'CONFIG_CHANGED', 'A selected item has moved. Refresh the content library.')
+          if (previousScope !== target.code && input.confirmReassignment !== true) fail(409, 'REASSIGNMENT_REQUIRED', 'Confirm moving content out of its current scope. Each content item can belong to only one scope.')
+          return { row, published, previousScope }
+        })
+        const changed = prepared.filter(item => item.previousScope !== target.code)
+        for (const { row, published, previousScope } of changed) {
+          const version = row.published_version + 1
+          const next = { ...published, contentScope: target.code }
+          const draft = row.draft ? { ...decode(row.draft), contentScope: target.code } : null
+          exec('INSERT INTO commerce_versions VALUES(?,?,?,?)', row.id, version, JSON.stringify(next), now())
+          exec('UPDATE commerce_configs SET draft=?,published_version=?,revision=revision+1,updated_at=? WHERE id=?', draft ? JSON.stringify(draft) : null, version, now(), row.id)
+          audit('CONTENT_SCOPE_ASSOCIATED', row.id, { contentType: input.contentType, fromScope: previousScope, scope: target.code, version })
+        }
+        return { changed: changed.length, items: prepared.map(({ row }) => configDetail('content', row.id)) }
+      })
+    },
     bulkContent(input) {
       return atomic(() => {
         if (!Array.isArray(input.items) || !input.items.length || input.items.length > 100 || new Set(input.items.map(item => item.id)).size !== input.items.length) fail(400, 'INVALID_SELECTION', 'Choose 1–100 unique content records.')

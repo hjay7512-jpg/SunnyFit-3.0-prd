@@ -34,6 +34,7 @@ function dispatch(store, method, route, body = {}, params = {}) {
     else if (path==='/content-scopes' && method==='GET') data=store.entitlementModel.scopes(query.entitlementCode)
     else if (path==='/content-scopes' && method==='POST') data=store.entitlementModel.saveScope(body)
     else if (path==='/content-scopes' && method==='PUT') data=store.entitlementModel.saveScope(body.config,body.revision)
+    else if (path==='/content-scope-contents' && method==='POST') data=commerce.assignScopeContents(body)
     else if (config) {
       const [, entity, id, action] = config
       if (!id && method === 'GET') data = commerce.configList(entity, query)

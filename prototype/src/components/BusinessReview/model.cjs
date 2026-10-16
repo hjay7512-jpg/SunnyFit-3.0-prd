@@ -102,8 +102,8 @@ const entities={
   "content_scope": {
     "title": "Content Scope",
     "name": "内容范围",
-    "subtitle": "内容侧维护的范围",
-    "definition": "内容范围是一组供授权使用的内容，由内容管理侧维护。每条内容只选一个范围，权益组合可以选择多个范围。",
+    "subtitle": "按内容类型维护的标签",
+    "definition": "在权益管理 → 内容管理中，先选内容类型和范围标签，再从对应内容库添加内容。一条内容只能关联一个范围；迁移时替换原关联。权益组合可以选择多个范围。",
     "example": "“Premium Courses”可以包含多门课程。某权益组合选择这个范围，就覆盖其中的课程。",
     "rules": [
       "新建一个范围后，旧权益组合不会自动获得它，需要另行选择并发布。",
@@ -113,7 +113,7 @@ const entities={
     "links": [
       [
         "维护内容范围",
-        "content"
+        "content-management"
       ],
       [
         "权益目录",

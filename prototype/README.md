@@ -15,7 +15,7 @@
 
 周报依据正式 V3 `7697:14248`，Challenge 依据 Alpha 现有 `266:41091`；保留原底部四项导航和个人中心菜单。Movement / World Tour 从原入口接入，未定位独立列表完整设计稿，当前为共用 V3 玻璃组件的评审延展。正式价格、赠送数量、单次消耗数量和即时升级结算仍标记为 Open。
 
-本轮复现：`npm test`（56 项业务测试）、`npm run test:mvp`（15 项新版浏览器检查）、`npm run test:business-review`（11 项图形评审检查）。本地构建已通过，详见[当前交付与边界](docs/SunnyFit_V3_Optimized_Demo_Handoff.md)。以下为此前迭代的历史记录，以本段最新定义为准。
+本轮复现：`npm test`（59 项业务测试）、`npm run test:mvp`（15 项新版浏览器检查）、`npm run test:business-review`（11 项图形评审检查）。本地构建已通过，详见[当前交付与边界](docs/SunnyFit_V3_Optimized_Demo_Handoff.md)。以下为此前迭代的历史记录，以本段最新定义为准。
 
 原型已加入图形化需求评审：[打开业务关系图](http://127.0.0.1:3012/?build=business-review#/business-rules?module=overview&topic=relations&node=entitlement)。通过后台右上角 Business rules 进入独立页面，按当前模块定位，提供权益类型、权益关系、权益组合、内容授权、套餐与订单、额度与消费、版本与 Open 七组图。节点可点选查看定义和关系约束，支持大屏演示、共享当前节点链接和 SVG 导出；Demo Overview 保留场景数据。运行 `npm run test:business-review` 校验只读交互，详见[评审交付记录](docs/SunnyFit_V3_Admin_Prototype_Handoff.md)。
 
@@ -70,7 +70,8 @@ npm start
 | Entitlement Catalog / Suits | 建议新增权益管理：只读目录、Base/Additional、Scope、Credits 福利、草稿、发布、版本、引用保护 |
 | Products | 建议新增商业商品管理或扩展已有模块：会员和 Credits 商品；SKU 在商品详情内 |
 | Service Pricing | 建议新增计价配置能力，可并入商业化配置 |
-| Course Management | 扩展原 Course / World Tour / **现有 Training Program** 列表及编辑页；统一内容列表为演示载体 |
+| Content Management | 权益管理下按内容类型维护范围标签，从各自内容库关联内容；每条内容仅一个范围 |
+| Course Management | 原内容库按各自类型查看内容与归属，范围关系跳转权益内容管理维护 |
 | User Rights / Wallets / Ledger | 扩展原用户详情：权益、Credits 余额 / 批次 / 流水、补偿和资产查询；不要求独立钱包菜单 |
 | Orders / Subscriptions | 复用原交易 / 订阅管理，增加快照、履约状态及失败补发；续订管理按渠道能力确认 |
 | Redemptions / Service Requests / Audit | 必需的记录与追溯能力；嵌入用户 / 内容详情及原操作日志，独立查询页是辅助样例 |
@@ -81,7 +82,7 @@ App：Home、Workout 的 Course 首屏、课程详情、Training Program 首页�
 
 ## 建议评审顺序
 
-1. **Course Management（MVP）**：按 Course / World Tour / Training Program 和 Content Scope 筛选 → 行内 Set Scope 单条设置，或勾选多条后 Set Content Scope 批量设置 → 保存草稿 → 核对列表中的 Draft 范围 → 发布。不同内容类型分别选择有效 Scope；商业标签默认不改动，未变更条目跳过。独立兑换 / Challenge 为 P3。
+1. **权益管理 → Content Management（MVP）**：选择内容类型 → 维护范围标签 → 从对应内容库勾选内容并添加到范围。一个内容只关联单一范围；迁移时确认替换旧关联。Course / World Tour / Training Program 各自独立，原内容库仅查看归属和基础信息。
 2. **Flow Preview**：Jamie 加购后使用普通聊天；Casey 深入分析时额度不足；Alex 查看跨批次消费；Evelyn 到期后读取旧资产。
 3. **Orders**：模拟支付成功但履约失败，再 Retry Delivery；查看购买快照。
 4. **App**：输入问题 → 受限弹窗 → 充值 → 返回，输入保留；兑换内容后再次使用不收费。

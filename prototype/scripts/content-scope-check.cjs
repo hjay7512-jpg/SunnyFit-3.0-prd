@@ -1,61 +1,35 @@
-// End-to-end scope edits use disposable local fixtures, never the online admin.
-const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict')
-const { spawn } = require('node:child_process'), { randomUUID } = require('node:crypto'), { chromium } = require('playwright-core')
-const root = path.resolve(__dirname, '..'), port = 3136, base = `http://127.0.0.1:${port}`
-const database = path.join(root, 'runtime', `scope-review-${randomUUID()}.sqlite`)
-const evidence = path.join(root, 'runtime/content-scope-validation')
-const checks = [], errors = []; let server, browser, page, output = ''
-const pass = name => { checks.push(name); console.log('PASS ' + name) }
-async function until(work, name) { for (let i = 0; i < 100; i++) { if (await work()) return; await new Promise(resolve => setTimeout(resolve, 100)) } throw Error('Timed out: ' + name) }
-async function api(route, body, method = body ? 'POST' : 'GET') { const response = await fetch(base + '/api/commercialization' + route, { method, headers: { 'Content-Type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) }); const result = await response.json(); assert.equal(response.status, 200, result.message); return result.data }
-async function run() {
-  fs.mkdirSync(evidence, { recursive: true })
-  server = spawn(process.execPath, ['server/index.cjs'], { cwd: root, env: { ...process.env, API_PORT: String(port), DEMO_DB_PATH: database }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
-  server.stdout.on('data', data => output += data); server.stderr.on('data', data => output += data)
-  await until(async () => { if (server.exitCode !== null) throw Error(output); try { const r = await fetch(base + '/api/health'); return (await r.json()).data.demo.database === database } catch (_) { return false } }, 'isolated server')
-  const catalog = await api('/content'), fixtures = []
-  for (const type of ['course', 'world_tour', 'training_program']) {
-    const source = catalog.find(row => row.published?.contentType === type && row.published.policyVersion === 20261014) || catalog.find(row => row.published?.contentType === type)
-    const config = { ...source.published, name: 'ScopeReview ' + type, code: 'scope_review_' + type, tier: 'free', contentScope: 'free_content', status: 'active' }
-    const created = await api('/content', config); fixtures.push(await api('/content/' + created.id + '/publish', { revision: created.revision }))
-  }
-  browser = await chromium.launch({ channel: 'msedge', headless: true }); page = await browser.newPage({ viewport: { width: 1440, height: 1000 } }); page.setDefaultTimeout(10000)
-  page.on('pageerror', error => errors.push(error.message))
-  page.on('response', response => { if (response.url().includes('/api/') && response.status() >= 400) errors.push(response.status() + ' ' + response.url()) })
-  await page.goto(base + '/#/commercialization/content'); await page.getByPlaceholder('Course ID / name').fill('ScopeReview')
-  const rows = page.locator('.course-management > .el-table > .el-table__body-wrapper tbody tr')
-  await until(async () => (await rows.count()) === 3, 'three fixture rows')
-  await page.getByTestId('content-type-filter').getByText('Training Program', { exact: true }).click(); assert.equal(await rows.count(), 1); await page.getByTestId('content-type-filter').getByText('ALL', { exact: true }).click()
-  assert.equal(await rows.count(), 3); pass('existing-list-pattern-supports-course-world-tour-and-program-filtering')
-  await page.getByTestId('edit-scope-' + fixtures[0].id).last().click()
-  const dialog = page.locator('.bulk-bar .el-dialog:visible')
-  await until(async () => !(await dialog.locator('.el-select input').first().isDisabled()), 'scope options loaded')
-  assert.ok(await dialog.getByRole('button', { name: 'Save Draft', exact: true }).isDisabled())
-  async function pick(group, name) { await group.locator('.el-select').click(); await page.locator('.el-select-dropdown:visible .el-select-dropdown__item').filter({ hasText: new RegExp('^' + name + '$') }).click(); await until(async () => (await page.locator('.el-select-dropdown:visible').count()) === 0, 'scope dropdown closes') }
-  await pick(dialog.locator('.bulk-scope-row'), 'Premium Content'); await dialog.getByRole('button', { name: 'Save Draft', exact: true }).click(); await dialog.waitFor({ state: 'hidden' })
-  const course = await api('/content/' + fixtures[0].id)
-  assert.equal(course.draft.contentScope, 'premium_content'); assert.equal(course.draft.tier, 'free'); assert.deepEqual(course.published, fixtures[0].published)
-  await until(async () => (await rows.filter({ hasText: 'ScopeReview course' }).innerText()).includes('Draft'), 'pending scope visible')
-  pass('single-edit-saves-only-scope-as-a-visible-draft-without-changing-label-or-live-access')
-  const selectAll = page.locator('.course-management > .el-table > .el-table__fixed .el-table__fixed-header-wrapper .el-checkbox')
-  await selectAll.click(); await page.getByTestId('content-bulk-tools').getByRole('button', { name: 'Set Content Scope', exact: true }).click()
-  await until(async () => (await dialog.locator('.bulk-scope-row').count()) === 3 && !(await dialog.locator('.el-select input').first().isDisabled()), 'three independent scope groups')
-  await pick(dialog.locator('.bulk-scope-row').filter({ hasText: /^World Tour/ }), 'Premium Content')
-  await pick(dialog.locator('.bulk-scope-row').filter({ hasText: /^Training Program/ }), 'Premium Content')
-  await dialog.getByRole('button', { name: 'Save 2 Drafts', exact: true }).click(); await dialog.waitFor({ state: 'hidden' })
-  assert.equal((await api('/content/' + fixtures[0].id)).revision, course.revision)
-  for (const fixture of fixtures.slice(1)) { const result = await api('/content/' + fixture.id); assert.equal(result.draft.contentScope, 'premium_content'); assert.equal(result.draft.tier, 'free'); assert.deepEqual(result.published, fixture.published) }
-  pass('mixed-type-batch-uses-per-type-scopes-skips-unchanged-records-and-preserves-labels')
-  await until(async () => (await page.getByTestId('content-bulk-tools').innerText()).includes('0 selected'), 'selection cleared after save')
-  await selectAll.click(); await page.getByTestId('content-bulk-tools').getByRole('button', { name: 'Publish Selected Drafts', exact: true }).click(); await page.locator('.el-message-box:visible').getByRole('button', { name: 'Publish', exact: true }).click()
-  await until(async () => (await api('/content/' + fixtures[0].id)).published.contentScope === 'premium_content', 'publication complete')
-  for (const fixture of fixtures) { const result = await api('/content/' + fixture.id); assert.equal(result.published.contentScope, 'premium_content'); assert.equal(result.draft, null) }
-  pass('explicit-publication-applies-all-reviewed-drafts-and-clears-draft-state')
-  await page.getByTestId('content-scope-filter').click(); await page.locator('.el-select-dropdown:visible .el-select-dropdown__item').filter({ hasText: /^Premium Content · World Tour$/ }).click(); assert.equal(await rows.count(), 1); assert.match(await rows.innerText(), /ScopeReview world_tour/)
-  pass('scope-filter-disambiguates-identical-scope-codes-across-content-types')
-  await page.getByRole('button', { name: 'Reset', exact: true }).click(); await page.screenshot({ path: path.join(evidence, 'course-management.png'), fullPage: true })
-  for (const width of [1024, 1440]) { await page.setViewportSize({ width, height: 1000 }); assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)); await page.getByTestId('edit-scope-' + fixtures[0].id).last().count().then(async count => { if (!count) await page.getByPlaceholder('Course ID / name').fill('ScopeReview course') }); await page.getByTestId('edit-scope-' + fixtures[0].id).last().click(); const bounds = await dialog.boundingBox(); assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= width); await dialog.getByRole('button', { name: 'Cancel', exact: true }).click() }
-  pass('table-scrolls-within-page-and-scope-dialog-fits-desktop-viewports')
-  assert.deepEqual(errors, [])
+// Scope management writes only to disposable local fixtures.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict')
+const {spawn}=require('node:child_process'),{randomUUID}=require('node:crypto'),{chromium}=require('playwright-core')
+const root=path.resolve(__dirname,'..'),port=3136,base=`http://127.0.0.1:${port}`,database=path.join(root,'runtime',`scope-review-${randomUUID()}.sqlite`),evidence=path.join(root,'runtime/content-scope-validation')
+const checks=[],errors=[];let server,browser,page,output=''
+const pass=name=>{checks.push(name);console.log('PASS '+name)}
+async function until(work,name){for(let i=0;i<100;i++){if(await work())return;await new Promise(resolve=>setTimeout(resolve,100))}throw Error('Timed out: '+name)}
+async function api(route,body,method=body?'POST':'GET'){const response=await fetch(base+'/api/commercialization'+route,{method,headers:{'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});const result=await response.json();assert.equal(response.status,200,JSON.stringify(result));return result.data}
+async function run(){
+ fs.mkdirSync(evidence,{recursive:true});server=spawn(process.execPath,['server/index.cjs'],{cwd:root,env:{...process.env,API_PORT:String(port),DEMO_DB_PATH:database},stdio:['ignore','pipe','pipe'],windowsHide:true});server.stdout.on('data',d=>output+=d);server.stderr.on('data',d=>output+=d)
+ await until(async()=>{if(server.exitCode!==null)throw Error(output);try{return(await(await fetch(base+'/api/health')).json()).data.demo.database===database}catch(_){return false}},'isolated server')
+ const catalog=await api('/content'),fixtures=[]
+ for(const [i,type] of ['course','course','world_tour','training_program'].entries()){const source=catalog.find(row=>row.published?.contentType===type&&row.published.policyVersion===20261014)||catalog.find(row=>row.published?.contentType===type);const created=await api('/content',{...source.published,name:'ScopeReview '+type+' '+i,code:'scope_review_'+i,tier:'free',contentScope:'free_content',status:'active'});fixtures.push(await api('/content/'+created.id+'/publish',{revision:created.revision}))}
+ for(const code of ['world_tour_access','training_program_access'])await api('/content-scopes',{entitlementCode:code,code:'review_scope',name:code==='world_tour_access'?'World Review':'Program Review',status:'active'})
+ browser=await chromium.launch({channel:'msedge',headless:true});page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.url().includes('/api/')&&r.status()>=400)errors.push(r.status()+' '+r.url())})
+ await page.goto(base+'/#/commercialization/content-management');await page.getByTestId('content-management-page').waitFor();await page.locator('.scope-list-item').first().waitFor()
+ const nav=page.locator('.el-submenu').filter({hasText:'Entitlement Management'});assert.equal(await nav.getByText('Content Management',{exact:true}).count(),1)
+ await page.getByTestId('new-scope').click();let dialog=page.locator('.el-dialog:visible');await page.getByTestId('scope-name').fill('Strength Review');await page.getByTestId('scope-code').fill('review_scope');await dialog.getByRole('button',{name:'Save Label',exact:true}).click();await dialog.waitFor({state:'hidden'});await page.getByTestId('scope-label-review_scope').waitFor();assert.equal(await page.getByTestId('scope-label-review_scope').getAttribute('aria-pressed'),'true');assert.match(await page.locator('.selected-scope-heading').innerText(),/Strength Review/)
+ pass('entitlement-content-menu-maintains-scope-labels-within-selected-content-type')
+ await page.getByTestId('add-library-content').click();dialog=page.locator('.el-dialog:visible');await page.getByTestId('library-search').fill('ScopeReview');const libraryRows=page.getByTestId('scope-library').locator('.el-table__body-wrapper tbody tr');await until(async()=>(await libraryRows.count())===2,'course library isolated');assert.doesNotMatch(await libraryRows.allInnerTexts().then(t=>t.join(' ')),/world_tour|training_program/)
+ await page.getByTestId('scope-library').locator('.el-table__header-wrapper .el-checkbox').click();await page.getByTestId('confirm-library-add').click();await page.locator('.el-message-box:visible').getByRole('button',{name:'Confirm and Add',exact:true}).click();await dialog.waitFor({state:'hidden'});const memberRows=page.getByTestId('scope-members').locator('.el-table__body-wrapper tbody tr');await until(async()=>(await memberRows.count())===2,'two associations saved')
+ for(const fixture of fixtures.slice(0,2)){const row=await api('/content/'+fixture.id);assert.equal(row.published.contentScope,'review_scope');assert.equal(row.published.tier,'free');assert.equal(row.published.name,fixture.published.name)}assert.equal((await api('/content/'+fixtures[2].id)).published.contentScope,'free_content')
+ pass('picker-adds-only-matching-library-content-and-preserves-unrelated-types-and-fields')
+ await page.getByTestId('scope-label-free_content').click();assert.doesNotMatch(await page.getByTestId('scope-members').innerText(),/ScopeReview course/);await page.getByTestId('scope-label-review_scope').click();await page.getByTestId('add-library-content').click();await page.getByTestId('library-search').fill('ScopeReview');await until(async()=>(await libraryRows.count())===2,'already associated entries visible');assert.equal(await page.getByTestId('scope-library').locator('tbody .el-checkbox:not(.is-disabled)').count(),0);assert.ok(await page.getByTestId('confirm-library-add').isDisabled());await page.locator('.el-dialog:visible').getByRole('button',{name:'Cancel',exact:true}).click()
+ pass('association-moves-out-of-previous-scope-and-prevents-duplicate-membership')
+ await page.getByTestId('move-content-'+fixtures[0].id).click();dialog=page.locator('.el-dialog:visible');await dialog.locator('.move-target').click();await page.locator('.el-select-dropdown:visible .el-select-dropdown__item').filter({hasText:/^Free Content$/}).click();await dialog.getByRole('button',{name:'Move Content',exact:true}).click();await dialog.waitFor({state:'hidden'});await until(async()=>(await memberRows.count())===1,'one member after move');assert.equal((await api('/content/'+fixtures[0].id)).published.contentScope,'free_content')
+ pass('moving-content-replaces-its-single-association-within-the-same-content-type')
+ for(const [type,expected] of [['world_tour','World Review'],['training_program','Program Review']]){await page.locator('#tab-'+type).click();await page.getByTestId('scope-label-review_scope').click();assert.match(await page.locator('.selected-scope-heading').innerText(),new RegExp(expected));await page.getByTestId('add-library-content').click();await page.getByTestId('library-search').fill('ScopeReview');await until(async()=>(await libraryRows.count())===1,'matching library '+type);assert.match(await libraryRows.innerText(),new RegExp(type));await page.locator('.el-dialog:visible').getByRole('button',{name:'Cancel',exact:true}).click()}
+ pass('world-tour-and-program-use-their-own-scopes-and-content-libraries')
+ for(const width of [1024,1440]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.getByTestId('add-library-content').click();const b=await page.locator('.el-dialog:visible').boundingBox();assert.ok(b.x>=0&&b.x+b.width<=width);await page.locator('.el-dialog:visible').getByRole('button',{name:'Cancel',exact:true}).click()}
+ await page.locator('#tab-course').click();await page.getByTestId('scope-label-review_scope').click();await until(async()=>(await page.locator('.el-message').count())===0,'notices close');await page.screenshot({path:path.join(evidence,'content-management.png'),fullPage:true})
+ await page.goto(base+'/#/commercialization/content?type=world_tour');await page.getByTestId('content-page').waitFor();assert.equal(await page.getByRole('button',{name:'Set Scope',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'Set Content Scope',exact:true}).count(),0);assert.doesNotMatch(await page.getByTestId('content-page').locator('.el-table__body-wrapper').first().innerText(),/ScopeReview course|ScopeReview training_program/)
+ pass('old-generic-scope-controls-are-removed-and-layout-fits-desktop-widths');assert.deepEqual(errors,[])
 }
-run().catch(async error => { errors.push(error.stack); console.error(error); process.exitCode = 1; if (page) await page.screenshot({ path: path.join(evidence, 'failure.png'), fullPage: true }).catch(() => {}) }).finally(async () => { if (browser) await browser.close(); if (server && server.exitCode === null) { const closed = new Promise(resolve => server.once('exit', resolve)); server.kill(); await closed } fs.writeFileSync(path.join(evidence, 'results.json'), JSON.stringify({ status: process.exitCode ? 'failed' : 'passed', checks, errors }, null, 2)); for (const suffix of ['', '-wal', '-shm']) try { fs.unlinkSync(database + suffix) } catch (error) { if (error.code !== 'ENOENT') throw error } })
+run().catch(async error=>{errors.push(error.stack);console.error(error);process.exitCode=1;if(page)await page.screenshot({path:path.join(evidence,'failure.png'),fullPage:true}).catch(()=>{})}).finally(async()=>{if(browser)await browser.close();if(server&&server.exitCode===null){const closed=new Promise(resolve=>server.once('exit',resolve));server.kill();await closed}fs.mkdirSync(evidence,{recursive:true});fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify({status:process.exitCode?'failed':'passed',checks,errors},null,2));for(const suffix of['','-wal','-shm'])try{fs.unlinkSync(database+suffix)}catch(e){if(e.code!=='ENOENT')throw e}})

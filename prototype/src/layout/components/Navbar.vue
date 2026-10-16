@@ -13,7 +13,7 @@ export default {
   name: 'Navbar',
   computed: {
     opened() { return this.$store.state.app.sidebar.opened },
-    breadcrumbs() { return this.$route.matched.filter(entry => entry.meta && entry.meta.title) },
+    breadcrumbs() { const entitlementModule = ['catalog','suits','content-management'].includes(this.$route.path.split('/')[2]); return this.$route.matched.filter(entry => entry.meta && entry.meta.title).map(entry => entitlementModule && entry.path === '/commercialization' ? { ...entry, meta: { ...entry.meta, title: 'Entitlement Management' } } : entry) },
     businessRulesTarget() {
       const activePath = this.$route.meta.activeMenu || this.$route.path
       const module = activePath.split('/')[2] || 'overview'

@@ -9,6 +9,7 @@ const commercialization = {
   name: 'Commercialization',
   meta: { title: 'Commercialization', icon: 'el-icon-money' },
   children: [
+    { path: 'content-management', name: 'EntitlementContentManagement', component: () => import('@/views/commercialization/content-management'), meta: { title: 'Content Management', perms: ['GET /commercialization/content-scopes'] } },
     { path: 'overview', name: 'CommercializationOverview', component: () => import('@/views/commercialization/overview'), meta: { title: 'Demo Overview', perms: ['GET /commercialization/overview'] } },
     ...['products','content','pricing','campaigns'].flatMap(entity => [
       { path: entity, name: 'Commerce'+entity, component: () => import('@/views/commercialization/configurations'), props: { entity }, meta: { title: {products:'Products',content:'Course Management',pricing:'Service Pricing',campaigns:'Campaigns & Compensation'}[entity], perms: ['GET /commercialization/'+entity] } },

@@ -4,7 +4,8 @@ export const implementationScopes = {
   suits: { kind: 'new', label: '建议新增模块', title: '权益管理 · 权益套餐', priority: 'P1', priorityNote: 'MVP 需预置 Free / Premium 组合；完整的套餐管理后台列为 P1。', description: '配置内容 Scope、功能项、Credits 发放规则和发布版本。', businessTopic: 'composition', businessNode: 'suit' },
   products: { kind: 'new', label: '建议新增模块', title: '商业商品管理', priority: 'MVP', priorityNote: 'MVP 覆盖会员商品与 Apple / Google SKU 关联；单独销售的 Credits 商品是 P2。', description: '管理会员及 Credits 商品；SKU 放在商品详情内。如原后台已有商品管理，扩展原模块。', businessTopic: 'orders', businessNode: 'membership_product' },
   pricing: { kind: 'new', label: '建议新增配置', title: 'Credits 服务计价', priority: 'P1', priorityNote: 'AI Credits 额度授予、报价和消费闭环列为 P1；具体服务扣额仍待业务定义。', description: '配置用户操作与 Credits 价格的对应关系；独立菜单是方案，可并入商业化配置。', businessTopic: 'credits', businessNode: 'consume_policy' },
-  content: { kind: 'extension', label: '扩展现有模块', title: '课程管理 · Course / World Tour / Training Program', priority: 'MVP', priorityNote: 'MVP 在现有列表与编辑页维护 Course、World Tour、Program 的范围标记，支持单条与批量编辑；Content Credits 兑换与限时挑战授权是 P3。', description: '在现有课程管理列表、编辑页增加内容范围标记、筛选与批量设置；内容创建、基础资料和 Training Program 编排继续复用原功能。', businessTopic: 'content', businessNode: 'content', links: [{ path: 'redemptions', title: '兑换记录样例' }] },
+  'content-management': { kind: 'new', label: '权益管理', title: '权益管理 · 内容管理', priority: 'MVP', priorityNote: '按内容类型维护范围标签与内容关联；课程范围关联属于 MVP，限时挑战授权仍为 P3。', description: '先选内容类型，再选范围标签，从对应内容库添加内容；每条内容只能关联一个范围标签。迁移范围时替换原关联。', businessTopic: 'content', businessNode: 'content' },
+  content: { kind: 'extension', label: '扩展现有模块', title: '现有内容库 · Course / World Tour / Training Program', priority: 'MVP', priorityNote: '现有内容库展示各自内容的范围归属；范围标签及关联统一在权益管理 → 内容管理维护。Content Credits 兑换与限时挑战授权是 P3。', description: '按各自内容类型查看内容库与范围归属，基础内容编辑继续复用原功能；范围关联在权益管理的内容管理中维护。', businessTopic: 'content', businessNode: 'content', links: [{ path: 'redemptions', title: '兑换记录样例' }] },
   users: { kind: 'extension', label: '扩展现有模块', title: '用户管理 · 用户详情', priority: 'MVP', priorityNote: 'MVP 查询有效会员权益并支持基础订单 / 权益异常处理；Credits Wallet、批次和消费明细列为 P1。', description: '增加权益、Credits 余额 / 批次 / 流水、兑换和消费查询。本页仅展示商业化部分；保留原用户资料及管理功能。', businessTopic: 'relations', businessNode: 'access_grant', links: [{ path: 'ledger', title: '流水查询样例' }, { path: 'redemptions', title: '兑换查询样例' }, { path: 'usage', title: '服务消费查询样例' }] },
   orders: { kind: 'extension', label: '合并到交易管理', title: '订单管理', priority: 'MVP', priorityNote: 'MVP 校验 Apple / Google 会员订单完整生命周期；独立购买 Credits 商品的订单是 P2。原型中的交易均为本地模拟。', description: '增加商品类型、支付 / 履约状态、购买快照和失败补发。复用原订单模块；没有对应模块时再新增。', businessTopic: 'orders', businessNode: 'order' },
   subscriptions: { kind: 'extension', label: '合并到订阅管理', title: '订阅管理', priority: 'MVP', priorityNote: 'MVP 覆盖订阅购买、续费、取消、过期、退款 / 撤销和恢复校验；本原型不连接真实商店。', description: '增加已购权益版本、周期和续订状态；复用原订阅模块。后台取消 / 恢复续订需按现有渠道能力确认。', businessTopic: 'orders', businessNode: 'fulfillment' },
@@ -29,9 +30,12 @@ export const priorityForPath = path => {
 
 const item = (path, title, icon, priority = implementationScopes[path] && implementationScopes[path].priority) => ({ path: '/commercialization/' + path, title, icon, priority })
 export const sidebarGroups = [
-  { key: 'commerce', title: 'Commercialization', icon: 'el-icon-money', items: [
+  { key: 'entitlements', title: 'Entitlement Management', icon: 'el-icon-collection', items: [
     item('catalog', 'Entitlement Catalog', 'el-icon-collection'),
     item('suits', 'Entitlement Suits', 'el-icon-files'),
+    item('content-management', 'Content Management', 'el-icon-folder-opened')
+  ] },
+  { key: 'commerce', title: 'Commercialization', icon: 'el-icon-money', items: [
     item('products', 'Products', 'el-icon-goods'),
     item('pricing', 'Service Pricing', 'el-icon-coin')
   ] },

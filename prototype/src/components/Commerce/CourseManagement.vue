@@ -2,20 +2,18 @@
   <div class="app-container course-management" data-testid="content-page">
     <div class="course-heading">
       <div><h1>Course Management</h1><p>Courses, World Tour and Training Programs</p></div>
-      <div class="course-heading-actions"><content-scope-manager @changed="load"/><el-button icon="el-icon-refresh" :loading="loading" @click="load">Refresh</el-button></div>
+      <div class="course-heading-actions"><el-button @click="$router.push({path:'/commercialization/content-management',query:{type:contentType}})">Manage Access Scopes</el-button><el-button icon="el-icon-refresh" :loading="loading" @click="load">Refresh</el-button></div>
     </div>
 
     <div class="course-filters filter-container">
-      <div class="course-filter-row"><label>Content Type :</label><el-radio-group v-model="contentType" size="small" data-testid="content-type-filter"><el-radio-button label="">ALL</el-radio-button><el-radio-button v-for="type in contentTypes" :key="type" :label="type">{{ typeLabel(type) }}<span v-if="type==='limited_challenge'" class="later-phase">P3</span></el-radio-button></el-radio-group></div>
+      <div class="course-filter-row"><label>Content Type :</label><el-radio-group v-model="contentType" size="small" data-testid="content-type-filter"><el-radio-button v-for="type in contentTypes" :key="type" :label="type">{{ typeLabel(type) }}<span v-if="type==='limited_challenge'" class="later-phase">P3</span></el-radio-button></el-radio-group></div>
       <div class="course-filter-row"><label>Content Scope :</label><el-select v-model="contentScope" clearable placeholder="ALL" size="small" data-testid="content-scope-filter"><el-option v-for="scope in scopeOptions" :key="scope.entitlementCode+':'+scope.code" :value="scope.entitlementCode+':'+scope.code" :label="scope.name+(contentType?'':' · '+scopeType(scope.entitlementCode))"/></el-select><el-tag size="mini" :type="contentType==='limited_challenge'?'info':'success'">{{ contentType==='limited_challenge'?'P3':'MVP' }}</el-tag></div>
       <div class="course-filter-row"><label>Status :</label><el-radio-group v-model="status" size="small"><el-radio-button label="">ALL</el-radio-button><el-radio-button label="active">Active</el-radio-button><el-radio-button label="disabled">Disabled</el-radio-button><el-radio-button label="draft">Draft pending</el-radio-button></el-radio-group></div>
       <el-form inline class="course-search" @submit.native.prevent="page=1"><el-form-item><el-input v-model="search" placeholder="Course ID / name" clearable size="small" data-testid="content-search"/></el-form-item><el-form-item><el-button type="primary" size="small" icon="el-icon-search" @click="page=1">Search</el-button><el-button size="small" @click="reset">Reset</el-button></el-form-item></el-form>
     </div>
 
     <el-alert v-if="error" :title="error" type="error" :closable="false"/>
-    <content-bulk ref="bulk" :selection="selection" @changed="load"/>
-    <el-table ref="table" v-loading="loading" :data="pageItems" row-key="id" border size="small" empty-text="No matching courses." @selection-change="selection=$event">
-      <el-table-column type="selection" width="45" fixed="left"/>
+    <el-table ref="table" v-loading="loading" :data="pageItems" row-key="id" border size="small" empty-text="No matching courses.">
       <el-table-column label="Course ID" width="180"><template slot-scope="s"><span class="course-id">{{ s.row.id }}</span></template></el-table-column>
       <el-table-column label="Thumbnail" width="85" align="center"><template slot-scope="s"><div class="course-thumbnail"><img v-if="thumbnail(s.row)" :src="thumbnail(s.row)" alt=""/><i v-else class="el-icon-picture-outline"/></div></template></el-table-column>
       <el-table-column :label="contentType==='training_program'?'Training Program Name':'Course Name'" min-width="230"><template slot-scope="s"><el-button type="text" class="course-name" @click="edit(s.row)">{{ current(s.row).name }}</el-button><div class="item-code">{{ s.row.code }}</div></template></el-table-column>
@@ -24,10 +22,10 @@
       <el-table-column min-width="215" class-name="scope-column"><template slot="header">Content Scope <el-tag size="mini" type="success">MVP</el-tag></template><template slot-scope="s"><div class="published-scope">{{ scopeName(s.row.published || current(s.row)) }}</div><div v-if="scopeChanged(s.row)" class="pending-scope"><el-tag size="mini" type="warning">Draft</el-tag> {{ scopeName(s.row.draft) }}</div><span v-if="priority(s.row)==='P3'" class="scope-phase">P3 · independent unlock / Challenge</span></template></el-table-column>
       <el-table-column label="Status" width="125"><template slot-scope="s"><el-tag size="mini" :type="s.row.status==='active'?'success':'info'">{{ typeLabel(s.row.status) }}</el-tag><div v-if="s.row.hasDraft" class="draft-indicator">Draft pending</div></template></el-table-column>
       <el-table-column label="Updated" width="175"><template slot-scope="s">{{ dateTime(s.row.updatedAt) }}</template></el-table-column>
-      <el-table-column label="Actions" width="185" fixed="right"><template slot-scope="s"><el-button type="text" :data-testid="'edit-scope-'+s.row.id" @click="$refs.bulk.open(s.row)">Set Scope</el-button><el-button type="text" @click="edit(s.row)">Edit</el-button></template></el-table-column>
+      <el-table-column label="Actions" width="185" fixed="right"><template slot-scope="s"><el-button type="text" @click="edit(s.row)">Edit</el-button></template></el-table-column>
     </el-table>
     <div class="pagination-container"><el-pagination :current-page.sync="page" :page-size="pageSize" :total="filtered.length" layout="total, prev, pager, next"/></div>
-    <div class="course-footer"><span>A content item belongs to one scope. Draft assignments take effect after publishing.</span><router-link to="/commercialization/redemptions">Redemption records <el-tag size="mini" type="info">P3</el-tag></router-link></div>
+    <div class="course-footer"><span>Scope labels and content associations are maintained in Entitlement Management → Content Management.</span><router-link to="/commercialization/redemptions">Redemption records <el-tag size="mini" type="info">P3</el-tag></router-link></div>
   </div>
 </template>
 
@@ -35,13 +33,10 @@
 import { listConfigs, getContentScopes } from '@/api/commerce'
 import { typeLabel } from '@/views/commercialization/commerce-definitions'
 import { dateTime } from '@/utils/format'
-import ContentBulk from './ContentBulk'
-import ContentScopeManager from './ContentScopeManager'
 
 export default {
   name: 'CourseManagement',
-  components: { ContentBulk, ContentScopeManager },
-  data() { return { items: [], scopes: [], selection: [], search: '', contentType: '', contentScope: '', status: '', page: 1, pageSize: 10, loading: false, error: '' } },
+  data() { return { items: [], scopes: [], selection: [], search: '', contentType: ['course','world_tour','training_program','movement','limited_challenge'].includes(this.$route.query.type) ? this.$route.query.type : 'course', contentScope: '', status: '', page: 1, pageSize: 10, loading: false, error: '' } },
   computed: {
     contentTypes() { const present = new Set(this.items.map(row => this.current(row).contentType)); return ['course', 'world_tour', 'training_program', 'movement', 'limited_challenge'].filter(type => present.has(type)) },
     scopeOptions() { const codes = new Set(this.items.filter(row => !this.contentType || this.current(row).contentType === this.contentType).map(row => this.current(row).entitlementCode)); return this.scopes.filter(scope => codes.has(scope.entitlementCode)) },
@@ -66,7 +61,7 @@ export default {
     edit(row) { this.$router.push('/commercialization/content/' + row.id) },
     clearSelection() { this.selection = []; if (this.$refs.table) this.$refs.table.clearSelection() },
     resetPage() { this.page = 1; this.clearSelection() },
-    reset() { this.search = ''; this.contentType = ''; this.contentScope = ''; this.status = ''; this.resetPage() },
+    reset() { this.search = ''; this.contentType = 'course'; this.contentScope = ''; this.status = ''; this.resetPage() },
     async load() { this.loading = true; this.error = ''; this.clearSelection(); try { [this.items, this.scopes] = await Promise.all([listConfigs('content'), getContentScopes()]); this.page = Math.min(this.page, Math.max(1, Math.ceil(this.filtered.length / this.pageSize))) } catch (error) { this.error = error.message } finally { this.loading = false } }
   }
 }
