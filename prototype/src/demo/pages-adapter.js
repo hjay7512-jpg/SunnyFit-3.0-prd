@@ -12,7 +12,7 @@ export function runtime() {
   if (!runtimePromise) {
     const base = process.env.BASE_URL
     runtimePromise = script(base + 'demo-runtime/sql-wasm.js')
-      .then(() => script(base + 'demo-runtime/engine.js'))
+      .then(() => script(base + 'demo-runtime/' + (process.env.VUE_APP_DEMO_ENGINE || 'engine.js')))
       .then(() => window.SunnyFitPagesRuntime.ready)
       .then(() => window.SunnyFitPagesRuntime)
       .catch(error => { runtimePromise = null; throw error })

@@ -46,6 +46,7 @@ async function main() {
     await page.locator('.phone-frame[aria-busy="false"]').waitFor()
     assert.equal((await api('/catalog')).length, 10)
     assert.ok((await api('/users/DEMO-2002')).effective.membershipActive)
+    assert.ok(await page.locator('script[src*="demo-runtime/engine."]').evaluateAll(scripts=>scripts.some(script=>/engine\.[a-f0-9]{16}\.js$/.test(script.src))), 'Runtime must use a content fingerprint to avoid stale API code')
     pass('Subdirectory homepage initializes latest fixtures through browser SQLite')
     const free = await api('/weekly-report/DEMO-2001'), paid = await api('/weekly-report/DEMO-2002')
     assert.equal(free.stats.workouts, 6); assert.equal(free.insight.body, null); assert.ok(paid.insight.body)

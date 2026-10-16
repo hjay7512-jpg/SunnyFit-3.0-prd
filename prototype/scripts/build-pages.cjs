@@ -2,6 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { spawnSync } = require('node:child_process')
 const { build } = require('esbuild')
+const { createHash } = require('node:crypto')
 const root = path.resolve(__dirname, '..')
 const base = process.env.DEMO_PUBLIC_PATH || '/SunnyFit-3.0-prd/prototype/'
 if (!/^\/[a-zA-Z0-9/_.-]*\/$/.test(base) || base.split('/').includes('..')) throw new Error('DEMO_PUBLIC_PATH must be an absolute directory URL ending in /.')
@@ -19,8 +20,10 @@ async function main() {
       builder.onResolve({ filter: /^node:crypto$/ }, () => ({ path: path.join(__dirname, 'pages/crypto.cjs') }))
     } }]
   })
+  const engineFile = 'engine.' + createHash('sha256').update(fs.readFileSync(path.join(runtime, 'engine.js'))).digest('hex').slice(0, 16) + '.js'
+  fs.renameSync(path.join(runtime, 'engine.js'), path.join(runtime, engineFile))
   const result = spawnSync(process.execPath, ['--openssl-legacy-provider', path.join(root, 'node_modules/@vue/cli-service/bin/vue-cli-service.js'), 'build', '--dest', output], {
-    cwd: root, stdio: 'inherit', env: { ...process.env, DEMO_PUBLIC_PATH: base, VUE_APP_DEMO_RUNTIME: 'browser' }
+    cwd: root, stdio: 'inherit', env: { ...process.env, DEMO_PUBLIC_PATH: base, VUE_APP_DEMO_RUNTIME: 'browser', VUE_APP_DEMO_ENGINE: engineFile }
   })
   if (result.status !== 0) process.exit(result.status || 1)
   function rewrite(dir) {
