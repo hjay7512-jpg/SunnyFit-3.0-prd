@@ -3,7 +3,7 @@
     {title:'商品交付什么',rule:'会员商品绑定 Base Suit，开通访问权并逐月发放 Credits。额度包只发指定类型的 Credits，不开通会员。',interaction:'报价锁定商品、SKU 和 Suit 版本；已支付订单按购买快照履约。'},
     {title:'月度额度',rule:'按月、按年付费均从订阅开始日，按原订阅时区逐月发放。月赠余额不结转，自购额度无到期日。',interaction:'价格和数量是本地评审参数，正式定价仍待定义。'},
     {title:'升级',rule:'升级立即生效并开启新周期；剩余价值抵扣和应付金额仍待定义。',interaction:'已有付费会员升级暂不结算，显示待定原因，不生成错误订单。'}]},
-  content:{title:'Content Commercialization',singular:'Content',description:'Courses, World Tours, Training Programs, Movements and Limited Challenges.',notes:[
+  content:{title:'Course Management',singular:'Content',description:'Existing Course Management extended with Course, World Tour and Training Program access scopes.',notes:[
     {title:'内容归属',rule:'单内容归属一个 Scope；Suit 多选 Scope。没有 ALL，新 Scope 不自动加入既有套餐。',interaction:'浏览和预览开放。课程、实景、动作在 Start 校验；训练包在 Select 校验。'},
     {title:'限时挑战',rule:'Challenge Access 只控制 Join 资格；开放时间、目标、进度和奖励由挑战业务管理。',interaction:'Join 检查资格和时间，不伪造训练完成或奖励。'},
     {title:'独立兑换',rule:'Content Credits 确认兑换成功后永久解锁；重复播放不扣额，会员到期不撤销。',interaction:'价格未配置时不能兑换。下架处理仍待定义；历史兑换保留原合同。'},

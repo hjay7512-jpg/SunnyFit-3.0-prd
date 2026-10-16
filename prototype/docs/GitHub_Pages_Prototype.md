@@ -6,7 +6,7 @@
 
 - [前台原型](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/app/home?user=DEMO-2002&review=1)
 - [后台原型](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/commercialization/overview)
-- [业务定义与关系图](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/commercialization/overview?tab=logic)
+- [业务定义与关系图](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/business-rules?module=overview&topic=relations&node=entitlement)
 - [组件与设计来源](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/demo/lab?tab=components)
 - [A/B 场景实验](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/demo/lab)
 

@@ -1,20 +1,23 @@
 # SunnyFit 3.0 商业化原型
 
-在线原型独立部署于仓库的 `prototype/`：[前台](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/app/home?user=DEMO-2002&review=1)、[后台](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/commercialization/overview)、[业务关系](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/commercialization/overview?tab=logic)。使用与本地共用的业务代码，演示数据保存在当前浏览器。部署和迭代说明见 [GitHub Pages 原型](docs/GitHub_Pages_Prototype.md)。
+在线原型独立部署于仓库的 `prototype/`：[前台](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/app/home?user=DEMO-2002&review=1)、[后台](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/commercialization/overview)、[业务关系](https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/business-rules?module=overview&topic=relations&node=entitlement)。使用与本地共用的业务代码，演示数据保存在当前浏览器。部署和迭代说明见 [GitHub Pages 原型](docs/GitHub_Pages_Prototype.md)。
 
 完整后台 Demo + 按真实 Figma 页面还原的 App 样稿，共用 HTTP API 和持久化 SQLite 数据。页面业务文案使用英文，交互注释使用中文。
 
 ## 最新验证与更新方案
 
-2026-10-14 已按 [Entitlement Item List v10](https://sunnyfit.atlassian.net/wiki/x/CQAadg) 和关联管理定义更新前后台。当前 MVP 是 **5 项 Content Access、3 项 Feature Access、2 种 Consumable Credits**。功能不扣额度；AI 开放请求按 User Turn 使用 AI Coach Credits；精品兑换使用 Content Credits，成功后永久解锁。会员月赠按原订阅日期和时区逐月刷新、不结转，自购永久有效。Base / Additional 访问权取并集，额度独立发放。
+2026-10-16 按最新交付计划标记：MVP 覆盖会员商品 / SKU、订单订阅、有效权益与课程范围标记；完整权益管理及 AI Credits 闭环为 P1，独立 Credits 商品为 P2，兑换、限时挑战授权和活动发放为 P3。下面的权益模型描述用于完整业务评审，不代表全部纳入 MVP。后台右上角 Business rules 已独立承载全局规则，并按当前模块定位。详见[本轮后台交付与验证](docs/Admin_MVP_2026-10-16.md)。
 
-直接打开 [新版前台评审](http://127.0.0.1:3012/#/app/home?user=DEMO-2002&review=1)、[免费周报](http://127.0.0.1:3012/#/app/weekly?user=DEMO-2001&review=0)、[会员与两种余额](http://127.0.0.1:3012/#/app/membership?user=DEMO-2002&review=0)、[后台关系图](http://127.0.0.1:3012/#/commercialization/overview?tab=logic)。`npm run demo:optimized` 默认进入新版账号。DEMO-2001 是 Free、DEMO-2002 是 Premium、DEMO-2003 是 Free 加自购 AI Credits；DEMO-100x 保留为历史规则场景。
+
+2026-10-14 已按 [Entitlement Item List v10](https://sunnyfit.atlassian.net/wiki/x/CQAadg) 和关联管理定义更新前后台。当前权益模型包含 **5 项 Content Access、3 项 Feature Access、2 种 Consumable Credits**。功能不扣额度；AI 开放请求按 User Turn 使用 AI Coach Credits；精品兑换使用 Content Credits，成功后永久解锁。会员月赠按原订阅日期和时区逐月刷新、不结转，自购永久有效。Base / Additional 访问权取并集，额度独立发放。
+
+直接打开 [新版前台评审](http://127.0.0.1:3012/#/app/home?user=DEMO-2002&review=1)、[免费周报](http://127.0.0.1:3012/#/app/weekly?user=DEMO-2001&review=0)、[会员与两种余额](http://127.0.0.1:3012/#/app/membership?user=DEMO-2002&review=0)、[后台关系图](http://127.0.0.1:3012/#/business-rules?module=overview&topic=relations&node=entitlement)。`npm run demo:optimized` 默认进入新版账号。DEMO-2001 是 Free、DEMO-2002 是 Premium、DEMO-2003 是 Free 加自购 AI Credits；DEMO-100x 保留为历史规则场景。
 
 周报依据正式 V3 `7697:14248`，Challenge 依据 Alpha 现有 `266:41091`；保留原底部四项导航和个人中心菜单。Movement / World Tour 从原入口接入，未定位独立列表完整设计稿，当前为共用 V3 玻璃组件的评审延展。正式价格、赠送数量、单次消耗数量和即时升级结算仍标记为 Open。
 
-本轮复现：`npm test`（55 项业务测试）、`npm run test:mvp`（15 项新版浏览器检查）、`npm run test:business-review`（10 项图形评审检查）。本地构建已通过，详见[当前交付与边界](docs/SunnyFit_V3_Optimized_Demo_Handoff.md)。以下为此前迭代的历史记录，以本段最新定义为准。
+本轮复现：`npm test`（56 项业务测试）、`npm run test:mvp`（15 项新版浏览器检查）、`npm run test:business-review`（11 项图形评审检查）。本地构建已通过，详见[当前交付与边界](docs/SunnyFit_V3_Optimized_Demo_Handoff.md)。以下为此前迭代的历史记录，以本段最新定义为准。
 
-原型已加入图形化需求评审：[打开业务关系图](http://127.0.0.1:3012/?build=business-review#/commercialization/overview?tab=logic)。沿用 Review Tools → Demo Overview，提供权益类型、权益关系、权益组合、内容授权、套餐与订单、额度与消费、版本与 Open 七组图。节点可点选查看定义和关系约束，支持大屏演示、共享当前节点链接和 SVG 导出；“场景与数据”保留原概览。运行 `npm run test:business-review` 校验只读交互，详见[评审交付记录](docs/SunnyFit_V3_Admin_Prototype_Handoff.md)。
+原型已加入图形化需求评审：[打开业务关系图](http://127.0.0.1:3012/?build=business-review#/business-rules?module=overview&topic=relations&node=entitlement)。通过后台右上角 Business rules 进入独立页面，按当前模块定位，提供权益类型、权益关系、权益组合、内容授权、套餐与订单、额度与消费、版本与 Open 七组图。节点可点选查看定义和关系约束，支持大屏演示、共享当前节点链接和 SVG 导出；Demo Overview 保留场景数据。运行 `npm run test:business-review` 校验只读交互，详见[评审交付记录](docs/SunnyFit_V3_Admin_Prototype_Handoff.md)。
 
 早期三类模型交付建立了 Scope、功能加入和额度分型，[权益目录](http://127.0.0.1:3012/#/commercialization/catalog) 与 [Suit 配置](http://127.0.0.1:3012/#/commercialization/suits) 继续使用原入口。当时关于服务单位与 Additional 合并的待定描述，已被本轮确认的 User Turn 和访问权并集覆盖；具体金额和更细合并规则仍待定。
 
@@ -67,7 +70,7 @@ npm start
 | Entitlement Catalog / Suits | 建议新增权益管理：只读目录、Base/Additional、Scope、Credits 福利、草稿、发布、版本、引用保护 |
 | Products | 建议新增商业商品管理或扩展已有模块：会员和 Credits 商品；SKU 在商品详情内 |
 | Service Pricing | 建议新增计价配置能力，可并入商业化配置 |
-| Content Labels | 扩展原 Course / World Tour / **现有 Training Program** 列表及编辑页；统一内容列表为演示载体 |
+| Course Management | 扩展原 Course / World Tour / **现有 Training Program** 列表及编辑页；统一内容列表为演示载体 |
 | User Rights / Wallets / Ledger | 扩展原用户详情：权益、Credits 余额 / 批次 / 流水、补偿和资产查询；不要求独立钱包菜单 |
 | Orders / Subscriptions | 复用原交易 / 订阅管理，增加快照、履约状态及失败补发；续订管理按渠道能力确认 |
 | Redemptions / Service Requests / Audit | 必需的记录与追溯能力；嵌入用户 / 内容详情及原操作日志，独立查询页是辅助样例 |
@@ -78,7 +81,7 @@ App：Home、Workout 的 Course 首屏、课程详情、Training Program 首页�
 
 ## 建议评审顺序
 
-1. **Content Labels**：筛选三个内容类型 → Configure → 修改标签/兑换规则 → 保存草稿 → 预览 → 发布。勾选多条可批量保存或发布。
+1. **Course Management（MVP）**：按 Course / World Tour / Training Program 和 Content Scope 筛选 → 行内 Set Scope 单条设置，或勾选多条后 Set Content Scope 批量设置 → 保存草稿 → 核对列表中的 Draft 范围 → 发布。不同内容类型分别选择有效 Scope；商业标签默认不改动，未变更条目跳过。独立兑换 / Challenge 为 P3。
 2. **Flow Preview**：Jamie 加购后使用普通聊天；Casey 深入分析时额度不足；Alex 查看跨批次消费；Evelyn 到期后读取旧资产。
 3. **Orders**：模拟支付成功但履约失败，再 Retry Delivery；查看购买快照。
 4. **App**：输入问题 → 受限弹窗 → 充值 → 返回，输入保留；兑换内容后再次使用不收费。

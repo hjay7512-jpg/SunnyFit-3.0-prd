@@ -75,8 +75,8 @@ export default {
   methods:{
     money,creditTypeLabel,creditGrantLabel,
     statusLabel(status){return status==='open'?'Open · 待定':status==='legacy'?'历史兼容':'已确认'},
-    selectTopic(id){this.topicId=id;this.selectedId=this.topic.initial;this.zoom=null;this.feedback='';this.shareFallback='';this.$nextTick(()=>{const canvas=this.$el.querySelector('.review-diagram-scroll');if(canvas){canvas.scrollLeft=0;canvas.scrollTop=0}})},
-    selectNode(id){this.selectedId=id;this.feedback='';this.shareFallback=''},
+    selectTopic(id){this.topicId=id;this.selectedId=this.topic.initial;this.zoom=null;this.feedback='';this.shareFallback='';this.syncLocation();this.$nextTick(()=>{const canvas=this.$el.querySelector('.review-diagram-scroll');if(canvas){canvas.scrollLeft=0;canvas.scrollTop=0}})},
+    selectNode(id){this.selectedId=id;this.feedback='';this.shareFallback='';this.syncLocation()},
     openDecision(entity){this.selectTopic('versions');this.selectNode(entity);this.$nextTick(()=>this.$el.querySelector('.review-topic-heading').scrollIntoView({block:'start',behavior:'smooth'}))},
     nodeStatus(node){return entities[node.entity].status||'confirmed'},
     nodeLabel(node){return (node.title||entities[node.entity].title)+'，'+(node.subtitle||entities[node.entity].subtitle)+'，'+this.statusLabel(this.nodeStatus(node))},
@@ -99,7 +99,8 @@ export default {
       if(event.shiftKey&&(active===first||outside)){event.preventDefault();last.focus()}
       else if(!event.shiftKey&&(active===last||outside)){event.preventDefault();first.focus()}
     },
-    currentLink(){const url=new URL(window.location.href);url.hash='/commercialization/overview?'+new URLSearchParams({tab:'logic',topic:this.topicId,node:this.selectedId}).toString();return url.href},
+    syncLocation(){if(this.$route.path!=='/business-rules')return;const query={...this.$route.query,topic:this.topicId,node:this.selectedId};this.$router.replace({path:'/business-rules',query}).catch(()=>{})},
+    currentLink(){const resolved=this.$router.resolve({path:'/business-rules',query:{...this.$route.query,topic:this.topicId,node:this.selectedId}});return window.location.origin+window.location.pathname+resolved.href},
     async copyLink(){const url=this.currentLink();try{await navigator.clipboard.writeText(url);this.feedback='已复制当前主题和节点的链接。';this.shareFallback=''}catch(_){this.shareFallback=url;this.feedback='可从下面复制当前视图链接。'}},
     exportSvg(){const svg=this.$refs.graphSvg.cloneNode(true);svg.removeAttribute('style');svg.setAttribute('width',this.topic.width);svg.setAttribute('height',this.topic.height);svg.querySelectorAll('[tabindex]').forEach(node=>node.removeAttribute('tabindex'));const data='<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(svg);const url=URL.createObjectURL(new Blob([data],{type:'image/svg+xml;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download='SunnyFit-business-'+this.topicId+'.svg';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);this.feedback='已导出当前关系图，包含关系说明与状态标记。'},
     itemName(code){return (this.catalog||[]).find(item=>item.code===code)?.name||code},

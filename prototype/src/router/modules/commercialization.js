@@ -11,7 +11,7 @@ const commercialization = {
   children: [
     { path: 'overview', name: 'CommercializationOverview', component: () => import('@/views/commercialization/overview'), meta: { title: 'Demo Overview', perms: ['GET /commercialization/overview'] } },
     ...['products','content','pricing','campaigns'].flatMap(entity => [
-      { path: entity, name: 'Commerce'+entity, component: () => import('@/views/commercialization/configurations'), props: { entity }, meta: { title: {products:'Products',content:'Content Labels',pricing:'Service Pricing',campaigns:'Campaigns & Compensation'}[entity], perms: ['GET /commercialization/'+entity] } },
+      { path: entity, name: 'Commerce'+entity, component: () => import('@/views/commercialization/configurations'), props: { entity }, meta: { title: {products:'Products',content:'Course Management',pricing:'Service Pricing',campaigns:'Campaigns & Compensation'}[entity], perms: ['GET /commercialization/'+entity] } },
       { path: entity+'/:id', name: 'Commerce'+entity+'Detail', hidden: true, component: () => import('@/views/commercialization/configurations/detail'), props: { entity }, meta: { title: 'Configure '+entity, activeMenu: '/commercialization/'+entity, perms: ['PUT /commercialization/'+entity+'/{id}'] } }
     ]),
     { path:'users',name:'CommerceUsers',component:()=>import('@/views/commercialization/users'),meta:{title:'User Rights',perms:['GET /commercialization/users']} },

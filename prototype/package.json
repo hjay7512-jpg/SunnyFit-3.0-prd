@@ -27,6 +27,7 @@
     "demo:lab": "powershell.exe -NoProfile -File scripts/open-lab.ps1",
     "demo:components": "powershell.exe -NoProfile -File scripts/open-lab.ps1 -Components",
     "test:browser": "node scripts/browser-check.cjs",
+    "test:content-scope": "node scripts/content-scope-check.cjs",
     "test:entitlement-ui": "node scripts/entitlement-model-check.cjs",
     "test:business-review": "node scripts/business-review-check.cjs",
     "review": "powershell.exe -NoProfile -File scripts/open-review.ps1",

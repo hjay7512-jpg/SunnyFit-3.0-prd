@@ -34,12 +34,23 @@ const router = new Router({
   routes: [
     { path: '/', redirect: '/commercialization/overview', hidden: true },
     commercialization,
+    { path: '/business-rules', name: 'BusinessRules', component: () => import('@/views/business-rules'), hidden: true, meta: { title: 'Business Rules', app: true, noCache: true } },
     { path: '/demo/lab', component: () => import('@/views/demo/Lab'), hidden: true, meta: { title: 'V3.0 Demo Lab', app: true } },
     { path: '/app', redirect: '/app/home', hidden: true },
     { path: '/app/:screen(home|workout|course|program|result|plan|history|profile|membership|plans|billing|wallet|coach|weekly|challenge|movement|world-tour|devices|community|settings|support|invite|equipment-shop)', component: () => import('@/views/app'), hidden: true, meta: { title: 'App Samples', app: true } },
     { path: '/app/:withdrawn(content|library|unlocked|program-detail)', redirect: to => ({path:'/app/home',query:to.query}), hidden:true },
     { path: '*', redirect: '/commercialization/overview', hidden: true }
   ]
+})
+// Keep previously shared review links working while moving the global rules out of the admin menu.
+router.beforeEach((to, from, next) => {
+  if (to.path === '/commercialization/overview' && to.query.tab === 'logic') {
+    const query = { ...to.query }
+    delete query.tab
+    next({ path: '/business-rules', query, replace: true })
+    return
+  }
+  next()
 })
 // Vue Router 3.1 does not call scrollBehavior for the first Hash navigation.
 router.onReady(()=>{

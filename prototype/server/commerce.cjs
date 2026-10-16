@@ -568,16 +568,23 @@ function createCommerce({ db, now, transaction, audit, fail, suitDetail, catalog
       return atomic(() => {
         if (!Array.isArray(input.items) || !input.items.length || input.items.length > 100 || new Set(input.items.map(item => item.id)).size !== input.items.length) fail(400, 'INVALID_SELECTION', 'Choose 1–100 unique content records.')
         if (!['save','publish'].includes(input.action)) fail(400, 'INVALID_ACTION', 'Choose Save Drafts or Publish Drafts.')
+        const contentScopes = input.contentScopes === undefined ? {} : input.contentScopes
+        if (!contentScopes || typeof contentScopes !== 'object' || Array.isArray(contentScopes) || (input.action === 'publish' && Object.keys(contentScopes).length)) fail(400, 'INVALID_SCOPE_SELECTION', 'Content scope assignments can only be saved as drafts.')
+        if (input.action === 'save' && input.tier === undefined && !Object.keys(contentScopes).length) fail(400, 'NO_CHANGES', 'Choose a label or content scope to update.')
+        const selectedEntitlements = new Set()
         const prepared = input.items.map(item => {
           const row = configRow('content', item.id); revisionCheck(row, item.revision)
           if (input.action === 'publish' && !row.draft) fail(409, 'NO_DRAFT', 'Every selected record must have a saved draft.')
           const previous=decode(row.draft||JSON.stringify(liveConfig(row)))
+          selectedEntitlements.add(previous.entitlementCode)
           const mapping=previous.contentScope||(previous.tier==='free'?(previous.freeScope||'free_content'):'premium_content')
-          const proposed = input.action === 'save' ? { ...previous,...(!legacyFixtures?{contentScope:mapping}:{}), tier: input.tier, redemptionCredits: input.redemptionCredits, redemptionValidityDays: input.redemptionValidityDays } : decode(row.draft)
+          const scopeUpdate=Object.prototype.hasOwnProperty.call(contentScopes,previous.entitlementCode)
+          const proposed = input.action === 'save' ? { ...previous,...(!legacyFixtures||scopeUpdate?{contentScope:scopeUpdate?contentScopes[previous.entitlementCode]:mapping}:{}),...(input.tier!==undefined?{tier:input.tier}:{}),...(input.tier==='featured'?{redemptionCredits:input.redemptionCredits,redemptionValidityDays:input.redemptionValidityDays}:{}) } : decode(row.draft)
           const config = validate('content', proposed, row)
           if (input.action === 'publish' && canonical(config) === canonical(liveConfig(row))) fail(409, 'NO_CHANGES', 'A selected draft matches its published version.')
           return { row, config }
         })
+        if (Object.keys(contentScopes).some(code => !selectedEntitlements.has(code))) fail(400, 'INVALID_SCOPE_SELECTION', 'Choose a content scope only for types included in the selected records.')
         for (const { row, config } of prepared) {
           if (input.action === 'save') exec('UPDATE commerce_configs SET draft=?,revision=revision+1,updated_at=? WHERE id=?', JSON.stringify(config), now(), row.id)
           else {

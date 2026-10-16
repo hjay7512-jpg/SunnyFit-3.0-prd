@@ -4,7 +4,7 @@
     <nav aria-label="Review shortcuts">
       <router-link to="/app/home?user=DEMO-2002&review=1">前台</router-link>
       <router-link to="/commercialization/overview">后台</router-link>
-      <router-link to="/commercialization/overview?tab=logic">业务关系</router-link>
+      <router-link to="/business-rules?module=overview&topic=relations&node=entitlement">业务规则</router-link>
       <router-link to="/demo/lab?tab=components">组件</router-link>
       <button type="button" :disabled="resetting" @click="reset">{{ resetting ? '重置中…' : '重置演示' }}</button>
     </nav>
