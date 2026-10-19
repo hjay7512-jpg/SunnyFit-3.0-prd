@@ -8,7 +8,7 @@
     "api": "node server/index.cjs",
     "build": "node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js build",
     "start": "node server/index.cjs",
-    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs",
+    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs tests/subscription-wall.test.cjs",
     "test:consumer": "node scripts/optimized-demo-check.cjs",
     "test:layout": "node scripts/check-demo-layout.cjs",
     "test:foundation": "node --test tests/demo-runtime.test.cjs && node scripts/demo-foundation-check.cjs",
@@ -38,7 +38,8 @@
     "seed": "node server/seed.cjs",
     "test:mvp": "node scripts/mvp-commercialization-check.cjs",
     "build:pages": "node scripts/build-pages.cjs",
-    "test:pages": "node scripts/pages-check.cjs"
+    "test:pages": "node scripts/pages-check.cjs",
+    "test:paywall": "node --test tests/subscription-wall.test.cjs && node scripts/subscription-wall-check.cjs"
   },
   "dependencies": {
     "@noble/hashes": "1.8.0",

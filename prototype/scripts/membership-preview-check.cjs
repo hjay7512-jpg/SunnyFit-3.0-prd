@@ -46,14 +46,14 @@ async function layout(){
   assert.equal(await page.locator('.premium-page').getAttribute('data-membership-state'),'active');assert.match(await page.locator('.premium-status-date').innerText(),/Nov 16, 2026/);
   await page.getByRole('button',{name:'Back',exact:true}).click();await page.locator('.personal-center').waitFor();assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'65');
   pass('Event expiry restores quota without changing membership or its expiry; unified navigation preserves both');
-  await open('membership','free',0);await page.getByRole('button',{name:'Get Premium allowance',exact:true}).click();const offers=page.getByRole('dialog',{name:'Choose your Premium plan'});await offers.waitFor();
+  await open('membership','free',0);await page.getByRole('button',{name:'Get Premium allowance',exact:true}).click();const offers=page.getByRole('dialog',{name:'More ways to move forward.'});await offers.waitFor();
   assert.equal(await offers.getByRole('radio').count(),2);assert.equal(await offers.getByRole('radio',{name:/Monthly/}).getAttribute('aria-checked'),'true');
-  await offers.getByRole('button',{name:/^Subscribe ·/}).click();await page.getByRole('dialog',{name:'You’re ready to continue'}).waitFor();await page.getByRole('button',{name:'View membership & usage',exact:true}).click();
+  await offers.getByRole('button',{name:/^(Continue with Premium|Start \d+-day free trial)$/}).click();await page.getByRole('dialog',{name:'You’re ready to continue'}).waitFor();await page.getByRole('button',{name:'View membership & usage',exact:true}).click();
   assert.equal(await page.getByLabel('Unlimited conversations',{exact:true}).count(),0);assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'100');
   await page.getByRole('button',{name:'Manage subscription',exact:true}).click();await page.getByRole('button',{name:'Turn off renewal',exact:true}).click();await page.getByRole('button',{name:'Done',exact:true}).click();
   assert.ok(page.url().includes('membershipState=canceled'));assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'100');
   pass('First subscription grants a fresh finite allowance; turning off renewal preserves it');
-  await open('membership','free',65);await page.getByRole('button',{name:'Explore Premium',exact:true}).click();await page.getByRole('radio',{name:/Yearly/}).click();await page.getByRole('button',{name:/^Subscribe ·/}).click();await page.getByRole('button',{name:'View membership & usage',exact:true}).click();
+  await open('membership','free',65);await page.getByRole('button',{name:'Explore Premium',exact:true}).click();await page.getByRole('radio',{name:/Yearly/}).click();await page.getByRole('button',{name:/^(Continue with Premium|Start \d+-day free trial)$/}).click();await page.getByRole('button',{name:'View membership & usage',exact:true}).click();
   assert.match(await page.locator('.premium-status-date').innerText(),/2027/);assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'100');pass('Annual subscription shares checkout and grants a fresh finite allowance');
   await page.setViewportSize({width:1440,height:1000});await open('profile','active',10,'standard','1');
   await page.locator('[data-review-component=quota] [data-state=campaign]').click();await page.getByLabel('Unlimited conversations',{exact:true}).waitFor();

@@ -1,8 +1,8 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice']
+export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer']
 export default {
-  data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:''}},
+  data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
     reviewPageState(){return pick(this.$route.query,'reviewPage',['loading','error','unavailable','empty'],['default','loading','error','unavailable','empty'])},
     mvpContentState(){return pick(this.$route.query,'reviewContent',['content-free','content-premium'],['default','content-free','content-premium'])},
@@ -13,18 +13,25 @@ export default {
     reviewDocument(){return reviewModel(this)}
   },
   created(){if(this.reviewMode&&this.$route.query.reviewFixture!=='1')this.replaceReviewQuery({reviewFixture:'1',membershipState:this.$route.query.membershipState||'free',chatRemaining:this.$route.query.chatRemaining||'65'})},
-  watch:{loading(value){if(!value)this.$nextTick(this.restoreReviewMovement)},'$route.fullPath'(){this.$nextTick(this.restoreReviewMovement)}},
+  watch:{loading(value){if(!value)this.$nextTick(()=>{this.restoreReviewMovement();this.restoreReviewPaywall()})},'$route.fullPath'(){this.$nextTick(this.restoreReviewMovement)}},
   methods:{
     async replaceReviewQuery(patch){
       const query={...this.$route.query,...patch};for(const key of Object.keys(query))if(query[key]===undefined)delete query[key]
       await new Promise(resolve=>this.$router.replace({path:this.$route.path,query},resolve,resolve));await this.$nextTick()
     },
     async applyReviewState(scope,value){
+      if(scope==='offer'){
+        if(this.mvpPendingPurchase||['processing','restoring'].includes(this.mvpGate?.stage))return
+        const flow=this.mvpGate;this.mvpCheckoutToken++;this.mvpCheckoutApplying=true
+        try{await this.replaceReviewQuery({reviewOffer:value,membershipState:'free'});this.reviewWallKey=this.$route.path}finally{this.mvpCheckoutApplying=false}
+        if(flow)this.mvpGate={...flow,kind:'membership',offer:null,stage:'offer',feedback:''};else this.previewReviewPurchase('offer')
+        return
+      }
       if(scope==='purchase'){
-        const flow=this.mvpGate;this.mvpRequestToken++;clearTimeout(this.mvpTimer)
+        const flow=this.mvpGate;this.mvpRequestToken++;this.mvpCheckoutToken++;clearTimeout(this.mvpTimer)
         if(value==='closed'){this.cancelMvpPurchase();this.mvpPendingPurchase=null;return}
         if(value==='success'){this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery({membershipState:'active',chatRemaining:'100'})}finally{this.mvpCheckoutApplying=false}}
-        if(flow)this.mvpGate={...flow,stage:value};else this.previewReviewPurchase(value)
+        if(flow){const wall=this.mvpWall;this.mvpGate={...flow,stage:value,offer:flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId)}}else this.previewReviewPurchase(value)
         this.mvpPurchaseOutcome='success';if(value==='pending')this.mvpPendingPurchase=this.mvpGate
         return
       }
@@ -58,6 +65,11 @@ export default {
       const query={review:'1',reviewFixture:'1',membershipState:screen==='movement-training'?'active':'free',chatRemaining:'65',user:'DEMO-2002'}
       this.$router.push({path:'/app/'+screen,query},()=>{})
     },
+    restoreReviewPaywall(){
+      const variant=this.$route.query.reviewOffer,key=this.$route.path
+      if(!this.reviewMode||!this.data||this.loading||this.reviewWallKey===key)return
+      this.reviewWallKey=key;if(variant)this.previewReviewPurchase('offer')
+    },
     restoreReviewMovement(){
       if(!this.reviewMode||this.screen!=='movement-training'||!this.$refs.movement)return
       const q=this.$route.query
@@ -83,10 +95,10 @@ export default {
       if(Object.keys(patch).length)this.replaceReviewQuery(patch)
     },
     previewReviewPurchase(stage){
-      const kinds={course:'course',program:'training_program','world-tour':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',plan:'dynamic_plan','movement-training':'movement'}
-      const kind=kinds[this.screen]||'membership',content=kind==='training_program'?this.selectedProgram:kind==='movement'?this.movementContent:this.selectedContent
+      const kinds={course:'course',program:'training_program','world-tour':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',plan:'dynamic_plan',challenge:'limited_challenge','movement-training':'movement'}
+      const kind=kinds[this.screen]||'membership',content=kind==='training_program'?this.selectedProgram:kind==='movement'?this.movementContent:kind==='limited_challenge'?this.challengeContents[0]:this.selectedContent
       this.mvpUpgrade(kind,content)
-      if(this.mvpGate){this.mvpGate={...this.mvpGate,stage,offer:this.mvpOffers[0]};this.mvpPurchaseOutcome='success'}
+      if(this.mvpGate){const wall=this.mvpWall;this.mvpGate={...this.mvpGate,stage,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId)};this.mvpPurchaseOutcome='success'}
     },
     reviewDocumentAction(action){if(action==='purchase')this.previewReviewPurchase('offer');if(action==='movement-run')this.movementReview={...this.movementReview,pinned:false};if(action.startsWith('simulate-'))this.$refs.movement?.simulate(action.slice(9))},
     openReviewPreview(){this.go(this.screen,{review:'0',...(this.screen==='movement-training'?{reviewScene:undefined,reviewMode:undefined,reviewCamera:undefined}: {})})}

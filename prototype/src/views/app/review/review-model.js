@@ -6,11 +6,21 @@ const empty=state('empty','暂无内容','当前没有可展示的内容，保�
 const memberStates=[state('free','未订阅','显示 Free 账户及有限的 AI Coach 用量。可从原入口了解 Premium。'),state('active','会员有效','Premium 权益有效，显示续订日期。会员身份和对话剩余额度分别呈现。'),state('canceled','已关续订','当前周期内仍保留 Premium 权益；显示有效期，不视为已经过期。'),state('expired','会员已到期','恢复 Free 权限，保留已保存的历史内容；新请求按当前权限处理。')]
 const quotaStates=[state('available','额度充足','显示 65% 剩余对话额度，进度条与数值一致。'),state('low','额度较低','剩余 10% 时显示低额度提示，不影响已拥有的训练功能。'),state('empty','额度用尽','显示 0%；聊天草稿保留，发送时引导查看用量或订阅。训练和已保存结果仍可使用。'),state('campaign','限时无限量','活动期显示无限量和截止时间，会员功能授权保持独立。'),state('ended','活动已结束','取消无限量标记，恢复显示有限额度，不改变会员有效状态。')]
 const insightStates=[state('locked','待解锁','基础数据可读；洞察区域展示 Premium 入口，点击后打开当前场景的订阅说明。'),state('ready','已就绪','Premium 可使用个性化洞察；运动结果页可点击生成，周报展示就绪内容，不消耗对话额度。'),state('insight-loading','生成中','仅洞察组件显示生成状态，基础数据继续可读；生成按钮避免重复提交。'),state('insight-error','生成失败','仅洞察组件显示失败与重试入口，基础数据不受影响。'),state('saved-insight','已保存','展示已保存的洞察。会员到期后，原结果仍可阅读。')]
-const purchaseStates=[state('closed','收起','从原型中的 Premium 入口打开场景化订阅说明，保留当前内容或聊天草稿。'),state('offer','订阅说明','弹层说明当前被限制的功能，并展示同一 Premium 等级的月付与年付选项。'),state('processing','处理中','平台处理期间避免重复付款，等待当前请求确认。'),state('success','购买成功','展示成功反馈并保留原任务；点击继续后才开始训练或发送草稿。此状态只更新评审展示。'),state('failure','付款失败','展示付款失败与重试操作，保留原始任务，不自动开始训练或发送消息。'),state('cancelled','取消付款','取消后保留原内容与草稿，可返回页面或重新选择方案。'),state('pending','待确认','付款待确认时不重复下单，提供查询结果入口。')]
+const purchaseStates=[state('closed','收起','从原型中的 Premium 入口打开付费墙，保留当前内容、位置和聊天草稿。'),state('offer','付费墙','统一基座按当前入口匹配一条主价值和三项权益。方案在内容区选择，底部只固定主按钮和扣费说明；全部权益可按需展开。'),state('processing','处理中','平台处理期间避免重复付款，等待当前请求确认。'),state('restoring','恢复购买','核对当前账户的已有订阅，避免重复购买；无有效订阅时保留当前方案和任务并显示结果。'),state('success','购买成功','展示成功反馈并保留原任务；点击继续后才开始训练或发送草稿。此状态只更新评审展示。'),state('failure','付款失败','展示付款失败与重试操作，保留原始任务，不自动开始训练或发送消息。'),state('cancelled','取消付款','取消后保留原内容与草稿，可返回页面或重新选择方案。'),state('pending','待确认','付款待确认时不重复下单，提供查询结果入口。')]
+const offerStates=[state('standard','常规订阅','没有适用试用活动时，按在售 SKU 展示真实周期与价格。默认月付；切换方案同步更新按钮及扣费说明。'),state('trial','30 天试用','评审示例：已核实当前账户符合活动资格，仅年付方案享 30 天免费。默认选中年付，按钮为 Start 30-day free trial；显示今天 $0 和试用后的完整年费。切换月付恢复常规订阅。'),state('ineligible','无试用资格','活动仍有效，但当前账户没有试用资格；展示常规订阅，不保留免费标签或免费按钮。'),state('unknown','资格未知','资格尚未核实，展示常规订阅。只有平台确认有效资格后才允许承诺试用。'),state('expired','活动已失效','活动过期后回落到常规方案；付款前重新核对活动、资格、SKU 与价格，变化时要求重新选择。'),state('unavailable','方案不可用','方案未取得时禁止付款，保留原任务并提供重新加载入口。')]
+const eventLabels={paywall_view:'付费墙曝光',paywall_offer_selected:'选择方案',paywall_benefits_expanded:'展开全部权益',paywall_purchase_started:'发起购买',paywall_purchase_result:'购买结果',paywall_dismissed:'关闭付费墙',paywall_continue:'继续原任务',paywall_restore_started:'恢复购买',paywall_restore_result:'恢复结果'}
+function wallSections(vm,items){
+  if(!items.some(item=>item.id==='purchase'))return items
+  const wall=vm.mvpWall,flow=vm.mvpGate,events=(vm.paywallEvents||[]).slice(-5).reverse()
+  const offer={id:'offer',title:'活动与试用匹配',states:offerStates,active:vm.$route.query.reviewOffer||'standard',disabled:!!vm.mvpPendingPurchase||['processing','restoring'].includes(flow?.stage)}
+  offer.description=offerStates.find(item=>item.id===offer.active)?.description||offerStates[0].description
+  const tracking={id:'paywall-events',title:'入口与转化事件',description:['同一付费墙使用不同入口标识匹配首屏内容：受限权益 → 场景主张 → 其他 Premium 价值 → 方案 → 继续原任务。','曝光、方案选择、购买结果、关闭和继续原任务均关联同一次流程；不记录聊天原文。当前为本地事件预览，真实发布时由分析 SDK 适配器接收。'],facts:wall?[['基座',wall.id+' · v'+wall.version],['入口',wall.placementId],['受限权益',wall.entitlementCode||'主动了解会员'],['匹配活动',wall.campaignId||'常规订阅'],['资格判定',wall.eligibility.reason],['当前方案',flow?.offer?.offerId||wall.defaultOfferId||'无可用方案']]:[],events:events.map(event=>({id:event.eventId,label:eventLabels[event.type]||event.type,detail:[event.placementId,event.result,event.billingPeriod,event.trialDays?event.trialDays+' 天试用':null].filter(Boolean).join(' · ')}))}
+  const index=items.findIndex(item=>item.id==='purchase');return [...items.slice(0,index+1),offer,tracking,...items.slice(index+1)]
+}
 const accessStates=[state('locked','未解锁','浏览详情开放；执行 Start / Join / Activate 时才检查权限，并保留原任务用于订阅后返回。'),state('unlocked','已解锁','当前功能权限通过，可执行对应操作；开始训练或激活计划不消耗对话额度。')]
 const sections={
   quota:{id:'quota',title:'AI Coach 用量',states:quotaStates},
-  purchase:{id:'purchase',title:'场景化订阅弹层',states:purchaseStates},
+  purchase:{id:'purchase',title:'Premium 付费墙',states:purchaseStates},
   access:{id:'access',title:'功能权限与开始操作',states:accessStates},
   insight:{id:'insight',title:'AI 个性化洞察',states:insightStates},
   content:{id:'content',title:'内容范围',states:[state('all','全部','显示目录中的内容，保留 Free / Premium 标记。'),state('content-free','Free 内容','只展示 Free 内容；无需订阅即可开始。'),state('content-premium','Premium 内容','展示 Premium 内容，开始权限由下方功能状态独立决定。')]},
@@ -64,7 +74,8 @@ function movementModel(vm){
     const actions=player?.current.kind==='time'?[{id:'simulate-timer',label:'计时动作 · 剩余 1 秒'}]:mode==='vision'?[{id:'simulate-rep',label:'模拟识别 +1 次'},{id:'simulate-target',label:'模拟识别至本动作目标'}]:[]
     if(actions.length)list.push({id:'recognition-events',title:'演示推进',description:['向本地演示会话发送事件；真实摄像头模式使用模型输出。'],actions})
   }
-  return {title:'动作训练过程',states,active:active.id,description:active.description,sections:list.map(section=>({...section,description:section.states?.find(item=>item.id===section.active)?.description||section.description||[]}))}
+  if(active.id==='prepare')list.push({...sections.purchase,active:vm.mvpGate?.stage||'closed'})
+  return {title:'动作训练过程',states,active:active.id,description:active.description,sections:wallSections(vm,list.map(section=>({...section,description:section.states?.find(item=>item.id===section.active)?.description||section.description||[]})))}
 }
 export function reviewModel(vm){
   if(vm.screen==='movement-training')return movementModel(vm)
@@ -89,5 +100,5 @@ export function reviewModel(vm){
     if(section.id==='quota'&&typeof vm.mvpMember.percent==='number'&&['available','low'].includes(choice?.id))choice={...choice,description:choice.description.map(line=>line.replace(choice.id==='low'?'10%':'65%',vm.mvpMember.percent+'%'))}
     return {...section,active:choice?.id,description:choice?.description||section.description||[],disabled:unavailable}
   })
-  return {title:config.title,states,active,description:selected.id==='default'?(config.description||selected.description):selected.description,sections:items}
+  return {title:config.title,states,active,description:selected.id==='default'?(config.description||selected.description):selected.description,sections:wallSections(vm,items)}
 }
