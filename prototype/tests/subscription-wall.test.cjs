@@ -9,8 +9,8 @@ test('all entitlement entries share one base but preserve placement, context and
   const placements=new Set()
   for(const kind of Object.keys(config.placements)){
     const resolved=wall({kind,resource:{id:'resource',name:'Selected workout',draft:'private message'}})
-    assert.equal(resolved.id,'sunnyfit-premium');assert.equal(resolved.version,2);assert.equal(resolved.benefits.length,3)
-    assert.equal(resolved.benefits[0].id,config.placements[kind].focus);assert.equal(resolved.resource.id,'resource')
+    assert.equal(resolved.id,'sunnyfit-premium');assert.equal(resolved.version,3);assert.equal(resolved.benefits.length,3)
+    assert.ok(resolved.education.stories.some(story=>story.id===resolved.entry.defaultBenefit));assert.equal(resolved.entry,config.entryStories[kind]);assert.equal(resolved.benefits[0].id,config.placements[kind].focus);assert.equal(resolved.resource.id,'resource')
     assert.equal(resolved.resource.savedDraft,true);assert.equal(JSON.stringify(resolved).includes('private message'),false);placements.add(resolved.placementId)
   }
   assert.equal(placements.size,10)

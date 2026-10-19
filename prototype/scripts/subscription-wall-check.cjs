@@ -15,8 +15,8 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
   const placements=new Set()
   for(const screen of ['course','world-tour','program','plan','weekly','result','coach','challenge','membership']){
     await open(screen);await tab('purchase','offer');await dialog().getByRole('radio').first().waitFor()
-    const data=await state();assert.equal(data.wall.id,'sunnyfit-premium');assert.equal(data.wall.version,2);placements.add(data.wall.placementId)
-    assert.equal(await dialog().locator('.sf-premium-paywall__benefits li').count(),3);assert.equal(await dialog().locator('details[open]').count(),0)
+    const data=await state();assert.equal(data.wall.id,'sunnyfit-premium');assert.equal(data.wall.version,3);placements.add(data.wall.placementId)
+    assert.equal(await dialog().locator('.sf-premium-paywall__resource strong').innerText(),data.context.resourceName);assert.equal(await dialog().locator('[data-purchase-view=benefits]').isVisible(),false)
     assert.equal(await dialog().locator('.sf-modal__footer .context-purchase-offers').count(),0)
     if(['course','coach','weekly','program','world-tour'].includes(screen))await shot('entry-'+screen)
   }
@@ -37,9 +37,9 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
   pass('Unavailable catalog blocks payment and retry restores plans without dropping the selected resource')
   await dialog().getByRole('button',{name:'Restore purchases',exact:true}).click();await dialog().getByText('No active subscription was found for this account.',{exact:true}).waitFor();assert.equal((await state()).member,'free')
   pass('Restore checks existing ownership and reports no active subscription without granting demo membership')
-  await dialog().locator('summary').click();assert.equal(await dialog().locator('details[open]').count(),1);assert.match(await dialog().locator('details[open]').innerText(),/Finite AI Coach/)
+  await dialog().getByRole('button',{name:'See what Premium includes',exact:true}).click();await dialog().getByRole('region',{name:'Before you decide'}).getByText('Is AI Coach unlimited?',{exact:true}).click();assert.match(await dialog().locator('details[open]').innerText(),/finite conversation allowance/)
   await dialog().getByRole('radio',{name:/Yearly/}).click();await dialog().getByRole('button',{name:'Close',exact:true}).click();await dialog().waitFor({state:'hidden'})
-  const events=(await state()).events;for(const type of ['paywall_view','paywall_offer_selected','paywall_benefits_expanded','paywall_dismissed','paywall_restore_result'])assert.ok(events.some(e=>e.type===type))
+  const events=(await state()).events;for(const type of ['paywall_view','paywall_offer_selected','paywall_details_view','paywall_dismissed','paywall_restore_result'])assert.ok(events.some(e=>e.type===type))
   assert.equal(new Set(events.filter(e=>e.type==='paywall_view').map(e=>[e.flowId,e.eligibilityReason,e.offerId].join('|'))).size,events.filter(e=>e.type==='paywall_view').length)
   assert.equal(events.findLast(e=>e.type==='paywall_dismissed').billingPeriod,'annual');assert.match(await scope('paywall-events').innerText(),/关闭付费墙/)
   pass('Exposure is deduplicated; selections, expansion, restore and dismissal retain the same funnel attribution in the review document')

@@ -39,7 +39,7 @@
     "test:mvp": "node scripts/mvp-commercialization-check.cjs",
     "build:pages": "node scripts/build-pages.cjs",
     "test:pages": "node scripts/pages-check.cjs",
-    "test:paywall": "node --test tests/subscription-wall.test.cjs && node scripts/subscription-wall-check.cjs"
+    "test:paywall": "node --test tests/subscription-wall.test.cjs && node scripts/subscription-wall-check.cjs && node scripts/paywall-decision-check.cjs"
   },
   "dependencies": {
     "@noble/hashes": "1.8.0",

@@ -1,6 +1,6 @@
 // One Premium wall; placements change the opening value story and attribution.
 // Prices and verified promotion eligibility are runtime inputs, never marketing copy.
-const base={id:'sunnyfit-premium',version:2,variant:'benefit-led',defaultBillingPeriod:'monthly',cta:'Continue with Premium',trialCta:'Start {days}-day free trial',maxVisibleBenefits:3}
+const base={id:'sunnyfit-premium',version:3,variant:'two-path',defaultBillingPeriod:'monthly',cta:'Continue with Premium',trialCta:'Start {days}-day free trial',maxVisibleBenefits:3}
 const benefits={
   workouts:{icon:'play',title:'Premium workouts & real-world routes'},
   plans:{icon:'calendar',title:'Activate your Dynamic Plan'},
@@ -23,4 +23,34 @@ const placements={
   limited_challenge:placement('challenge.join','challenge_access','Join this Premium challenge','A new challenge.\nA reason to show up.','Join this challenge and keep exploring ways to train.','training','challenge',['workouts','plans'],{label:'YOUR SELECTED CHALLENGE',action:'join-challenge',continueLabel:'Join this challenge',cancelLabel:'Back to challenge',success:'You can now confirm your challenge entry.'}),
   membership:placement('membership.explore',null,'Choose your Premium plan','More ways\nto move forward.','Workouts, plans and insights. One Premium membership.','membership','workouts',['plans','insights'],{label:'YOUR MEMBERSHIP',action:'membership',continueLabel:'View membership & usage',cancelLabel:'Back to benefits',success:'Your Premium membership and finite AI Coach allowance are ready.'})
 }
-module.exports={base,benefits,placements,fullBenefits:['Premium courses, World Tours & Training Programs','Dynamic Plan activation','Workout & weekly AI insights','Finite AI Coach conversation allowance','Eligible Limited Challenges']}
+// The first step answers the user's immediate intent. The guide explains the
+// wider membership without replacing that intent or creating another checkout.
+const entryStories={
+  course:{title:'Start this workout\nwith Premium.',description:'Follow the session you chose, with more workouts to come back to.',unlock:'This workout + the Premium training library',category:'YOUR SELECTED WORKOUT',defaultBenefit:'workouts',image:'assets/figma/restored/source_course_current/imgPexelsAndreaPiacquadio3757944.webp',next:'Your selected workout is ready to start after subscribing.'},
+  world_tour:{title:'Take this route\nwith Premium.',description:'Make this session a change of scenery. Keep exploring on your next one.',unlock:'This route + more Premium destinations',category:'YOUR SELECTED ROUTE',defaultBenefit:'workouts',next:'Return to this route after subscribing.'},
+  training_program:{title:'Follow the whole\nProgram.',description:'Go from one workout to a routine, with the full sequence ready to follow.',unlock:'Every workout in this Program',category:'YOUR SELECTED PROGRAM',defaultBenefit:'workouts',image:'assets/figma/restored/source_program/img.webp',next:'Your Program and selected session stay ready for you.'},
+  movement:{title:'Make time\nfor this workout.',description:'Follow your selected movements, then find more ways to build your routine.',unlock:'This movement group + Premium workouts',category:'YOUR SELECTED WORKOUT',defaultBenefit:'workouts',next:'Return to preparation and choose how to train.'},
+  dynamic_plan:{title:'Put your plan\ninto action.',description:'You have a routine in mind. Premium lets you activate it and follow through.',unlock:'Activate the plan you already previewed',category:'YOUR SAVED PLAN',defaultBenefit:'plans',next:'Your saved plan stays here, ready to activate.'},
+  workout_insight:{title:'Make sense of\nthis session.',description:'Go beyond the numbers with an AI perspective on your workout and effort.',unlock:'An insight for this completed workout',category:'YOUR WORKOUT',defaultBenefit:'insights',next:'Return to this workout to generate its insight.'},
+  weekly_insight:{title:'See what your\nweek adds up to.',description:'Understand your workout mix and consistency as you plan what comes next.',unlock:'Your weekly AI insight',category:'YOUR WEEKLY REPORT',defaultBenefit:'insights',next:'This report and its basic stats stay available.'},
+  ai_allowance:{title:'Keep this\nconversation going.',description:'Bring your next training question. Your first subscription adds a fresh allowance.',unlock:'New, finite AI Coach conversation allowance',category:'YOUR CONVERSATION',defaultBenefit:'coach',next:'Your message is saved. You decide when to send it.'},
+  limited_challenge:{title:'Make this challenge\nyour next step.',description:'Join while registration is open, with more ways to train along the way.',unlock:'Access to this eligible Premium challenge',category:'YOUR SELECTED CHALLENGE',defaultBenefit:'workouts',next:'Return to confirm your entry while registration is open.'},
+  membership:{title:'More ways\nto move forward.',description:'Find workouts to enjoy, a plan to follow and perspective on your progress.',unlock:'Premium training, plans & insights',category:'YOUR MEMBERSHIP',defaultBenefit:'workouts',next:'One membership across your Premium training features.'}
+}
+const education={
+  title:'Make your next\nworkout a habit.',
+  description:'More ways to move. A routine to follow. Support along the way.',
+  stories:[
+    {id:'workouts',label:'Workouts',icon:'play',title:'Find a workout you want to come back to.',description:'Explore Premium courses, real-world routes, movement workouts and complete Training Programs. Choose a session for today, or a sequence to keep following.',artwork:'training',examples:['Trainer-led courses','World Tours','Movements','Training Programs'],detail:'Eligible Limited Challenges give you another reason to show up. Registration dates and event rules apply.'},
+    {id:'plans',label:'Plans',icon:'calendar',title:'Know what to do next.',description:'Activate the Dynamic Plan you previewed with AI Coach, then follow your upcoming sessions together.',artwork:'plan',examples:['Preview your routine','Activate your plan','Follow your next session'],detail:'Plan activation is a Premium feature. It does not use your conversation allowance.'},
+    {id:'insights',label:'Insights',icon:'spark',title:'Understand more than the numbers.',description:'Add an AI perspective to a completed workout or your weekly report. Reflect on your effort, workout mix and consistency.',artwork:'insight',examples:['After a workout','Across your week'],detail:'Your workout records and basic weekly stats remain free. AI insights do not use conversation allowance.'},
+    {id:'coach',label:'AI Coach',icon:'coach',title:'Talk through your next step.',description:'Discuss your goals, available time and equipment with AI Coach as you shape your routine.',artwork:'coach',examples:['Explore workout ideas','Discuss your plan'],detail:'Premium includes a finite conversation allowance. Your first subscription adds fresh allowance immediately; it is not unlimited chat.'}
+  ],
+  comparison:[['Courses, routes & movements','Free selection','Free + Premium'],['Training Programs','Free selection','Free + Premium'],['Dynamic Plan','Preview','Preview + activate'],['AI insights','Basic stats','Workout + weekly insights'],['AI Coach','Free allowance','Member allowance'],['Limited Challenges','—','Eligible events']],
+  questions:[
+    {title:'Does Premium only unlock this activity?',answer:'Your subscription includes this activity and Premium courses, World Tours, Training Programs, Dynamic Plan activation, AI insights and eligible challenges while your membership is active.'},
+    {title:'Is AI Coach unlimited?',answer:'Free and Premium both have a finite conversation allowance. Your first Premium subscription gives you fresh allowance immediately. Your training features remain available if that allowance is used up.'},
+    {title:'Can I turn off renewal?',answer:'You can turn off auto-renewal in subscription settings. Your Premium access continues until the end of your current paid period.'}
+  ]
+}
+module.exports={base,benefits,placements,entryStories,education,fullBenefits:['Premium courses, World Tours & Training Programs','Dynamic Plan activation','Workout & weekly AI insights','Finite AI Coach conversation allowance','Eligible Limited Challenges']}

@@ -64,16 +64,28 @@ export default {
   methods:{
     resolveCurrentWall(now){
       const context=this.mvpGate?.context||{},provided=this.data?.subscriptionOffer||{},variant=this.isMvpPreview?this.$route.query.reviewOffer:undefined,promotion=variant?reviewPromotion(variant,now):provided
-      return resolveSubscriptionWall({kind:context.kind||'membership',resource:{id:context.resourceId,name:context.resourceName,detail:context.detail,draft:!!context.draft},member:this.mvpMember,offers:variant==='unavailable'?[]:this.mvpOffers,campaign:promotion.campaign,eligibility:promotion.eligibility,channel:provided.channel||'web_demo',currency:provided.currency,now})
+      return resolveSubscriptionWall({kind:context.kind||'membership',resource:{id:context.resourceId,name:context.resourceName,detail:context.detail,image:context.image,draft:!!context.draft},member:this.mvpMember,offers:variant==='unavailable'?[]:this.mvpOffers,campaign:promotion.campaign,eligibility:promotion.eligibility,channel:provided.channel||'web_demo',currency:provided.currency,now})
     },
     emitPaywallEvent(type,offer,extra={}){
       const flow=this.mvpGate;if(!flow?.context)return
       const wall=this.resolveCurrentWall(Date.now()),selected=offer||flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId),context=flow.context
-      const event=recordPaywallEvent({type,flowId:context.flowId,placementId:context.placementId||wall.placementId,wallId:wall.id,wallVersion:wall.version,entitlementCode:context.entitlementCode||wall.entitlementCode,scope:context.scope||wall.scope,resourceId:context.resourceId,campaignId:selected?.campaignId||null,offerId:selected?.offerId||null,skuId:selected?.sku.id,productId:selected?.product.id,billingPeriod:selected?.sku.billingPeriod,currency:selected?.sku.currency,priceCents:selected?.chargeTodayCents,trialDays:selected?.trialDays||0,eligibilityStatus:wall.eligibility.status,eligibilityReason:wall.eligibility.reason,source:this.isMvpPreview?'review':'prototype',...extra})
+      const event=recordPaywallEvent({type,flowId:context.flowId,placementId:context.placementId||wall.placementId,wallId:wall.id,wallVersion:wall.version,entitlementCode:context.entitlementCode||wall.entitlementCode,scope:context.scope||wall.scope,resourceId:context.resourceId,campaignId:selected?.campaignId||null,offerId:selected?.offerId||null,skuId:selected?.sku.id,productId:selected?.product.id,billingPeriod:selected?.sku.billingPeriod,currency:selected?.sku.currency,priceCents:selected?.chargeTodayCents,trialDays:selected?.trialDays||0,eligibilityStatus:wall.eligibility.status,eligibilityReason:wall.eligibility.reason,source:this.isMvpPreview?'review':'prototype',view:flow.view||'quick',benefitId:flow.benefitTab,...extra})
       this.paywallEvents=[...this.paywallEvents,event].slice(-30)
     },
     selectWallOffer(offer){if(this.mvpGate)this.mvpGate={...this.mvpGate,offer};this.emitPaywallEvent('paywall_offer_selected',offer)},
-    expandWallBenefits(open){if(open)this.emitPaywallEvent('paywall_benefits_expanded')},
+    async changeWallView(input){
+      const view=typeof input==='string'?input:input.view,flow=this.mvpGate
+      if(!flow||flow.kind!=='membership'||flow.stage!=='offer'||!['quick','benefits'].includes(view))return
+      const offer=typeof input==='object'?input.offer:flow.offer,wall=this.mvpWall
+      this.mvpGate={...flow,view,offer:offer||flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:flow.benefitTab||wall.entry.defaultBenefit}
+      if(flow.view!==view)this.emitPaywallEvent(view==='benefits'?'paywall_details_view':'paywall_quick_return',this.mvpGate.offer,{view,benefitId:this.mvpGate.benefitTab})
+      if(this.reviewMode){this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery({reviewPurchaseView:view,reviewBenefit:this.mvpGate.benefitTab})}finally{this.mvpCheckoutApplying=false}}
+    },
+    async changeWallBenefit(benefitId){
+      const flow=this.mvpGate;if(!flow||flow.stage!=='offer'||!this.mvpWall.education.stories.some(item=>item.id===benefitId))return
+      this.mvpGate={...flow,benefitTab:benefitId};this.emitPaywallEvent('paywall_benefit_explored',flow.offer,{view:'benefits',benefitId})
+      if(this.reviewMode){this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery({reviewBenefit:benefitId})}finally{this.mvpCheckoutApplying=false}}
+    },
     validWallOffer(offer){
       if(!offer)return null
       return this.resolveCurrentWall(Date.now()).offers.find(item=>(offer.offerId?item.offerId===offer.offerId:item.sku.id===offer.sku.id)&&item.sku.currency===offer.sku.currency&&item.sku.priceCents===offer.sku.priceCents&&(!offer.offerId||item.trialDays===offer.trialDays))||null
@@ -124,7 +136,9 @@ export default {
       if(kind==='workout_insight'){intent.resourceId=this.objectKey;intent.resourceName='Your completed workout';intent.detail='40 min · Perceived effort 4 / 10'}
       if(kind==='membership'){intent.resourceId='premium';intent.resourceName='SunnyFit Premium'}
       if(kind==='ai_allowance'){intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active){this.mvpGate={kind:'usage',stage:'offer',title:this.mvpMember.campaignEnded?'Your unlimited event has ended':'Your allowance is used up',context:intent};return}}
-      this.mvpGate={...item,kind:'membership',stage:'offer',context:intent,expired:this.mvpMember.state==='expired'}
+      intent.image=content?.coverUrl||''
+      this.mvpGate={...item,kind:'membership',stage:'offer',view:this.reviewMode&&this.$route.query.reviewPurchaseView==='benefits'?'benefits':'quick',benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
+      const wall=this.mvpWall;this.mvpGate={...this.mvpGate,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:this.mvpGate.benefitTab||wall.entry.defaultBenefit}
     },
     cancelMvpPurchase(reason,offer){if(reason==='dismiss')this.emitPaywallEvent('paywall_dismissed',offer,{reason:'user_dismissed'});this.mvpCheckoutToken++;this.mvpGate=null},
     async purchaseMvpOffer(offer){

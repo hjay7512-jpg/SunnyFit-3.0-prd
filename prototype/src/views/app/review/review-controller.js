@@ -1,6 +1,6 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer']
+export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewPurchaseView','reviewBenefit']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
@@ -20,6 +20,13 @@ export default {
       await new Promise(resolve=>this.$router.replace({path:this.$route.path,query},resolve,resolve));await this.$nextTick()
     },
     async applyReviewState(scope,value){
+      if(scope==='purchase-view'||scope==='benefit'){
+        if(this.mvpPendingPurchase||['processing','restoring'].includes(this.mvpGate?.stage))return
+        if(!this.mvpGate)this.previewReviewPurchase('offer')
+        if(scope==='purchase-view')await this.changeWallView(value)
+        else {if(this.mvpGate?.view!=='benefits')await this.changeWallView('benefits');await this.changeWallBenefit(value)}
+        return
+      }
       if(scope==='offer'){
         if(this.mvpPendingPurchase||['processing','restoring'].includes(this.mvpGate?.stage))return
         const flow=this.mvpGate;this.mvpCheckoutToken++;this.mvpCheckoutApplying=true
@@ -68,7 +75,7 @@ export default {
     restoreReviewPaywall(){
       const variant=this.$route.query.reviewOffer,key=this.$route.path
       if(!this.reviewMode||!this.data||this.loading||this.reviewWallKey===key)return
-      this.reviewWallKey=key;if(variant)this.previewReviewPurchase('offer')
+      this.reviewWallKey=key;if(variant||this.$route.query.reviewPurchaseView)this.previewReviewPurchase('offer')
     },
     restoreReviewMovement(){
       if(!this.reviewMode||this.screen!=='movement-training'||!this.$refs.movement)return

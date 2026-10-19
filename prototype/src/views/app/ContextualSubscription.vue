@@ -1,6 +1,6 @@
 <template>
   <div class="context-subscription">
-    <sf-paywall v-if="showWall" :open="!!gate" :wall="wall" :selected-id="selectedId" :processing="processing" :processing-label="gate.stage==='restoring'?'Restoring purchases…':'Confirming purchase…'" :disclosure="disclosure" :feedback="gate.feedback" :terms-url="resources.terms" :privacy-url="resources.privacy" @close="$emit('close',selectedOffer)" @select="selectOffer" @purchase="$emit('purchase',$event)" @restore="$emit('restore')" @reload="$emit('reload')" @details="$emit('details',$event)"/>
+    <sf-paywall v-if="showWall" :open="!!gate" :wall="wall" :selected-id="selectedId" :view="gate.view||'quick'" :benefit-id="gate.benefitTab" :positions="readingPositions" :processing="processing" :processing-label="gate.stage==='restoring'?'Restoring purchases…':'Confirming purchase…'" :disclosure="disclosure" :feedback="gate.feedback" :terms-url="resources.terms" :privacy-url="resources.privacy" @close="$emit('close',selectedOffer)" @select="selectOffer" @purchase="$emit('purchase',$event)" @restore="$emit('restore')" @reload="$emit('reload')" @view="$emit('view',{view:$event,offer:selectedOffer})" @benefit="$emit('benefit',$event)" @position="saveReading"/>
     <sf-sheet v-else class="paywall-receipt" :open="!!gate" contained :resizable="false" :title="heading" :busy="processing" @input="$emit('close')">
       <template v-if="gate">
         <span class="paywall-receipt__symbol" :class="'is-'+gate.stage"><sf-icon :name="gate.stage==='success'?'check':gate.kind==='usage'||gate.kind==='unknown'?'coach':gate.stage==='pending'?'refresh':'membership'" :size="30"/></span>
@@ -27,19 +27,20 @@ import {SfSheet,SfButton,SfIcon,SfPaywall} from '@/design-system'
 import {wallDisclosure} from './subscription-wall.cjs'
 import {profileResources} from './profile-menu'
 export default {
-  components:{SfSheet,SfButton,SfIcon,SfPaywall},props:{gate:Object,member:Object,wall:Object},data(){return{selectedId:'',selectionCampaign:undefined,resources:profileResources}},
+  components:{SfSheet,SfButton,SfIcon,SfPaywall},props:{gate:Object,member:Object,wall:Object},data(){return{readingPositions:{quick:0,benefits:0},resources:profileResources}},
   computed:{
     showWall(){return this.gate&&this.wall&&this.gate.kind==='membership'&&['offer','processing','restoring'].includes(this.gate.stage)},
     processing(){return ['processing','refreshing','restoring'].includes(this.gate?.stage)},
+    selectedId(){const stored=this.gate?.offer;return this.wall?.offers.find(offer=>stored&&offer.offerId===stored.offerId)?.offerId||this.wall?.defaultOfferId||''},
     selectedOffer(){return this.wall?.offers.find(offer=>offer.offerId===this.selectedId)},
     disclosure(){return wallDisclosure(this.selectedOffer)},
     heading(){if(!this.gate)return '';return {success:'You’re ready to continue',failure:'Purchase not completed',cancelled:'Purchase canceled',pending:'Confirming your purchase','access-error':'This item is unavailable','event-closed':'Challenge registration is closed'}[this.gate.stage]||this.gate.title},
     message(){if(!this.gate)return '';const stage=this.gate.stage;if(stage==='success')return this.gate.context.success;if(stage==='failure')return 'Your purchase didn’t go through. Your plan and allowance haven’t changed.';if(stage==='cancelled')return 'Nothing was charged. Your activity is still here.';if(stage==='pending')return 'We’re waiting for purchase confirmation before unlocking Premium.';if(stage==='access-error')return 'Premium is active. Return to check this activity’s availability.';if(stage==='event-closed')return 'This challenge is no longer open. Your Premium membership is still active.';if(this.gate.kind==='unknown')return 'Your draft is saved. Check your allowance before sending.';return 'Your Premium is still active. Your conversation allowance is used up.'}
   },
-  watch:{'gate.context.key':{immediate:true,handler(){this.selectedId='';this.resetSelection()}},'wall.signature':{immediate:true,handler(){this.resetSelection()}}},
+  watch:{'gate.context.key'(){this.readingPositions={quick:0,benefits:0}}},
   methods:{
-    resetSelection(){if(!this.wall)return;if(this.selectionCampaign!==this.wall.campaignId){this.selectionCampaign=this.wall.campaignId;this.selectedId=this.wall.defaultOfferId;return}const prior=this.wall.offers.find(offer=>offer.offerId===this.selectedId);if(prior)return;const stored=this.gate?.offer;this.selectedId=this.wall.offers.find(offer=>stored&&offer.sku.id===stored.sku.id&&(!stored.offerId||offer.offerId===stored.offerId))?.offerId||this.wall.defaultOfferId},
-    selectOffer(offer){if(this.selectedId===offer.offerId)return;this.selectedId=offer.offerId;this.$emit('select',offer)}
+    saveReading(position){this.readingPositions={...this.readingPositions,[position.view]:position.top}},
+    selectOffer(offer){if(this.selectedId!==offer.offerId)this.$emit('select',offer)}
   }
 }
 </script>
