@@ -56,13 +56,13 @@ async function layout(){
   await open('membership','free',65);await page.getByRole('button',{name:'Explore Premium',exact:true}).click();await page.getByRole('radio',{name:/Yearly/}).click();await page.getByRole('button',{name:/^Subscribe ·/}).click();await page.getByRole('button',{name:'View membership & usage',exact:true}).click();
   assert.match(await page.locator('.premium-status-date').innerText(),/2027/);assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'100');pass('Annual subscription shares checkout and grants a fresh finite allowance');
   await page.setViewportSize({width:1440,height:1000});await open('profile','active',10,'standard','1');
-  await page.getByLabel('用量／活动状态（独立于会员）').selectOption('campaign');await page.getByLabel('Unlimited conversations',{exact:true}).waitFor();
-  await page.getByLabel('用量／活动状态（独立于会员）').selectOption('ended');await page.getByRole('progressbar').waitFor();assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'10');
+  await page.locator('[data-review-component=quota] [data-state=campaign]').click();await page.getByLabel('Unlimited conversations',{exact:true}).waitFor();
+  await page.locator('[data-review-component=quota] [data-state=ended]').click();await page.getByRole('progressbar').waitFor();assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'10');
   assert.equal(await page.locator('.profile-membership').getAttribute('data-membership-state'),'active');pass('Review controls change campaign state independently of membership');
   await page.goto(base+'/membership-review.html');await page.locator('.review-rail').waitFor();await page.locator('.personal-center').waitFor();assert.ok(page.url().includes('/app/profile?'));assert.equal(await page.locator('iframe').count(),0);
-  await page.getByLabel('身份与有效状态').selectOption('active');await page.getByRole('progressbar').waitFor();assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'65');
-  await page.getByLabel('用量／活动状态（独立于会员）').selectOption('campaign');await page.getByLabel('Unlimited conversations',{exact:true}).waitFor();
-  await page.getByLabel('用量／活动状态（独立于会员）').selectOption('ended');await page.getByRole('progressbar').waitFor();
+  await page.locator('[data-review-scope=page] [data-state=active]').click();await page.getByRole('progressbar').waitFor();assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'65');
+  await page.locator('[data-review-component=quota] [data-state=campaign]').click();await page.getByLabel('Unlimited conversations',{exact:true}).waitFor();
+  await page.locator('[data-review-component=quota] [data-state=ended]').click();await page.getByRole('progressbar').waitFor();
   await page.screenshot({path:path.join(dir,'original-app-review.png'),fullPage:true});pass('Original App sidebar organizes membership and campaign independently');
   assert.deepEqual(report.errors,[]);assert.deepEqual(report.writes,[]);pass('No browser errors or API writes');report.status='passed';
 })().catch(async e=>{report.status='failed';report.error=e.stack;process.exitCode=1;if(page)await page.screenshot({path:path.join(dir,'failure.png')}).catch(()=>{})}).finally(async()=>{if(browser)await browser.close();fs.writeFileSync(path.join(dir,'results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({status:report.status,checks:report.checks.length,evidence:dir,error:report.error}))});

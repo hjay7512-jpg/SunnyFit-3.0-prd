@@ -1,6 +1,7 @@
 import { listUsers, finishService, startService, requestKey, getAsset, access,readWeeklyReport,joinChallenge } from '@/api/commerce';
 import commerceMixin from './commerceMixin';
 import mvpPreview from './mvp-preview';
+import reviewController,{reviewQueryKeys} from './review/review-controller';
 import AppIcon from './AppIcon';
 import SourceCanvas from './SourceCanvas';
 import ConsumerScreens from './ConsumerScreens';
@@ -21,13 +22,14 @@ import './account.css';
 import './profile-secondary.css';
 import './native-screens.css';
 import './preview-fit.css';
+import './review/review.css';
 function accountScrollKey(fullPath,userId){
   const [path,search='']=fullPath.split('?'),query=new URLSearchParams(search);
   return [query.get('user')||userId,path,query.get('profileSection')||'',query.get('profileItem')||''].join(':');
 }
 function withoutMembershipPreview(fullPath){
   const [path,search='']=fullPath.split('?'),query=new URLSearchParams(search);
-  query.delete('membershipState');query.delete('chatRemaining');query.delete('membershipCycle');query.delete('allowanceMode');query.delete('mvpState');query.sort();
+  for(const key of ['membershipState','chatRemaining','membershipCycle','allowanceMode','mvpState',...reviewQueryKeys])query.delete(key);query.sort();
   return path+'?'+query.toString();
 }
 export default {
@@ -35,7 +37,7 @@ export default {
     AppIcon,
     SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,MovementExperience
   },
-  mixins: [commerceMixin,mvpPreview],
+  mixins: [commerceMixin,mvpPreview,reviewController],
   data() {
     return {
       users: [],
@@ -89,7 +91,7 @@ export default {
       return titles[this.screen];
     },
     isProfileSecondary(){return profileScreens.includes(this.screen);},
-    movementContent(){return this.collectionMovementContents.find(c=>c.id===this.contentId)||this.collectionMovementContents[0]},
+    movementContent(){return this.collectionMovementContents.find(c=>c.id===this.contentId)||this.collectionMovementContents.find(c=>c.code==='vision_studio_workout')||this.collectionMovementContents[0]},
     collectionMovementContents(){return (this.presentationData?.contents||[]).filter(c=>c.contentType==='movement')},
     reviewMode() { return this.$route.query.review !== '0'; },
     objectKey() { return this.$route.query.object || (this.screen === 'weekly' ? 'demo-current-week' : 'demo-workout-01'); },
@@ -121,18 +123,19 @@ export default {
       return this.data.services.find(s => s.id === this.serviceId);
     },
     courseContents() {
-      return this.presentationData ? this.presentationData.contents.filter(c => c.contentType === 'course') : [];
+      const list=this.presentationData ? this.presentationData.contents.filter(c => c.contentType === 'course') : [];
+      return this.screen==='workout'&&['content-free','content-premium'].includes(this.mvpContentState)?list.filter(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium')):list;
     },
     programContents() {
       return this.presentationData ? this.presentationData.contents.filter(c => c.contentType === 'training_program') : [];
     },
     selectedContent() {
-      if(this.screen==='course'&&['content-free','content-premium'].includes(this.mvpPageState))return this.courseContents.find(c=>c.tier===(this.mvpPageState==='content-free'?'free':'premium'))||this.courseContents[0];
+      if(this.screen==='course'&&['content-free','content-premium'].includes(this.mvpContentState))return this.courseContents.find(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium'))||this.courseContents[0];
       return this.presentationData.contents.find(c => c.id === this.contentId) || this.courseContents[0];
     },
     selectedProgram() {
-      if(this.screen==='program'&&['content-free','content-premium'].includes(this.mvpPageState))return this.programContents.find(c=>c.tier===(this.mvpPageState==='content-free'?'free':'premium'))||this.programContents[0];
-      return this.presentationData.contents.find(c => c.id === this.programId) || this.programContents[0];
+      const selected=this.screen==='program'&&['content-free','content-premium'].includes(this.mvpContentState)?this.programContents.find(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium'))||this.programContents[0]:this.presentationData.contents.find(c => c.id === this.programId) || this.programContents[0];
+      return this.isMvpPreview&&this.$route.query.reviewWorkouts==='empty'&&selected?{...selected,membersPreview:[]}:selected;
     },
     programWorkout() {
       const members=(this.selectedProgram&&this.selectedProgram.membersPreview)||[];
@@ -192,7 +195,10 @@ export default {
   },
   watch: {
     '$route.fullPath'(toPath,fromPath) {
-      if(fromPath&&withoutMembershipPreview(toPath)===withoutMembershipPreview(fromPath)){if(!this.mvpCheckoutApplying){this.cancelMvpPurchase();this.closeSheet()}return;}
+      if(fromPath&&withoutMembershipPreview(toPath)===withoutMembershipPreview(fromPath)){
+        if(toPath!==this.mvpInternalRoute){this.mvpRequestToken++;clearTimeout(this.mvpTimer)}this.mvpInternalRoute='';
+        if(!this.mvpCheckoutApplying){this.cancelMvpPurchase();this.mvpPendingPurchase=null;this.closeSheet()}return;
+      }
       if(!this.mvpCheckoutApplying)this.cancelMvpPurchase();this.mvpRequestToken++;clearTimeout(this.mvpTimer);
       if(this.$refs.accountScroll&&fromPath)this.accountScrollPositions[accountScrollKey(fromPath,this.userId)]=this.$refs.accountScroll.scrollTop;
       // Browser navigation can bypass go(). A quote belongs to the page that requested it.
@@ -240,6 +246,7 @@ export default {
         program: this.programId,
         object: this.$route.query.object || 'demo-workout-01',
         review: this.reviewMode ? '1' : '0',
+        ...Object.fromEntries(reviewQueryKeys.map(key=>[key,key==='reviewFixture'||screen===this.screen?this.$route.query[key]:undefined])),
         membershipState: this.$route.query.membershipState || undefined,
         chatRemaining: this.$route.query.chatRemaining,
         membershipCycle: this.$route.query.membershipCycle,

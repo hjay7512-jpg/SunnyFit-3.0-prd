@@ -16,21 +16,21 @@ export const pageStates = {
 export default {
   data(){return {mvpRequestToken:0,mvpTimer:null,mvpGate:null,mvpFlowSequence:0,mvpCheckoutToken:0,mvpCheckoutApplying:false,mvpPurchaseOutcome:'success',mvpPendingPurchase:null}},
   computed:{
-    mvpMember(){return this.data?membershipView(this.data,this.$route.query):{}},
-    isMvpPreview(){return ['free','active','canceled','expired'].includes(this.$route.query.membershipState)},
-    mvpPageState(){return this.isMvpPreview?this.$route.query.mvpState||'default':'default'},
+    mvpMember(){return this.data?membershipView(this.data,this.reviewMode?{...this.$route.query,reviewFixture:'1'}:this.$route.query):{}},
+    isMvpPreview(){return this.reviewMode||this.$route.query.reviewFixture==='1'||['free','active','canceled','expired'].includes(this.$route.query.membershipState)},
+    mvpPageState(){return this.isMvpPreview?this.$route.query.reviewPage||this.$route.query.mvpState||'default':'default'},
     mvpOptions(){return pageStates[this.screen]||[]},
     mvpOffers(){return premiumOffers(this.data)},
-    mvpHasInsight(){return this.isMvpPreview&&this.screen==='result'?this.mvpPageState==='saved-insight':this.hasInsight},
+    mvpHasInsight(){return this.isMvpPreview&&this.screen==='result'?this.mvpInsightState==='saved-insight':this.hasInsight},
     mvpInsightBody(){return this.isMvpPreview&&this.screen==='result'?'You completed a 40-minute session and rated the effort 4 out of 10. Use this alongside how you feel as you reflect on today’s workout and plan your next session.':this.insightBody},
     challengeContents(){
       const list=(this.presentationData?.contents||[]).filter(c=>c.contentType==='limited_challenge')
       if(!this.isMvpPreview)return list
-      if(this.mvpPageState==='empty')return []
-      const now=Date.now(),day=86400000,state=this.mvpPageState
+      if(this.reviewPageState==='empty')return []
+      const now=Date.now(),day=86400000,state=this.mvpEventState
       return list.map(c=>({...c,participation:state==='joined'?{status:'joined'}:c.participation,challengeRules:state==='upcoming'?{...c.challengeRules,startsAt:new Date(now+day).toISOString(),endsAt:new Date(now+day*10).toISOString()}:state==='ended'?{...c.challengeRules,startsAt:new Date(now-day*3).toISOString(),endsAt:new Date(now-day).toISOString()}:c.challengeRules}))
     },
-    mvpPageFeedback(){return this.isMvpPreview&&(['loading','error','unavailable'].includes(this.mvpPageState)||this.mvpPageState==='empty'&&this.screen==='program')},
+    mvpPageFeedback(){return this.isMvpPreview&&(['loading','error','unavailable'].includes(this.reviewPageState)||this.reviewPageState==='empty'&&this.screen==='program')},
     presentationData(){
       if(!this.data||!this.isMvpPreview)return this.data
       const member=this.mvpMember
@@ -43,16 +43,16 @@ export default {
         }
       }
       const previewInsight=this.data.weeklyReport?.insight?.body||'Your '+(this.data.weeklyReport?.stats?.workouts||0)+' workouts added up to '+(this.data.weeklyReport?.stats?.time||0)+' minutes this week. Reflect on your workout mix and active days as you plan a routine that fits your next week.'
-      const weeklyReport=this.data.weeklyReport?{...this.data.weeklyReport,available:this.mvpPageState==='empty'&&this.screen==='weekly'?false:this.data.weeklyReport.available,insight:{...this.data.weeklyReport.insight,body:previewInsight,allowed:member.active||this.mvpPageState==='saved-insight',saved:this.mvpPageState==='saved-insight',status:this.mvpPageState==='insight-loading'?'loading':this.mvpPageState==='insight-error'?'error':'ready'}}:null
+      const weeklyReport=this.data.weeklyReport?{...this.data.weeklyReport,available:this.reviewPageState==='empty'&&this.screen==='weekly'?false:this.data.weeklyReport.available,insight:{...this.data.weeklyReport.insight,body:previewInsight,allowed:member.active||this.mvpInsightState==='saved-insight',saved:this.mvpInsightState==='saved-insight',status:this.mvpInsightState==='insight-loading'?'loading':this.mvpInsightState==='insight-error'?'error':'ready'}}:null
       return {...this.data,contents,weeklyReport}
     },
     mvpChatLabel(){
       if(!this.isMvpPreview)return this.costLabel('ai_chat')
       return this.mvpMember.unlimited?'Unlimited event · Until '+membershipDate(this.mvpMember.campaignEndsAt):this.mvpMember.percent===null?'Allowance unavailable':this.mvpMember.percent+'% conversation allowance left'
     },
-    mvpAiState(){return this.mvpPageState==='thinking'?'thinking':this.mvpPageState==='chat-error'?'error':this.aiActivity},
-    mvpInputLocked(){return this.chatInputLocked||this.isMvpPreview&&this.mvpPageState==='thinking'},
-    collectionContents(){const kind=this.screen==='movement'?'movement':'world_tour';let list=(this.presentationData?.contents||[]).filter(c=>c.contentType===kind);if(this.mvpPageState==='empty')return [];if(this.mvpPageState==='content-free'||this.mvpPageState==='content-premium')list=list.filter(c=>c.tier===(this.mvpPageState==='content-free'?'free':'premium'));return list}
+    mvpAiState(){return this.mvpReplyState==='thinking'?'thinking':this.mvpReplyState==='chat-error'?'error':this.aiActivity},
+    mvpInputLocked(){return this.chatInputLocked||this.isMvpPreview&&this.mvpReplyState==='thinking'},
+    collectionContents(){const kind=this.screen==='movement'?'movement':'world_tour';let list=(this.presentationData?.contents||[]).filter(c=>c.contentType===kind);if(this.reviewPageState==='empty')return [];if(this.mvpContentState==='content-free'||this.mvpContentState==='content-premium')list=list.filter(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium'));return list}
   },
   beforeDestroy(){clearTimeout(this.mvpTimer);this.mvpCheckoutToken++},
   methods:{
@@ -67,7 +67,15 @@ export default {
         else this.notice={title:'No active subscription found',body:'No active Premium subscription was found for this account. Check that you are using the account linked to your purchase. Nothing was charged.'}
       }finally{this.busy=false}
     },
-    setMvpPageState(state){this.mvpRequestToken++;clearTimeout(this.mvpTimer);this.$router.replace({path:this.$route.path,query:{...this.$route.query,membershipState:this.$route.query.membershipState||this.mvpMember.state||'free',chatRemaining:this.$route.query.chatRemaining||'65',mvpState:state==='default'?undefined:state}},()=>{})},
+    setMvpPageState(state,scope){
+      this.mvpRequestToken++;clearTimeout(this.mvpTimer)
+      const key=scope==='page'?'reviewPage':['saved-insight','insight-loading','insight-error'].includes(state)?'reviewInsight':['thinking','chat-error'].includes(state)?'reviewReply':['plan-preview','plan-active'].includes(state)?'reviewPlan':['joined','upcoming','ended'].includes(state)?'reviewEvent':state==='default'&&this.screen==='coach'?'reviewReply':state==='default'&&['weekly','result'].includes(this.screen)?'reviewInsight':'reviewPage'
+      const query={...this.$route.query,membershipState:this.$route.query.membershipState||this.mvpMember.state||'free',chatRemaining:this.$route.query.chatRemaining||'65',mvpState:undefined,[key]:state==='default'?undefined:state}
+      if(state==='default')delete query.reviewPage
+      for(const field of Object.keys(query))if(query[field]===undefined)delete query[field]
+      const route={path:this.$route.path,query};this.mvpInternalRoute=this.$router.resolve(route).route.fullPath
+      this.$router.replace(route,()=>{})
+    },
     mvpUpgrade(kind,content){
       if(this.mvpPendingPurchase){this.mvpGate=this.mvpPendingPurchase;return}
       const copy={
@@ -168,7 +176,7 @@ export default {
       if(action==='usage'){this.go('membership',{returnTo:this.screen,resumeState:this.mvpPageState});return true}
       if(action==='open-weekly'){this.go('weekly',{object:this.data.weeklyReport?.id});return true}
       if(action==='weekly-later'){this.appToast='Your weekly report stays available.';return true}
-      if(action==='mvp-retry'){this.setMvpPageState('default');return true}
+      if(action==='mvp-retry'){this.setMvpPageState('default','page');return true}
       if(action==='weekly-upgrade'){this.mvpUpgrade('weekly_insight');return true}
       if(action==='quota-options'){this.mvpUpgrade('ai_allowance');return true}
       if(action==='retry-weekly'){this.setMvpPageState('default');return true}

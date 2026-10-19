@@ -37,10 +37,10 @@ async function capture(name){await page.locator('.phone-frame').screenshot({path
   await page.locator('[data-testid=course-title]').evaluate(e=>{e.textContent='The Signature Strength Session — a longer workout title';});
   await separated('[data-testid=course-identity]','[data-testid=course-metrics]');await capture('long-course-title');report.checks.push('long course title flows without overlap');
   await page.setViewportSize({width:1440,height:1000});await open('home','1');
-  assert.equal(await page.locator('.review-rail').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(48, 65, 86)');
+  assert.equal(await page.locator('.review-rail').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 255, 255)');
   assert.equal(await page.locator('.review-pages [aria-current="page"]').count(),1);
-  await page.screenshot({path:path.join(evidence,'review-sidebar.png'),fullPage:true});report.checks.push('Admin sidebar palette and selected page');
-  await page.getByRole('button',{name:'进入用户模式',exact:true}).click();await page.locator('.review-rail').waitFor({state:'hidden'});report.checks.push('customer mode hides review controls');
+  await page.screenshot({path:path.join(evidence,'review-sidebar.png'),fullPage:true});report.checks.push('Three-column module navigation and selected page');
+  await page.getByRole('button',{name:'打开纯页面预览 ↗',exact:true}).click();await page.locator('.review-rail').waitFor({state:'hidden'});report.checks.push('customer mode hides review controls');
   for(const screen of ['library','unlocked','weekly','program-detail']){await open(screen);assert.ok(page.url().includes('/app/home?'),'Withdrawn proposal must return to the existing home');}report.checks.push('withdrawn proposal routes cannot enter user flow');
   await page.locator('[data-action="profile"]').first().click();await page.locator('.personal-center').waitFor();assert.equal(await page.locator('.profile-membership').count(),1);assert.equal(await page.getByRole('button',{name:/Browse workouts|Weekly report|Unlocked content/}).count(),0);report.checks.push('original profile hierarchy without invented menu');
   assert.deepEqual(report.errors,[]);report.status='passed';

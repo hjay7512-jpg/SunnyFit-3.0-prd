@@ -1,0 +1,93 @@
+const state=(id,label,...description)=>({id,label,description})
+const normal=state('default','正常页面','按当前页面结构展示内容。组件状态可在下方分别切换。')
+const loading=state('loading','加载中','页面数据加载期间显示加载反馈，暂不呈现未取得的数据；加载完成后恢复页面。')
+const error=state('error','加载失败','数据请求失败时提供重试入口；重试恢复当前页面，不丢失入口上下文。')
+const empty=state('empty','暂无内容','当前没有可展示的内容，保留页面标题及返回入口，不显示伪造记录。')
+const memberStates=[state('free','未订阅','显示 Free 账户及有限的 AI Coach 用量。可从原入口了解 Premium。'),state('active','会员有效','Premium 权益有效，显示续订日期。会员身份和对话剩余额度分别呈现。'),state('canceled','已关续订','当前周期内仍保留 Premium 权益；显示有效期，不视为已经过期。'),state('expired','会员已到期','恢复 Free 权限，保留已保存的历史内容；新请求按当前权限处理。')]
+const quotaStates=[state('available','额度充足','显示 65% 剩余对话额度，进度条与数值一致。'),state('low','额度较低','剩余 10% 时显示低额度提示，不影响已拥有的训练功能。'),state('empty','额度用尽','显示 0%；聊天草稿保留，发送时引导查看用量或订阅。训练和已保存结果仍可使用。'),state('campaign','限时无限量','活动期显示无限量和截止时间，会员功能授权保持独立。'),state('ended','活动已结束','取消无限量标记，恢复显示有限额度，不改变会员有效状态。')]
+const insightStates=[state('locked','待解锁','基础数据可读；洞察区域展示 Premium 入口，点击后打开当前场景的订阅说明。'),state('ready','已就绪','Premium 可使用个性化洞察；运动结果页可点击生成，周报展示就绪内容，不消耗对话额度。'),state('insight-loading','生成中','仅洞察组件显示生成状态，基础数据继续可读；生成按钮避免重复提交。'),state('insight-error','生成失败','仅洞察组件显示失败与重试入口，基础数据不受影响。'),state('saved-insight','已保存','展示已保存的洞察。会员到期后，原结果仍可阅读。')]
+const purchaseStates=[state('closed','收起','从原型中的 Premium 入口打开场景化订阅说明，保留当前内容或聊天草稿。'),state('offer','订阅说明','弹层说明当前被限制的功能，并展示同一 Premium 等级的月付与年付选项。'),state('processing','处理中','平台处理期间避免重复付款，等待当前请求确认。'),state('success','购买成功','展示成功反馈并保留原任务；点击继续后才开始训练或发送草稿。此状态只更新评审展示。'),state('failure','付款失败','展示付款失败与重试操作，保留原始任务，不自动开始训练或发送消息。'),state('cancelled','取消付款','取消后保留原内容与草稿，可返回页面或重新选择方案。'),state('pending','待确认','付款待确认时不重复下单，提供查询结果入口。')]
+const accessStates=[state('locked','未解锁','浏览详情开放；执行 Start / Join / Activate 时才检查权限，并保留原任务用于订阅后返回。'),state('unlocked','已解锁','当前功能权限通过，可执行对应操作；开始训练或激活计划不消耗对话额度。')]
+const sections={
+  quota:{id:'quota',title:'AI Coach 用量',states:quotaStates},
+  purchase:{id:'purchase',title:'场景化订阅弹层',states:purchaseStates},
+  access:{id:'access',title:'功能权限与开始操作',states:accessStates},
+  insight:{id:'insight',title:'AI 个性化洞察',states:insightStates},
+  content:{id:'content',title:'内容范围',states:[state('all','全部','显示目录中的内容，保留 Free / Premium 标记。'),state('content-free','Free 内容','只展示 Free 内容；无需订阅即可开始。'),state('content-premium','Premium 内容','展示 Premium 内容，开始权限由下方功能状态独立决定。')]},
+  reply:{id:'reply',title:'聊天回复',states:[state('default','正常对话','输入草稿可编辑，发送后进入回复状态。用量与会员状态分别检查。'),state('thinking','回复中','输入和发送暂时锁定，显示回复中的反馈。其他组件状态保持不变。'),state('chat-error','回复失败','显示失败和重试，保留草稿，不扣除本次失败请求的用量。')]},
+  plan:{id:'plan',title:'Dynamic Plan 卡片',states:[state('default','未生成','普通会话中不显示计划卡，保留原聊天工具栏。'),state('plan-preview','待激活','展示计划预览，允许讨论；点击 Activate 才检查 Premium 权限。'),state('plan-active','已激活','计划卡显示激活结果，避免重复激活，不消耗对话额度。')]},
+  event:{id:'event',title:'挑战卡与报名操作',states:[state('default','报名开放','活动时间内允许报名；Join 检查当前权益，只记录参与资格。'),state('upcoming','尚未开始','显示活动开始日期，报名入口不可用。'),state('joined','已报名','显示已加入状态，避免重复报名；不生成训练进度或奖励。'),state('ended','已经结束','显示活动结束状态，停止接受报名。')]},
+  workouts:{id:'workouts',title:'Program Workouts 列表',states:[state('default','有课程','展示该 Program 的包内课程；进入课程时保留父 Program 的授权上下文。'),state('empty','无课程','只替换课程列表为空态，保留 Program 标题和介绍，不把整个详情页替换掉。')]},
+  cycle:{id:'cycle',title:'订阅周期',states:[state('monthly','月付','同一 Premium 等级的月付周期，显示对应续订日期。'),state('annual','年付','年付周期不改变会员等级；有限对话额度仍按既定规则刷新。')]}
+}
+export const reviewGroups=[
+  {label:'训练与内容',pages:[['home','首页'],['workout','课程列表'],['course','课程详情'],['program','训练 Program'],['world-tour','World Tour'],['challenge','限时挑战'],['movement','动作训练'],['movement-detail','动作详情'],['movement-training','动作训练过程']]},
+  {label:'AI 与运动数据',pages:[['coach','AI Coach'],['plan','Dynamic Plan'],['weekly','每周报告'],['result','运动结果']]},
+  {label:'账户与会员',pages:[['profile','个人中心'],['membership','会员与用量'],['plans','方案与权益'],['billing','账单记录'],['wallet','Credits']]}
+]
+const catalog={
+  home:{title:'首页',description:['保留原有导航、推荐课程、My Progress 和独立 AI Coach 入口。'],sections:[{id:'entry',title:'原有入口',description:['课程 Start Now 进入对应内容；Plan 打开现有计划，AI 图标进入 AI Coach。']},{id:'weekly-entry',title:'每周报告入口',description:['有完整周报时展示入口；基础周数据免费，个性化洞察在报告中按权限展示。']}]},
+  workout:{title:'课程列表',description:['沿用既有课程、World Tour 与 Movements 入口。'],sections:['content',{id:'navigation',title:'课程与分类',description:['课程卡进入详情；World Tour 和 Movements 进入对应列表，不增加底部导航项。']}]},
+  course:{title:'课程详情',states:[normal,loading,error,state('unavailable','内容不可用','内容已不可用时停止开始操作，提供返回入口。')],description:['保留视频预览、课程信息与 Start；页面异常和组件权限分别切换。'],sections:['content','access','purchase']},
+  'world-tour':{title:'World Tour',states:[normal,loading,error,empty],description:['从原 Workout 分类进入路线列表，保留路线图、信息和 Start。'],sections:['content','access','purchase']},
+  program:{title:'Training Program',states:[normal,loading,error],description:['展示 Program 介绍、当前训练与包内课程，课程列表有自己的子状态。'],sections:['content','access','workouts','purchase']},
+  weekly:{title:'每周报告',states:[normal,state('empty','训练不足','训练不足以生成完整周报时展示空态。'),loading,error],description:['周统计与固定分析免费；AI 个性化洞察作为独立组件展示。'],sections:[{id:'stats',title:'基础数据与分享',description:['图表、训练统计及固定模板对所有账户开放。Share your week 仅导出免费基础数据。']},'insight','purchase']},
+  result:{title:'运动结果',description:['基础指标、图表与训练信息始终可读，洞察组件独立变化。'],sections:[{id:'results',title:'训练数据',description:['保留已有结果结构；展示完成训练的数据，不由权限或洞察状态替换。']},'insight','purchase']},
+  challenge:{title:'限时挑战',states:[normal,empty,loading,error],description:['保留原有分类与活动列表，报名时段和报名结果挂在挑战组件下。'],sections:['event','access','purchase']},
+  coach:{title:'AI Coach',description:['保留聊天区、输入框、历史和用量入口。回复、额度与计划卡分别切换，可组合查看。'],sections:['reply','quota','plan','access','purchase']},
+  plan:{title:'Dynamic Plan',states:[state('plan-preview','待激活计划','展示五日预览与计划建议，Activate 时检查 Premium。'),state('plan-active','已激活计划','展示当前已激活计划及训练入口，激活已有计划不消耗对话额度。'),loading,error],sections:['access',{id:'plan-actions',title:'计划操作',description:['GO 打开对应课程；More 中的 Adjust today 返回 AI Coach 讨论计划。']},'purchase']},
+  profile:{title:'个人中心',states:memberStates,sections:[{id:'member-entry',title:'会员与用量入口',description:['同一张卡展示会员有效状态、有效期和对话剩余额度；点击进入 Membership & Usage。']},'quota',{id:'profile-menu',title:'原有功能分组',description:['设备、健康、订单、设置和帮助保留原入口，Rewards / Badges 与 Credits 分开。']}]},
+  membership:{title:'会员与用量',states:memberStates,sections:['quota','cycle','purchase',{id:'benefits',title:'会员权益',description:['Free 和单一 Premium 分开展示。课程、计划等功能权限不等于无限对话量。']}]},
+  plans:{title:'方案与权益',states:memberStates,sections:['cycle','purchase',{id:'benefits',title:'方案与权益清单',description:['从会员页原入口查看在售方案与权益快照，月付和年付属于同一 Premium 等级。']}]},
+  billing:{title:'账单记录',description:['从原订单入口读取当前演示数据中的账单，不通过状态切换创建订单。'],sections:[{id:'orders',title:'历史记录',description:['保留历史订单、金额和周期信息。没有数据时展示空记录。']}]},
+  wallet:{title:'Credits',description:['AI Coach Credits 与 Content Credits 分别显示，自购和历史批次保留原有有效期。'],sections:[{id:'credits',title:'加购与返回',description:['加购入口不要求先订阅；完成后可返回原内容或对话，不自动重试原请求。']}]},
+  movement:{title:'动作训练列表',description:['浏览训练组合，通过 View Workout 查看详情，再进入运动准备页。'],sections:['access',{id:'training-group',title:'训练组合与视觉能力',description:['视觉支持在组合生成时配置，准备页再按设备性能决定是否显示可用的视觉开始入口。']}]},
+  'movement-detail':{title:'动作训练详情',description:['按 Warm-up / Workout / Cooldown 展示动作顺序、目标和计划休息。Get Ready 进入准备页。'],sections:[{id:'steps',title:'动作清单',description:['使用实际视频及目标，不在准备页重复堆叠动作列表。']},{id:'recovery',title:'计划间歇',description:['读取生成组合的 restSeconds，0 或缺省直接衔接，不统一插入固定休息。']}]}
+}
+function quotaActive(member){return member.unlimited?'campaign':member.campaignEnded?'ended':member.percent===0?'empty':member.percent<=20?'low':'available'}
+function movementModel(vm){
+  const view=vm.movementView,player=vm.$refs.movement,q=vm.$route.query
+  const states=[state('prepare','运动准备','保留预览、训练信息及心率入口。支持视觉识别的组合提供两种开始方式，不显示设备连接入口。'),state('setup','入镜引导','视觉模式默认竖屏，以识别区域和半透明剪影引导摆放手机。连续检测到人 3 秒后进入动作倒计时。'),state('countdown','动作倒计时','每个动作开始前准备 3 秒，仅显示数字；不遮罩或模糊画面，不累计训练量。'),state('training','正式训练','视觉计次动作按真实执行次数推进；计时动作只计时。可手动跳过剩余目标，窗口偏好不随动作切换重置。'),state('rest','计划休息','只在生成组合安排了 restSeconds 的位置休息。可暂停或跳过，结束后进入下一动作倒计时。'),state('summary','运动结果','展示目标完成情况和本次训练量。结束只确认一次；此处结果为演示数据，不新增训练记录。')]
+  const active=states.find(item=>item.id===view.stage)||states[0]
+  const live=['countdown','training','rest'].includes(active.id),mode=player?.mode||q.reviewMode||'regular'
+  const list=active.id==='prepare'?[{id:'start',title:'开始方式',description:['底部提供常规跟练和视觉识别两种开始按钮，用户直接选择开始方式。']}]:[{id:'training-mode',title:'训练模式',states:[state('regular','常规跟练','播放动作视频并按默认节奏计次，支持横竖屏。'),state('vision','视觉识别','默认摄像头为大窗，动作视频为小窗；Warm-up / Cooldown 的计时动作不识别次数。')],active:mode}]
+  if(active.id==='prepare')list.push({id:'device',title:'机型性能',states:[state('auto','支持视觉模式','训练组支持视觉时，同时展示常规和视觉开始按钮；开始前还会检查运行性能。'),state('low','低性能机型','低性能机型禁用视觉入口，常规视频跟练仍可开始。')],active:vm.movementReview.performance},{id:'heart-rate',title:'心率连接入口',description:['独立入口保留在准备页，可打开连接面板。当前浏览器原型不模拟蓝牙配对成功。']})
+  if(active.id==='prepare')list.push({...sections.access,title:'训练访问权限',active:vm.mvpMember.active?'unlocked':'locked'})
+  if(live&&mode==='vision')list.push({id:'device',title:'运行性能',states:[state('auto','正常运行','保持当前训练和识别流程。'),state('low','性能不足','暂停当前阶段并提示回退常规跟练，已完成的次数及窗口偏好保留。')],active:vm.movementReview.performance})
+  if(mode==='vision'||['prepare','setup'].includes(active.id))list.push({id:'camera',title:'摄像头画面',states:[state('demo','示例画面','此画面用于状态评审，不产生真实识别结果。真实摄像头由另一状态显式开启，图像在本地处理。'),state('camera','真实摄像头','请求浏览器摄像头权限，使用本地模型检测入镜；允许访问后进入真实识别流程。')],active:vm.movementReview.source})
+  if(active.id==='setup'&&vm.movementReview.source==='demo')list.push({id:'framing',title:'人物入镜',states:[state('out-of-view','未入镜','未检测到人时等待，不累计入镜时间。'),state('in-view','已入镜','检测到人连续 3 秒后进入动作倒计时，离开画面会重新计时。')],active:vm.movementReview.framed?'in-view':'out-of-view'})
+  if(live&&mode==='vision')list.push({id:'windows',title:'大小窗切换',states:[state('camera','摄像头大窗','点击动作视频小窗，切换为动作视频大窗。'),state('trainer','视频大窗','点击摄像头小窗，切换回摄像头大窗；动作衔接时保留选择。')],active:player?.cameraMain===false?'trainer':'camera'})
+  if(live)list.push({id:'panel',title:'数据与操作面板',states:[state('expanded','展开','显示当前动作、目标、暂停、跳过和下一动作预告。'),state('collapsed','收起','保留动作名、核心计数及暂停，把更多空间留给视频。顶部横条负责展开和收起。')],active:player?.immersive?'collapsed':'expanded'})
+  if(live&&mode==='regular')list.push({id:'orientation',title:'屏幕方向',states:[state('portrait','竖屏','视频位于上方，数据与操作集中在底部面板。'),state('landscape','横屏','视频与展开面板左右布局；收起面板时扩大视频显示区域。')],active:view.landscape?'landscape':'portrait'})
+  if(live||active.id==='setup')list.push({id:'movement-flow',title:'阶段衔接',description:[vm.movementReview.pinned?'当前固定在所选阶段供评审，视频仍可播放。运行流程后恢复入镜检测、倒计时和动作自动衔接。':'当前为交互流程，页面状态会随入镜、倒计时、休息和完成同步更新。'],actions:vm.movementReview.pinned?[{id:'movement-run',label:'运行此流程'}]:[]})
+  if(active.id==='training'&&vm.movementReview.source==='demo'){
+    const actions=player?.current.kind==='time'?[{id:'simulate-timer',label:'计时动作 · 剩余 1 秒'}]:mode==='vision'?[{id:'simulate-rep',label:'模拟识别 +1 次'},{id:'simulate-target',label:'模拟识别至本动作目标'}]:[]
+    if(actions.length)list.push({id:'recognition-events',title:'演示推进',description:['向本地演示会话发送事件；真实摄像头模式使用模型输出。'],actions})
+  }
+  return {title:'动作训练过程',states,active:active.id,description:active.description,sections:list.map(section=>({...section,description:section.states?.find(item=>item.id===section.active)?.description||section.description||[]}))}
+}
+export function reviewModel(vm){
+  if(vm.screen==='movement-training')return movementModel(vm)
+  const q=vm.$route.query,screen=vm.screen,config=catalog[screen]||{title:vm.screenTitle||'页面',description:vm.note.lines,sections:[]}
+  let states=config.states||[normal],active=vm.reviewPageState
+  if(['profile','membership','plans'].includes(screen))active=vm.mvpMember.state
+  if(screen==='plan'&&!['loading','error'].includes(active))active=vm.mvpPlanState==='plan-active'?'plan-active':'plan-preview'
+  const selected=states.find(item=>item.id===active)||states[0];active=selected.id
+  const unavailable=['loading','error','unavailable','empty'].includes(active)
+  const items=(config.sections||[]).filter(item=>item!=='cycle'||vm.mvpMember.active).map(item=>{
+    let section=typeof item==='string'?sections[item]:item
+    if(section.id==='access')section={...section,title:{course:'Start 与课程访问',program:'Program 开始与授权','world-tour':'路线 Start',coach:'计划激活权限',plan:'计划激活权限',challenge:'Join 与参与资格',movement:'训练访问权限'}[screen]||section.title}
+    if(section.id==='purchase'&&vm.mvpGate){
+      const extra={refreshing:state('refreshing','刷新用量','正在核对当前用量，保留草稿，不发起新的付款。'),'access-error':state('access-error','内容不可用','会员已生效，但原内容暂不可用；保留会员并返回原页检查。'),'event-closed':state('event-closed','报名已结束','订阅后重新检查活动时段，已结束的挑战不自动报名。')}
+      const current=extra[vm.mvpGate.stage];if(current)section={...section,states:[...section.states,current]}
+      if(vm.mvpGate.stage==='offer'&&['usage','unknown'].includes(vm.mvpGate.kind))section={...section,title:'对话用量反馈',states:section.states.map(item=>item.id==='offer'?state('offer','用量说明',vm.mvpGate.kind==='usage'?'会员仍有效，对话额度已用尽；训练权益保持可用，不要求重复订阅。':'暂时无法确认用量，保留草稿并提供重新查询入口。'):item)}
+    }
+    if(section.id==='content'&&['course','program'].includes(screen))section={...section,states:section.states.filter(item=>item.id!=='all')}
+    let value={quota:quotaActive(vm.mvpMember),cycle:q.membershipCycle||'monthly',content:vm.mvpContentState==='default'?'all':vm.mvpContentState,access:vm.mvpMember.active?'unlocked':'locked',insight:vm.mvpInsightState==='default'?(vm.mvpMember.active?'ready':'locked'):vm.mvpInsightState,reply:vm.mvpReplyState,plan:vm.mvpPlanState,event:vm.mvpEventState,workouts:q.reviewWorkouts||'default',purchase:vm.mvpGate?.stage||'closed'}[section.id]
+    if(section.id==='content'&&value==='all'&&['course','program'].includes(screen))value=(vm.data?(screen==='course'?vm.selectedContent:vm.selectedProgram):null)?.tier==='free'?'content-free':'content-premium'
+    let choice=section.states?.find(option=>option.id===value)||section.states?.[0]
+    if(section.id==='quota'&&typeof vm.mvpMember.percent==='number'&&['available','low'].includes(choice?.id))choice={...choice,description:choice.description.map(line=>line.replace(choice.id==='low'?'10%':'65%',vm.mvpMember.percent+'%'))}
+    return {...section,active:choice?.id,description:choice?.description||section.description||[],disabled:unavailable}
+  })
+  return {title:config.title,states,active,description:selected.id==='default'?(config.description||selected.description):selected.description,sections:items}
+}

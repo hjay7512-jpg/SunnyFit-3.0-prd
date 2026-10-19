@@ -88,9 +88,29 @@ export default {
     poster(step){const e=this.exercise(step);return process.env.BASE_URL+'assets/movement/'+(e.real?'real/':'media/')+e.video+(e.real&&!e.imageOnly?'.jpg':'.png')},
     phaseLabel(phase){return {warmup:'Warm-up',main:'Workout',cooldown:'Cooldown'}[phase]||'Workout'},
     formatTime(value){return String(Math.floor(value/60)).padStart(2,'0')+':'+String(Math.floor(value%60)).padStart(2,'0')},
-    setStage(stage){this.stage=stage;this.lastTick=performance.now();this.$emit('view-state',{stage,landscape:this.landscape});this.$nextTick(()=>{if(this.$refs.cameraViewport){this.resizeObserver.observe(this.$refs.cameraViewport);this.updateCameraBox()}})},
+    emitView(){this.$emit('view-state',{stage:this.stage,landscape:this.landscape,mode:this.mode,immersive:this.immersive,cameraMain:this.cameraMain})},
+    setStage(stage){this.stage=stage;this.lastTick=performance.now();this.emitView();this.$nextTick(()=>{if(this.$refs.cameraViewport){this.resizeObserver.observe(this.$refs.cameraViewport);this.updateCameraBox()}})},
     start(mode){this.mode=mode==='vision'&&this.training.vision.supported&&this.visionAvailable?'vision':'regular';this.$emit('start')},
-    begin(){if(this.mode==='vision'&&!this.visionAvailable)this.mode='regular';this.session=new TrainingSession(this.training.steps,this.mode);this.immersive=false;this.runtimeMessage='';this.cameraMain=true;this.gate.reset();if(this.mode==='vision'){this.setStage('setup');this.$nextTick(()=>this.enableCamera())}else{this.session.start();this.afterStep(-1)}},
+    begin(){this.$emit('review-live');if(this.mode==='vision'&&!this.visionAvailable)this.mode='regular';this.session=new TrainingSession(this.training.steps,this.mode);this.immersive=false;this.runtimeMessage='';this.cameraMain=true;this.gate.reset();if(this.mode==='vision'){this.setStage('setup');this.$nextTick(()=>this.enableCamera())}else{this.session.start();this.afterStep(-1)}},
+    previewScene(scene,options={}){
+      if(!this.review)return
+      if(!['prepare','setup','countdown','training','rest','summary'].includes(scene))scene='prepare'
+      this.cleanupCamera();this.exitOpen=false;this.runtimeSlow=false;this.runtimeMessage='';this.mediaError=false;this.mode=scene==='setup'||options.mode==='vision'?'vision':'regular';this.landscape=this.mode==='regular'&&options.orientation==='landscape'
+      if(options.panel)this.immersive=options.panel==='collapsed';if(options.windows)this.cameraMain=options.windows!=='trainer'
+      this.session=new TrainingSession(this.training.steps,this.mode);this.gate.reset();this.stability=0;this.bodyVisible=false
+      const completed=step=>({...step,reps:step.kind==='reps'?step.target:0,seconds:step.kind==='time'?step.target:step.target*(step.repSeconds||4),recognizedReps:this.mode==='vision'&&step.kind==='reps'?step.target:0,guidedReps:this.mode==='regular'&&step.kind==='reps'?step.target:0,skipped:false})
+      if(scene==='summary'){
+        this.session.results=this.training.steps.map(completed)
+        this.session.elapsed=this.session.results.reduce((sum,step)=>sum+step.seconds,0);this.session.index=this.training.steps.length;this.session.status='complete';this.session.phase='complete';this.landscape=false
+      }else if(['countdown','training','rest'].includes(scene)){
+        this.session.start()
+        if(scene==='training'){const index=this.training.steps.findIndex(step=>step.kind==='reps');this.session.index=Math.max(0,index);this.session.phase='exercise';this.session.phaseSeconds=0}
+        if(scene==='rest'){const index=this.training.steps.findIndex((step,i)=>i<this.training.steps.length-1&&step.restSeconds>0);if(index<0){scene='countdown'}else{this.session.index=index+1;this.session.phase='rest';this.session.phaseSeconds=this.training.steps[index].restSeconds}}
+        this.session.results=this.training.steps.slice(0,this.session.index).map(completed);this.session.elapsed=this.session.results.reduce((sum,step)=>sum+step.seconds,0)
+      }
+      this.setStage(scene)
+      if(this.mode==='vision'&&!['prepare','summary'].includes(scene))this.$nextTick(()=>{if(this.reviewSource==='demo'){this.cameraReady=true;this.cameraPhase='ready';this.bodyVisible=!!this.reviewOptions.framed;this.updateCameraBox()}else this.enableCamera()})
+    },
     fallback(){this.cleanupCamera();this.mode='regular';this.landscape=false;this.setStage('prepare')},
     async enableCamera(){
       if(this.cameraStarting)return
@@ -124,6 +144,7 @@ export default {
     },
     receivePose(pose,now){
       const assessment=assessPerson(pose&&pose.landmarks);this.bodyVisible=assessment.valid;this.recognitionHint=assessment.reason
+      if(this.review&&this.reviewOptions.pinned)return
       if(this.stage==='setup'){this.stability=this.gate.update(this.bodyVisible,null,now);if(this.stability>=3){this.resetRecognition();this.session.start();this.afterStep(-1)}}
       else if(this.stage==='training'&&this.current.kind==='reps'&&this.session.status==='active'){
         if(!this.bodyVisible){if(this.detector)this.detector.reset();this.detectorCount=0;return}
@@ -133,7 +154,7 @@ export default {
       }
     },
     tick(){
-      const now=performance.now(),delta=Math.min(.5,(now-this.lastTick)/1000);this.lastTick=now;this.syncVideos();if(document.hidden||this.runtimeSlow)return
+      const now=performance.now(),delta=Math.min(.5,(now-this.lastTick)/1000);this.lastTick=now;this.syncVideos();if(document.hidden||this.runtimeSlow||this.review&&this.reviewOptions.pinned)return
       const phaseBefore=this.stage,indexBefore=this.session.index
       if(this.mode==='vision'&&this.cameraReady&&this.reviewSource==='demo'&&['setup','training'].includes(this.stage))this.receivePose(this.reviewOptions.framed?{landmarks:samplePose(),confidence:1}:null,now)
       if(this.stage!==phaseBefore||this.session.index!==indexBefore)return
@@ -141,11 +162,11 @@ export default {
     },
     afterStep(previous){if(this.session.status==='complete'){this.landscape=false;this.setStage('summary');this.cleanupCamera();return}if(previous!==this.session.index){this.detector=null;this.detectorIndex=-1;this.mediaError=false}const stage={exercise:'training',countdown:'countdown',rest:'rest'}[this.session.phase];if(stage&&stage!==this.stage){this.resetRecognition();this.setStage(stage);if(stage==='training')this.$nextTick(()=>{if(this.$refs.teacherVideo)this.$refs.teacherVideo.currentTime=0})}},
     updateCameraBox(){const el=this.$refs.cameraViewport,video=this.$refs.cameraVideo||this.$refs.sampleVideo;if(!el||!video)return;const vw=video.videoWidth||400,vh=video.videoHeight||600,scale=Math.min(el.clientWidth/vw,el.clientHeight/vh),width=vw*scale,height=vh*scale;this.cameraBox={left:((el.clientWidth-width)/2+width*.08)+'px',top:((el.clientHeight-height)/2+height*.04)+'px',width:width*.84+'px',height:height*.92+'px'}},
-    swap(){this.cameraMain=!this.cameraMain;this.$nextTick(this.updateCameraBox)},
-    togglePanel(event){if(event&&event.detail&&performance.now()<(this.panelGestureUntil||0))return;this.immersive=!this.immersive;this.$nextTick(this.updateCameraBox)},
+    swap(){this.cameraMain=!this.cameraMain;this.emitView();this.$nextTick(this.updateCameraBox)},
+    togglePanel(event){if(event&&event.detail&&performance.now()<(this.panelGestureUntil||0))return;this.immersive=!this.immersive;this.emitView();this.$nextTick(this.updateCameraBox)},
     startPanelDrag(event){if(event.button!==0)return;this.panelGestureUntil=0;this.panelDragStart=event.clientY;event.currentTarget.setPointerCapture(event.pointerId)},
     endPanelDrag(event){if(this.panelDragStart===null||this.panelDragStart===undefined)return;const delta=event.clientY-this.panelDragStart;this.panelDragStart=null;if(Math.abs(delta)<24)return;this.immersive=delta>0;this.panelGestureUntil=performance.now()+500;this.$nextTick(this.updateCameraBox)},
-    toggleOrientation(){if(this.mode==='vision')return;this.landscape=!this.landscape;this.$emit('view-state',{stage:this.stage,landscape:this.landscape})},
+    toggleOrientation(){if(this.mode==='vision')return;this.landscape=!this.landscape;this.emitView()},
     toggleAudio(){this.muted=!this.muted;if(this.$refs.teacherVideo)this.$refs.teacherVideo.muted=this.muted},
     syncVideos(){const paused=document.hidden||this.runtimeSlow||this.session.status==='paused';for(const video of [this.$refs.teacherVideo,this.$refs.sampleVideo]){if(!video)continue;if(paused&&!video.paused)video.pause();else if(!paused&&video.paused)video.play().catch(()=>{})}},
     resetRecognition(){if(this.detector)this.detector.reset();this.detectorCount=0;if(this.filter)this.filter.reset()},

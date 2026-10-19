@@ -4,8 +4,9 @@ export function membershipView(data, query = {}) {
   const current = subscriptions.find(s => s.grant && s.grant.status === 'active')
   const ended = subscriptions.filter(s => s.grant && s.grant.status === 'expired').sort((a,b) => new Date(b.grant.expiresAt)-new Date(a.grant.expiresAt))[0]
   const actual = data.effective.membershipActive ? (current && !current.autoRenew ? 'canceled' : 'active') : ended ? 'expired' : 'free'
-  const preview = ['free','active','canceled','expired'].includes(query.membershipState)
-  const state = preview ? query.membershipState : actual
+  const specified = ['free','active','canceled','expired'].includes(query.membershipState)
+  const preview = specified || query.reviewFixture === '1'
+  const state = preview ? specified ? query.membershipState : 'free' : actual
   const active = state === 'active' || state === 'canceled'
   const allowance = ((data.wallet || {}).includedUsage || []).find(r => r.serviceId === 'ai_chat')
   const account = ((data.wallet || {}).accounts || []).find(row=>row.code==='AI_COACH_CREDIT')

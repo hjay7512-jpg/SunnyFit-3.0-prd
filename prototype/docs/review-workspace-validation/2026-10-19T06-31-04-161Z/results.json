@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "Module navigation, interactive prototype and documentation occupy three columns without identity selectors",
+    "Page membership and component quota tabs update both preview and description independently without changing users",
+    "Page loading and errors replace the page, disable component controls and restore the content; purchase states display the matching sheet",
+    "An empty Program workout list remains a component state inside the full detail page",
+    "Weekly page and insight states are independent, including saved content after recovering from an empty page",
+    "Chat reply, plan card and allowance states coexist and survive reload",
+    "Browser back restores the page state, preview and matching documentation",
+    "Changing a component state cancels an earlier generation timer so stale completion cannot overwrite the selected tab",
+    "Movement stage tabs preview framing, training, rest and summary; window and panel controls stay synchronized in both directions",
+    "Pure movement preview starts a clean interactive session instead of carrying a fixed camera snapshot",
+    "Desktop columns and mobile stacked navigation, prototype and document remain usable without horizontal overflow",
+    "Tabs support keyboard navigation and pure preview hides the entire review workspace",
+    "State review creates no API writes and no browser exceptions"
+  ],
+  "errors": [],
+  "writes": [],
+  "status": "passed"
+}
