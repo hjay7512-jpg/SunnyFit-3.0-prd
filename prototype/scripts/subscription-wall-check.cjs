@@ -13,10 +13,10 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
   browser=await chromium.launch({channel:'msedge',headless:true});page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});page.setDefaultTimeout(10000)
   page.on('pageerror',e=>report.errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/')&&r.method()!=='GET')report.writes.push(r.method()+' '+r.url())})
   const placements=new Set()
-  for(const screen of ['course','world-tour','program','plan','weekly','result','coach','challenge','membership']){
+  for(const screen of ['course','world-tour-detail','program','plan','weekly','result','coach','challenge','membership']){
     await open(screen);await tab('purchase','offer');await dialog().getByRole('radio').first().waitFor()
     const data=await state();assert.equal(data.wall.id,'sunnyfit-premium');assert.equal(data.wall.version,3);placements.add(data.wall.placementId)
-    assert.equal(await dialog().locator('.sf-premium-paywall__resource strong').innerText(),data.context.resourceName);assert.equal(await dialog().locator('[data-purchase-view=benefits]').isVisible(),false)
+    assert.equal(await dialog().locator('.sf-premium-paywall__resource strong').innerText(),data.context.resourceName);assert.equal(await dialog().locator('[data-purchase-view=benefits]').isVisible(),screen==='membership')
     assert.equal(await dialog().locator('.sf-modal__footer .context-purchase-offers').count(),0)
     if(['course','coach','weekly','program','world-tour'].includes(screen))await shot('entry-'+screen)
   }

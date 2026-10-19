@@ -1,6 +1,6 @@
 <template>
   <div class="sf-premium-guide">
-    <div class="sf-premium-guide__context"><span><sf-icon :name="wall.benefits[0].icon" :size="18"/></span><div><small>{{ wall.entry.category }}</small><strong>{{ wall.resource.name }}</strong><p>{{ wall.entry.next }}</p></div></div>
+    <div v-if="!generalOverview" class="sf-premium-guide__context"><span><sf-icon :name="wall.benefits[0].icon" :size="18"/></span><div><small>{{ wall.entry.category }}</small><strong>{{ wall.resource.name }}</strong><p>{{ wall.entry.next }}</p></div></div>
     <header class="sf-premium-guide__intro"><span>ONE SUNNYFIT PREMIUM MEMBERSHIP</span><h1>{{ wall.education.title }}</h1><p>{{ wall.education.description }}</p></header>
     <section class="sf-premium-guide__stories" aria-label="How you can use Premium">
       <div class="sf-premium-guide__tabs" role="tablist" aria-label="Explore Premium benefits">
@@ -16,8 +16,8 @@
     </section>
     <section class="sf-premium-guide__comparison" aria-label="Free and Premium comparison"><h2>What changes with Premium?</h2><table><thead><tr><th scope="col">Your SunnyFit</th><th scope="col">Free</th><th scope="col">Premium</th></tr></thead><tbody><tr v-for="row in wall.education.comparison" :key="row[0]"><th scope="row">{{ row[0] }}</th><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr></tbody></table></section>
     <slot/>
-    <section class="sf-premium-guide__questions" aria-label="Before you decide"><h2>Before you decide</h2><details v-for="question in wall.education.questions" :key="question.title"><summary>{{ question.title }}<sf-icon name="plus" :size="13"/></summary><p>{{ question.answer }}</p></details><details v-if="disclosure"><summary>{{ trial?'What happens after the free trial?':'How will I be billed?' }}<sf-icon name="plus" :size="13"/></summary><p>{{ disclosure }}</p></details></section>
-    <div class="sf-premium-guide__return"><sf-icon name="check" :size="16"/><span>{{ wall.entry.next }}</span></div>
+    <section class="sf-premium-guide__questions" aria-label="Before you decide"><h2>Before you decide</h2><details v-for="question in questions" :key="question.title"><summary>{{ question.title }}<sf-icon name="plus" :size="13"/></summary><p>{{ question.answer }}</p></details><details v-if="disclosure"><summary>{{ trial?'What happens after the free trial?':'How will I be billed?' }}<sf-icon name="plus" :size="13"/></summary><p>{{ disclosure }}</p></details></section>
+    <div v-if="!generalOverview" class="sf-premium-guide__return"><sf-icon name="check" :size="16"/><span>{{ wall.entry.next }}</span></div>
   </div>
 </template>
 <script>
@@ -25,7 +25,7 @@ import SfIcon from './SfIcon'
 import SfPaywallArtwork from './SfPaywallArtwork'
 export default {
   components:{SfIcon,SfPaywallArtwork},props:{wall:{type:Object,required:true},benefitId:String,disabled:Boolean,disclosure:String,trial:Boolean},
-  computed:{story(){return this.wall.education.stories.find(item=>item.id===this.benefitId)||this.wall.education.stories.find(item=>item.id===this.wall.entry.defaultBenefit)||this.wall.education.stories[0]}},
+  computed:{generalOverview(){return this.wall.placementId==='membership.explore'},questions(){return this.wall.education.questions.map((question,index)=>this.generalOverview&&index===0?{title:'What does Premium include?',answer:question.answer.replace('this activity and ','')}:question)},story(){return this.wall.education.stories.find(item=>item.id===this.benefitId)||this.wall.education.stories.find(item=>item.id===this.wall.entry.defaultBenefit)||this.wall.education.stories[0]}},
   methods:{navigate(event,id){if(this.disabled||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const list=this.wall.education.stories,index=list.findIndex(item=>item.id===id),next=event.key==='Home'?0:event.key==='End'?list.length-1:(index+(event.key==='ArrowRight'?1:-1)+list.length)%list.length;this.$emit('benefit',list[next].id);this.$nextTick(()=>this.$el.querySelector('#premium-guide-tab-'+list[next].id).focus())}}
 }
 </script>

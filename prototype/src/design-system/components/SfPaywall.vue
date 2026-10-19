@@ -1,7 +1,7 @@
 <template>
   <sf-sheet class="sf-premium-paywall" :class="{'is-guide':isGuide,'is-compact':compact}" :open="open" :title="isGuide?'Explore SunnyFit Premium':wall.entry.title.replace(/\n/g,' ')" contained :resizable="false" :busy="processing" content-class="sf-premium-paywall__panel" @input="$emit('close')">
     <div class="sf-premium-paywall__navigation">
-      <button v-if="isGuide" type="button" class="sf-premium-paywall__back" aria-label="Back to quick subscription" :disabled="processing" @click="$emit('view','quick')"><sf-icon name="back" :size="18"/></button>
+      <button v-if="isGuide" type="button" class="sf-premium-paywall__back" :aria-label="generalOverview?'Back to Membership & Usage':'Back to quick subscription'" :disabled="processing" @click="generalOverview?$emit('close'):$emit('view','quick')"><sf-icon name="back" :size="18"/></button>
       <sf-icon v-else name="membership" :size="17"/><span>SunnyFit <b>Premium</b></span>
     </div>
     <div v-show="!isGuide" class="sf-premium-paywall__quick" data-purchase-view="quick">
@@ -41,6 +41,7 @@ export default {
   data(){return {compact:false}},
   computed:{
     isGuide(){return this.view==='benefits'},
+    generalOverview(){return this.wall.placementId==='membership.explore'},
     selectedOffer(){return this.wall.offers.find(offer=>offer.offerId===this.selectedId)},
     resourceImage(){const image=this.wall.resource.image||this.wall.entry.image;return image?(/^(https?:|data:|\/)/.test(image)?image:process.env.BASE_URL+image):''}
   },

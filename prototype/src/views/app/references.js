@@ -17,7 +17,7 @@ export const titles = {
   plan: 'Plan',
   history: 'Dialogue with History',
   membership: 'Membership & Usage', plans:'Plan & Benefits', billing:'Billing History',
-  wallet: 'Extra Credits', challenge:'Challenges',movement:'Movements','movement-training':'Movement training','world-tour':'World Tour', profile:'Personal center', library:'Workouts', unlocked:'Unlocked content', weekly:'Weekly report', 'program-detail':'Training Program'
+  wallet: 'Extra Credits', challenge:'Challenges',movement:'Movements','movement-training':'Movement training','world-tour':'World Tour','world-tour-detail':'World Tour', profile:'Personal center', library:'Workouts', unlocked:'Unlocked content', weekly:'Weekly report', 'program-detail':'Training Program'
 };
 export const notes = {
   'movement-detail':{title:'动作详情 · 动作清单与训练安排',url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=36-5886',lines:['View Workout 进入独立动作详情页，按 Warm-up / Workout / Cooldown 展示动作顺序及目标。Get Ready 再进入准备页。','详情可浏览；准备页的开始按钮才检查训练权限。']},
@@ -30,7 +30,8 @@ export const notes = {
   weekly:{title:'Weekly Report · 正式新版',url:formal+'7697-14248',lines:['上周完整数据与固定模板免费；AI 个性化洞察按 Weekly Report AI Insight 授权，不扣 Credits。','首页未读卡替换推荐；Open / Maybe Later 标记已读。共享 PNG 只包含免费基础数据。训练为标记的本地验证样本。']},
   challenge:{title:'Limited Challenge · 现有 Join',url:alpha+'266-41091',lines:['保持原四个 Tab、分类、图片与 Join 结构；显示实际配置的开始/结束时间。','Join 检查 Scope 与活动时间，只记录加入资格，不生成训练进度或奖励。']},
   movement:{title:'Movements · 共用组件延展',url:formal+'4158-7827',lines:['沿用现有训练内容选择器的 Movements 入口；列表使用 V3 共用玻璃组件。未定位独立动作列表原稿，此页为评审设计延展。','浏览开放，Start 按 movement_access 的具体 Scope 校验。']},
-  'world-tour':{title:'World Tour · 原入口接入',url:formal+'6741-1367',lines:['从既有 Workout 分类进入，共用 V3 列表组件。独立 World Tour 列表原稿尚未定位，此页为评审设计延展。','Start 按 world_tour_access 的实际 Scope 校验；通过授权不产生完成训练。']},
+  'world-tour':{title:'World Tour · 浏览与分类',url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=1025-16528',lines:['按指定参考稿呈现实景封面、Scene 与 Equipment。路线先进入详情，再进行开始或订阅。']},
+  'world-tour-detail':{title:'World Tour · 路线详情',url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=1025-16528',lines:['从实景浏览页进入路线详情；沿用已有课程详情的信息层级，按路线配置展示底部 CTA。']},
   workout: {
     title: 'Workout · Course 模块',
     url: formal + '6741-1367',
@@ -89,8 +90,8 @@ export const notes = {
 // Current frontend review definitions override older historical note text.
 Object.assign(notes,{
   course:{...notes.course,lines:['保留原课程详情、预览与 Start。Free 可直接开始；Premium 内容在 Start 时展示场景化会员说明。','评审侧栏可切换 Free/Premium 内容、加载、失败和不可用。升级后回到原课程；开始训练不消耗对话用量。']},
-  'world-tour':{...notes['world-tour'],lines:['保留原 Workout → World Tour 入口及路线卡。Free/Premium 标记与 Start 权限一致。','原 App 侧栏切换路线、加载、失败、空态；缺失的 Free 路线为本地评审样例，不写入内容目录。']},
-  program:{...notes.program,lines:['沿用原 Program 与包内课程结构。加入/开始检查 Program 权益，进入包内课程保留父级上下文。','Free Program、Premium 门槛、可开始、空态与异常均在既有页面评审；不模拟真实训练进度。']},
+  'world-tour':{...notes['world-tour'],lines:['按指定 World Tour 浏览稿保留实景封面、Scene 和 Equipment，路线卡进入详情。Free 路线为本地评审样例，不写入内容目录。']},
+  program:{...notes.program,url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=2816-29683',lines:['还原 Details / Schedule、Program 封面与属性信息；课程清单位于 Schedule。','底部按访问权限和活动资格显示 Select Program 或付费引导；进入包内课程保留父级上下文。']},
   weekly:{...notes.weekly,lines:['基础周数据和固定分析保持免费；Premium 个性化 Insight 具有锁定、生成中、失败、已就绪与历史已保存状态。','历史已保存结果在过期后仍可读；升级返回原周报。评审参数只影响展示，不标记真实报告已读。']},
   coach:{...notes.coach,lines:['保留原聊天工具栏、输入框、历史与用量入口；0–100% 有限额度与限时无限量活动独立于会员身份。','额度不足统一进入 Membership & Usage 并保留草稿；AI 回复/失败为本地样例，不扣真实用量。Dynamic Plan 可讨论预览，Activate 时才检查会员权益。']},
   plan:{...notes.plan,lines:['保留原计划详情、五日预览与 More 操作。新增待激活与已激活状态，不新增一级入口。','Activate 检查 Premium；激活已有计划不消耗对话额度。无限量活动不授予会员功能。']}

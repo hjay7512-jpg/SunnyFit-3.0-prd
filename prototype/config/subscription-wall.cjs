@@ -1,6 +1,6 @@
 // One Premium wall; placements change the opening value story and attribution.
 // Prices and verified promotion eligibility are runtime inputs, never marketing copy.
-const base={id:'sunnyfit-premium',version:3,variant:'two-path',defaultBillingPeriod:'monthly',cta:'Continue with Premium',trialCta:'Start {days}-day free trial',maxVisibleBenefits:3}
+const base={id:'sunnyfit-premium',version:3,variant:'two-path',defaultBillingPeriod:'monthly',cta:'Continue with Premium',trialCta:'Start {days}-day free trial',contentCta:'Unlock with Premium',contentTrialCta:'Start {days}-day free trial',maxVisibleBenefits:3}
 const benefits={
   workouts:{icon:'play',title:'Premium workouts & real-world routes'},
   plans:{icon:'calendar',title:'Activate your Dynamic Plan'},

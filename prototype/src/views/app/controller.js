@@ -11,6 +11,8 @@ import ProfileSecondary from './ProfileSecondary';
 import V3WeeklyReport from './V3WeeklyReport';
 import V3Challenge from './V3Challenge';
 import V3ContentCollection from './V3ContentCollection';
+import V3WorldTour from './V3WorldTour';
+import V3Course from './V3Course';
 import MovementExperience from '@/features/movement/MovementExperience';
 import {profileScreens,profileTitle} from './profile-menu';
 import { pages, titles, notes } from './references';
@@ -35,7 +37,7 @@ function withoutMembershipPreview(fullPath){
 export default {
   components: {
     AppIcon,
-    SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,MovementExperience
+    SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,V3WorldTour,V3Course,MovementExperience
   },
   mixins: [commerceMixin,mvpPreview,reviewController],
   data() {
@@ -85,6 +87,7 @@ export default {
       return s || 'home';
     },
     screenTitle() {
+      if(this.screen==='world-tour-detail')return 'World Tour';
       if(this.screen==='movement-detail')return 'Workout details';
       if(this.screen==='movement-training')return this.movementView.stage==='prepare'?'Get ready':this.movementView.stage==='setup'?'Camera setup':this.movementView.stage==='summary'?'Workout summary':'Movement training';
       if(profileScreens.includes(this.screen))return profileTitle(this.screen,this.$route.query.profileSection,this.$route.query.profileItem);
@@ -133,6 +136,7 @@ export default {
       if(this.screen==='course'&&['content-free','content-premium'].includes(this.mvpContentState))return this.courseContents.find(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium'))||this.courseContents[0];
       return this.presentationData.contents.find(c => c.id === this.contentId) || this.courseContents[0];
     },
+    selectedWorldTour(){const list=(this.presentationData?.contents||[]).filter(c=>c.contentType==='world_tour');if(['content-free','content-premium'].includes(this.mvpContentState))return list.find(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium'))||list[0];return list.find(c=>c.id===this.contentId)||list[0]},
     selectedProgram() {
       const selected=this.screen==='program'&&['content-free','content-premium'].includes(this.mvpContentState)?this.programContents.find(c=>c.tier===(this.mvpContentState==='content-free'?'free':'premium'))||this.programContents[0]:this.presentationData.contents.find(c => c.id === this.programId) || this.programContents[0];
       return this.isMvpPreview&&this.$route.query.reviewWorkouts==='empty'&&selected?{...selected,membersPreview:[]}:selected;
@@ -279,6 +283,7 @@ export default {
         if(profileSection){this.go(this.screen);return;}
         this.go(profileParent||'profile');return;
       }
+      if(this.screen==='world-tour-detail'){this.go('world-tour',{collectionOrigin:this.$route.query.collectionOrigin||'workout'});return;}
       if(this.screen==='course'&&['home','workout','program','plan'].includes(this.$route.query.courseOrigin)){this.go(this.$route.query.courseOrigin,{returnTo:undefined,intent:undefined});return;}
       if(['plans','billing'].includes(this.screen)){this.go(this.screen==='billing'&&this.$route.query.parent==='profile'?'profile':'membership',{parent:undefined});return;}
       if(this.screen==='wallet'&&this.$route.query.parent==='membership'){this.go('membership',{parent:undefined});return;}
@@ -323,6 +328,8 @@ export default {
       if (this.busy) return;
       try {
         if(action.startsWith('open-movement:')){this.contentId=action.slice(14);this.go('movement-detail');return;}
+        if(action.startsWith('program-panel:')){if(this.reviewMode)await this.replaceReviewQuery({reviewProgramPanel:action.slice(14)});return;}
+        if(action.startsWith('open-world-tour:')){this.contentId=action.slice(16);this.go('world-tour-detail',{collectionOrigin:this.$route.query.collectionOrigin||'workout'});return;}
         if(action.startsWith('start-content:')){const content=this.presentationData.contents.find(c=>c.id===action.slice(14));if(content?.contentType==='movement'){this.contentId=content.id;this.go('movement-training');return;}}
         if(await this.handleMvpAction(action))return;
         if (action === 'back') { this.back(); return; }

@@ -1,6 +1,6 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewPurchaseView','reviewBenefit']
+export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
@@ -20,6 +20,9 @@ export default {
       await new Promise(resolve=>this.$router.replace({path:this.$route.path,query},resolve,resolve));await this.$nextTick()
     },
     async applyReviewState(scope,value){
+      if(scope==='content-offer'){
+        this.cancelMvpPurchase();this.reviewWallKey=this.$route.path;await this.replaceReviewQuery({reviewContentOffer:value,reviewOffer:undefined,membershipState:'free'});return
+      }
       if(scope==='purchase-view'||scope==='benefit'){
         if(this.mvpPendingPurchase||['processing','restoring'].includes(this.mvpGate?.stage))return
         if(!this.mvpGate)this.previewReviewPurchase('offer')
@@ -30,7 +33,7 @@ export default {
       if(scope==='offer'){
         if(this.mvpPendingPurchase||['processing','restoring'].includes(this.mvpGate?.stage))return
         const flow=this.mvpGate;this.mvpCheckoutToken++;this.mvpCheckoutApplying=true
-        try{await this.replaceReviewQuery({reviewOffer:value,membershipState:'free'});this.reviewWallKey=this.$route.path}finally{this.mvpCheckoutApplying=false}
+        try{await this.replaceReviewQuery({reviewOffer:value,reviewContentOffer:undefined,membershipState:'free'});this.reviewWallKey=this.$route.path}finally{this.mvpCheckoutApplying=false}
         if(flow)this.mvpGate={...flow,kind:'membership',offer:null,stage:'offer',feedback:''};else this.previewReviewPurchase('offer')
         return
       }
@@ -58,7 +61,7 @@ export default {
         else if(this.screen==='plan'&&['plan-preview','plan-active'].includes(value)){patch.reviewPlan=value;patch.reviewPage=undefined}
         else patch.reviewPage=value==='default'?undefined:value
       }else{
-        const keys={content:'reviewContent',insight:'reviewInsight',reply:'reviewReply',plan:'reviewPlan',event:'reviewEvent',workouts:'reviewWorkouts',cycle:'membershipCycle'}
+        const keys={content:'reviewContent',insight:'reviewInsight',reply:'reviewReply',plan:'reviewPlan',event:'reviewEvent',workouts:'reviewWorkouts','program-panel':'reviewProgramPanel',cycle:'membershipCycle'}
         if(keys[scope])patch[keys[scope]]=value
         if(scope==='access')patch.membershipState=value==='unlocked'?'active':'free'
         if(scope==='insight'&&['ready','insight-loading','insight-error'].includes(value))patch.membershipState='active'
@@ -102,8 +105,8 @@ export default {
       if(Object.keys(patch).length)this.replaceReviewQuery(patch)
     },
     previewReviewPurchase(stage){
-      const kinds={course:'course',program:'training_program','world-tour':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',plan:'dynamic_plan',challenge:'limited_challenge','movement-training':'movement'}
-      const kind=kinds[this.screen]||'membership',content=kind==='training_program'?this.selectedProgram:kind==='movement'?this.movementContent:kind==='limited_challenge'?this.challengeContents[0]:this.selectedContent
+      const kinds={course:'course',program:'training_program','world-tour':'world_tour','world-tour-detail':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',plan:'dynamic_plan',challenge:'limited_challenge','movement-training':'movement'}
+      const kind=kinds[this.screen]||'membership',content=kind==='training_program'?this.selectedProgram:kind==='movement'?this.movementContent:kind==='world_tour'?this.selectedWorldTour:kind==='limited_challenge'?this.challengeContents[0]:this.selectedContent
       this.mvpUpgrade(kind,content)
       if(this.mvpGate){const wall=this.mvpWall;this.mvpGate={...this.mvpGate,stage,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId)};this.mvpPurchaseOutcome='success'}
     },

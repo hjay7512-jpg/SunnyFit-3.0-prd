@@ -3,6 +3,7 @@ import {premiumOffers,premiumActivationQuery} from './premium-offers'
 import {placementFor,resolveSubscriptionWall,reviewPromotion} from './subscription-wall.cjs'
 import {recordPaywallEvent} from './paywall-analytics'
 import {requestKey} from '@/api/commerce'
+import {contentAction,presentContent} from './content-presentation.cjs'
 
 // View-only fixtures in the original App review shell. No API writes or access grants.
 export const pageStates = {
@@ -49,7 +50,7 @@ export default {
       }
       const previewInsight=this.data.weeklyReport?.insight?.body||'Your '+(this.data.weeklyReport?.stats?.workouts||0)+' workouts added up to '+(this.data.weeklyReport?.stats?.time||0)+' minutes this week. Reflect on your workout mix and active days as you plan a routine that fits your next week.'
       const weeklyReport=this.data.weeklyReport?{...this.data.weeklyReport,available:this.reviewPageState==='empty'&&this.screen==='weekly'?false:this.data.weeklyReport.available,insight:{...this.data.weeklyReport.insight,body:previewInsight,allowed:member.active||this.mvpInsightState==='saved-insight',saved:this.mvpInsightState==='saved-insight',status:this.mvpInsightState==='insight-loading'?'loading':this.mvpInsightState==='insight-error'?'error':'ready'}}:null
-      return {...this.data,contents,weeklyReport}
+      return {...this.data,contents:contents.map(presentContent),weeklyReport}
     },
     mvpChatLabel(){
       if(!this.isMvpPreview)return this.costLabel('ai_chat')
@@ -62,10 +63,12 @@ export default {
   watch:{paywallExposureKey(key){if(!key||this.paywallViewKeys.includes(key))return;this.$nextTick(()=>{if(this.paywallExposureKey!==key)return;this.paywallViewKeys.push(key);this.emitPaywallEvent('paywall_view')})}},
   beforeDestroy(){clearTimeout(this.mvpTimer);this.mvpCheckoutToken++},
   methods:{
-    resolveCurrentWall(now){
-      const context=this.mvpGate?.context||{},provided=this.data?.subscriptionOffer||{},variant=this.isMvpPreview?this.$route.query.reviewOffer:undefined,promotion=variant?reviewPromotion(variant,now):provided
-      return resolveSubscriptionWall({kind:context.kind||'membership',resource:{id:context.resourceId,name:context.resourceName,detail:context.detail,image:context.image,draft:!!context.draft},member:this.mvpMember,offers:variant==='unavailable'?[]:this.mvpOffers,campaign:promotion.campaign,eligibility:promotion.eligibility,channel:provided.channel||'web_demo',currency:provided.currency,now})
+    wallInput(now){
+      const provided=this.data?.subscriptionOffer||{},variant=this.isMvpPreview?(this.$route.query.reviewContentOffer||this.$route.query.reviewOffer):undefined,promotion=variant?reviewPromotion(variant,now):provided
+      return {member:this.mvpMember,offers:variant==='unavailable'?[]:this.mvpOffers,campaign:promotion.campaign,eligibility:promotion.eligibility,channel:provided.channel||'web_demo',currency:provided.currency,now}
     },
+    contentStartAction(content){return contentAction(content,this.wallInput(Date.now()))},
+    resolveCurrentWall(now){const context=this.mvpGate?.context||{};return resolveSubscriptionWall({...this.wallInput(now),kind:context.kind||'membership',resource:{id:context.resourceId,name:context.resourceName,detail:context.detail,image:context.image,draft:!!context.draft}})},
     emitPaywallEvent(type,offer,extra={}){
       const flow=this.mvpGate;if(!flow?.context)return
       const wall=this.resolveCurrentWall(Date.now()),selected=offer||flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId),context=flow.context
@@ -137,7 +140,8 @@ export default {
       if(kind==='membership'){intent.resourceId='premium';intent.resourceName='SunnyFit Premium'}
       if(kind==='ai_allowance'){intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active){this.mvpGate={kind:'usage',stage:'offer',title:this.mvpMember.campaignEnded?'Your unlimited event has ended':'Your allowance is used up',context:intent};return}}
       intent.image=content?.coverUrl||''
-      this.mvpGate={...item,kind:'membership',stage:'offer',view:this.reviewMode&&this.$route.query.reviewPurchaseView==='benefits'?'benefits':'quick',benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
+      const requestedView=this.reviewMode&&['quick','benefits'].includes(this.$route.query.reviewPurchaseView)?this.$route.query.reviewPurchaseView:null
+      this.mvpGate={...item,kind:'membership',stage:'offer',view:requestedView||(kind==='membership'?'benefits':'quick'),benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
       const wall=this.mvpWall;this.mvpGate={...this.mvpGate,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:this.mvpGate.benefitTab||wall.entry.defaultBenefit}
     },
     cancelMvpPurchase(reason,offer){if(reason==='dismiss')this.emitPaywallEvent('paywall_dismissed',offer,{reason:'user_dismissed'});this.mvpCheckoutToken++;this.mvpGate=null},

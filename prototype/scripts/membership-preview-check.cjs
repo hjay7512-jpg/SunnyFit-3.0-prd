@@ -46,7 +46,7 @@ async function layout(){
   assert.equal(await page.locator('.premium-page').getAttribute('data-membership-state'),'active');assert.match(await page.locator('.premium-status-date').innerText(),/Nov 16, 2026/);
   await page.getByRole('button',{name:'Back',exact:true}).click();await page.locator('.personal-center').waitFor();assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'65');
   pass('Event expiry restores quota without changing membership or its expiry; unified navigation preserves both');
-  await open('membership','free',0);await page.getByRole('button',{name:'Get Premium allowance',exact:true}).click();const offers=page.getByRole('dialog',{name:'More ways to move forward.'});await offers.waitFor();
+  await open('membership','free',0);await page.getByRole('button',{name:'Get Premium allowance',exact:true}).click();const offers=page.getByRole('dialog',{name:'Explore SunnyFit Premium'});await offers.waitFor();
   assert.equal(await offers.getByRole('radio').count(),2);assert.equal(await offers.getByRole('radio',{name:/Monthly/}).getAttribute('aria-checked'),'true');
   await offers.getByRole('button',{name:/^(Continue with Premium|Start \d+-day free trial)$/}).click();await page.getByRole('dialog',{name:'You’re ready to continue'}).waitFor();await page.getByRole('button',{name:'View membership & usage',exact:true}).click();
   assert.equal(await page.getByLabel('Unlimited conversations',{exact:true}).count(),0);assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuenow'),'100');
