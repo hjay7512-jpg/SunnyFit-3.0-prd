@@ -90,8 +90,8 @@ export const notes = {
 // Current frontend review definitions override older historical note text.
 Object.assign(notes,{
   course:{...notes.course,lines:['保留原课程详情、预览与 Start。Free 可直接开始；Premium 内容在 Start 时展示场景化会员说明。','评审侧栏可切换 Free/Premium 内容、加载、失败和不可用。升级后回到原课程；开始训练不消耗对话用量。']},
-  'world-tour':{...notes['world-tour'],lines:['按指定 World Tour 浏览稿保留实景封面、Scene 和 Equipment，路线卡进入详情。Free 路线为本地评审样例，不写入内容目录。']},
-  program:{...notes.program,url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=2816-29683',lines:['还原 Details / Schedule、Program 封面与属性信息；课程清单位于 Schedule。','底部按访问权限和活动资格显示 Select Program 或付费引导；进入包内课程保留父级上下文。']},
+  'world-tour':{...notes['world-tour'],lines:['参考稿提供 Scene / Equipment 浏览结构；视觉沿用 Demo 的 Workout 顶栏、红色分段控件、内容卡和底部导航。路线卡进入详情。Free 路线为本地评审样例，不写入内容目录。']},
+  program:{...notes.program,url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=2816-29683',lines:['保留 Details / Schedule、封面与属性信息，使用 Demo 共用导航、分段控件、内容卡及课表行；文字颜色与层级读取 V3 UI token。','底部按访问权限和活动资格显示 Select Program 或付费引导；进入包内课程保留父级上下文。']},
   weekly:{...notes.weekly,lines:['基础周数据和固定分析保持免费；Premium 个性化 Insight 具有锁定、生成中、失败、已就绪与历史已保存状态。','历史已保存结果在过期后仍可读；升级返回原周报。评审参数只影响展示，不标记真实报告已读。']},
   coach:{...notes.coach,lines:['保留原聊天工具栏、输入框、历史与用量入口；0–100% 有限额度与限时无限量活动独立于会员身份。','额度不足统一进入 Membership & Usage 并保留草稿；AI 回复/失败为本地样例，不扣真实用量。Dynamic Plan 可讨论预览，Activate 时才检查会员权益。']},
   plan:{...notes.plan,lines:['保留原计划详情、五日预览与 More 操作。新增待激活与已激活状态，不新增一级入口。','Activate 检查 Premium；激活已有计划不消耗对话额度。无限量活动不授予会员功能。']}

@@ -1,31 +1,60 @@
 <template>
   <div class="v3-program v3-screen" data-reference-node-id="2816:29683">
-    <sf-page-layout :ambient="false" @back="$emit('action','back')">
-      <template #header><div class="v3-program__navigation"><button type="button" aria-label="Back" @click="$emit('action','back')"><sf-icon name="back" :size="20"/></button><div role="tablist" aria-label="Program details"><button v-for="item in ['Details','Schedule']" :key="item" type="button" role="tab" :aria-selected="panel===item?'true':'false'" @click="panel=item;$emit('panel-change',item.toLowerCase())">{{ item }}</button></div><span/></div></template>
-      <div class="v3-program__cover"><img :src="content.coverUrl||asset('program-cover')" alt=""/><span v-if="accessLabel" class="commerce-content-label">{{ accessLabel }}</span></div>
+    <sf-page-layout title="Training Program" :ambient="false" @back="$emit('action','back')">
+      <sf-segmented-control :value="panel" :items="panels" label="Program details" @change="selectPanel"/>
+      <div class="v3-program__cover">
+        <img :src="content.coverUrl||asset('program-cover')" alt=""/>
+        <span v-if="accessLabel" class="commerce-content-label">{{ accessLabel }}</span>
+      </div>
       <section v-if="panel==='Details'" class="v3-program__details" role="tabpanel" aria-label="Details">
-        <div class="v3-program__identity"><p>{{ content.description }}</p><dl><div><dt>Program Name</dt><dd><h1>{{ content.name }}</h1></dd></div><div v-for="metric in metrics" :key="metric.label"><dt>{{ metric.label }}</dt><dd>{{ metric.value }}</dd></div></dl></div>
-        <section v-if="content.trainers&&content.trainers.length" class="v3-program__trainers"><h2>Trainers</h2><div v-for="trainer in content.trainers" :key="trainer.name"><sf-icon name="user" :size="22"/><span>{{ trainer.name }}</span></div></section>
+        <div class="v3-program__identity"><h1>{{ content.name }}</h1><p>{{ content.description }}</p></div>
+        <sf-card class="v3-program__attributes">
+          <dl><div v-for="metric in metrics" :key="metric.label"><dt>{{ metric.label }}</dt><dd>{{ metric.value }}</dd></div></dl>
+        </sf-card>
+        <section v-if="content.trainers&&content.trainers.length" class="v3-program__trainers">
+          <sf-section-title>Trainers</sf-section-title>
+          <sf-card><div v-for="trainer in content.trainers" :key="trainer.name" class="v3-program__trainer"><sf-avatar :name="trainer.name" :src="trainer.avatarUrl" :size="44"/><span>{{ trainer.name }}</span></div></sf-card>
+        </section>
         <sf-feedback v-if="!members.length" tone="empty" title="No workouts available"/>
       </section>
-      <section v-if="panel==='Schedule'" class="v3-program__members" role="tabpanel" aria-label="Schedule"><h2>Program Workouts</h2><button v-for="(course,index) in members" :key="course.id" type="button" :data-action="'open-course:'+course.id" :class="{'is-current':workout&&workout.id===course.id}" @click.stop="$emit('action','open-course:'+course.id)"><span class="v3-program__number">{{ String(index+1).padStart(2,'0') }}</span><div><small>WORKOUT {{ index+1 }}</small><strong>{{ course.name }}</strong><span>{{ course.durationMinutes }} min</span></div><sf-icon name="arrow" :size="16"/></button><sf-feedback v-if="!members.length" tone="empty" title="No workouts available"/></section>
+      <section v-if="panel==='Schedule'" class="v3-program__members" role="tabpanel" aria-label="Schedule">
+        <sf-section-title>Program Workouts</sf-section-title>
+        <sf-menu-row v-for="(course,index) in members" :key="course.id" :data-action="'open-course:'+course.id" :label="course.name" :description="'Workout '+(index+1)+' · '+course.durationMinutes+' min'" :class="{'is-current':workout&&workout.id===course.id}" @click="$emit('action','open-course:'+course.id)"/>
+        <sf-feedback v-if="!members.length" tone="empty" title="No workouts available"/>
+      </section>
       <template #footer><sf-button data-action="start-program" :data-content-id="content.id" @click.stop="$emit('action','start-program')">{{ startLabel||'Select Program' }}</sf-button></template>
     </sf-page-layout>
   </div>
 </template>
 <script>
-import {SfPageLayout,SfButton,SfIcon,SfFeedback} from '@/design-system'
+import {SfPageLayout,SfButton,SfFeedback,SfSegmentedControl,SfCard,SfSectionTitle,SfMenuRow,SfAvatar} from '@/design-system'
 export default {
-  name:'V3Program',components:{SfPageLayout,SfButton,SfIcon,SfFeedback},props:{content:{type:Object,required:true},workout:Object,nextWorkout:Object,courses:{type:Array,default:()=>[]},accessLabel:String,startLabel:String,panelState:String},
-  data(){return {panel:this.panelState==='schedule'?'Schedule':'Details'}},
+  name:'V3Program',components:{SfPageLayout,SfButton,SfFeedback,SfSegmentedControl,SfCard,SfSectionTitle,SfMenuRow,SfAvatar},
+  props:{content:{type:Object,required:true},workout:Object,nextWorkout:Object,courses:{type:Array,default:()=>[]},accessLabel:String,startLabel:String,panelState:String},
+  data(){return {panel:this.panelState==='schedule'?'Schedule':'Details',panels:[{value:'Details',label:'Details'},{value:'Schedule',label:'Schedule'}]}},
   watch:{panelState(value){this.panel=value==='schedule'?'Schedule':'Details'}},
   computed:{
     members(){return (this.content.membersPreview||[]).map(member=>this.courses.find(course=>course.id===member.id)).filter(Boolean)},
     metrics(){return [{label:'Total Courses',value:this.members.length},{label:'Program Length',value:this.content.durationWeeks?this.content.durationWeeks+' '+(this.content.durationWeeks===1?'week':'weeks'):'—'},{label:'Workout Goal',value:this.content.workoutGoal||'—'},{label:'Intensity',value:this.content.intensity||'—'},{label:'Target Area',value:this.content.targetArea||'—'}]}
   },
-  methods:{asset(name){return process.env.BASE_URL+'assets/figma/content-review/'+name+'.png'}}
+  methods:{asset(name){return process.env.BASE_URL+'assets/figma/content-review/'+name+'.png'},selectPanel(value){this.panel=value;this.$emit('panel-change',value.toLowerCase())}}
 }
 </script>
 <style scoped>
-.v3-program{background:#fff}.v3-program >>> .sf-page-layout__content{display:block;padding:88px 0 24px;background:#fff}.v3-program >>> .sf-page-layout__footer{padding:12px 16px 18px;background:#fff}.v3-program__navigation{pointer-events:auto;height:44px;display:flex;align-items:center;background:#fff}.v3-program__navigation>button,.v3-program__navigation>span{width:38px;min-height:44px;display:grid;place-items:center;border:0;background:none;color:#514954;flex-shrink:0;cursor:pointer}.v3-program__navigation>div{display:flex;flex:1;align-self:stretch}.v3-program__navigation [role=tab]{position:relative;flex:1;border:0;padding:8px;background:none;font:600 15px/24px var(--sf-font-family);color:#b4aab9;cursor:pointer}.v3-program__navigation [aria-selected=true]{color:#ed4a46}.v3-program__navigation [aria-selected=true]:after{content:'';position:absolute;width:18px;height:3px;border-radius:3px;bottom:6px;left:calc(50% - 9px);background:#ed4a46}.v3-program__cover{height:250px;position:relative;overflow:hidden;border-radius:0 0 24px 24px}.v3-program__cover>img{width:100%;height:100%;display:block;object-fit:cover}.v3-program__cover .commerce-content-label{top:12px;right:12px;left:auto}.v3-program__details{position:relative;padding:18px 16px 12px;border-radius:22px 22px 0 0;background:#fff;margin-top:-12px}.v3-program__identity>p{font-size:13px;line-height:21px;color:#8d8295;margin:0 0 11px}.v3-program__identity dl{margin:0}.v3-program__identity dl>div{display:grid;grid-template-columns:44% minmax(0,1fr);gap:10px;min-height:48px;padding:13px 0;border-bottom:1px solid #f0edf2;align-items:start}.v3-program__identity dt{font-size:14px;line-height:21px;color:#6f6279;font-weight:600}.v3-program__identity dd{margin:0;font-size:13px;line-height:21px;color:#9a8ba6}.v3-program__identity h1{font-size:13px;line-height:21px;font-weight:500;margin:0;color:#8d7b9b}.v3-program__trainers h2,.v3-program__members h2{font-size:17px;line-height:25px;margin:19px 0 12px;font-weight:600;color:#75607f}.v3-program__trainers>div{display:flex;gap:10px;align-items:center;padding:12px 0;font-size:13px;color:#a18bab}.v3-program__members{padding:16px}.v3-program__members h2{margin-top:0}.v3-program__members>button{display:flex;width:100%;align-items:center;gap:12px;padding:15px 12px;border:1px solid #eee7f1;border-radius:14px;background:#fcfafc;margin:0 0 10px;text-align:left;color:#a08aa9;cursor:pointer}.v3-program__members>button.is-current{background:#fff8f3;border-color:#edd8c8}.v3-program__number{font-size:21px;color:#ceb8c3}.v3-program__members button>div{display:grid;gap:4px;flex:1}.v3-program__members small{font-size:8px;letter-spacing:.7px;color:#b4a3bd}.v3-program__members strong{font-size:13px;line-height:19px;font-weight:600;color:#8f749d}.v3-program__members button div>span{font-size:11px;color:#b09abb}
+.v3-program__cover{aspect-ratio:375/249;position:relative;flex-shrink:0;overflow:hidden;border-radius:var(--sf-radius-card);background:var(--sf-content-surface)}
+.v3-program__cover>img{width:100%;height:auto;display:block}
+.v3-program__cover .commerce-content-label{top:12px;right:12px;left:auto}
+.v3-program__details{display:flex;flex-direction:column;gap:24px}
+.v3-program__identity h1{font-size:calc(24px * var(--sf-scale));line-height:1.35;font-weight:590;color:var(--sf-text);margin:0}
+.v3-program__identity p{font-size:calc(14px * var(--sf-scale));line-height:1.6;color:var(--sf-text-secondary);margin:8px 0 0}
+.v3-program__attributes dl{margin:0}
+.v3-program__attributes dl>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start;padding:14px 0;border-bottom:1px solid var(--sf-border)}
+.v3-program__attributes dl>div:first-child{padding-top:0}.v3-program__attributes dl>div:last-child{padding-bottom:0;border-bottom:0}
+.v3-program__attributes dt{font-size:calc(14px * var(--sf-scale));line-height:1.5;color:var(--sf-text-secondary)}
+.v3-program__attributes dd{margin:0;font-size:calc(16px * var(--sf-scale));line-height:1.4;font-weight:500;color:var(--sf-text);overflow-wrap:anywhere}
+.v3-program__trainers{display:flex;flex-direction:column;gap:12px}
+.v3-program__trainer{display:flex;align-items:center;gap:12px;font-size:calc(16px * var(--sf-scale));color:var(--sf-text);padding:8px 0}
+.v3-program__trainer:first-child{padding-top:0}.v3-program__trainer:last-child{padding-bottom:0}
+.v3-program__members{display:flex;flex-direction:column;gap:12px}
+.v3-program__members .is-current{border-color:var(--sf-action)}
 </style>
