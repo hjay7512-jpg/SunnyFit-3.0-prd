@@ -1,0 +1,172 @@
+{
+  "messages": {
+    "coach_curl_keep_elbows_still": {
+      "key": "coach_curl_keep_elbows_still",
+      "text": "Keep your elbows pinned to your sides. Don't let them drift forward.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_curl_reduce_swing": {
+      "key": "coach_curl_reduce_swing",
+      "text": "Stop using momentum. Let your biceps do the work.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_curl_slow_eccentric": {
+      "key": "coach_curl_slow_eccentric",
+      "text": "Slow down the lowering. Take two seconds to bring it back down.",
+      "priority": 1,
+      "tts_enabled": true
+    },
+    "coach_press_stay_tall": {
+      "key": "coach_press_stay_tall",
+      "text": "Sit up tall. Don't lean back as you press up.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_press_symmetric": {
+      "key": "coach_press_symmetric",
+      "text": "Press both dumbbells up together. Keep them even.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_press_full_range": {
+      "key": "coach_press_full_range",
+      "text": "Bring the weights down a bit more before your next press.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_raise_shoulder_height": {
+      "key": "coach_raise_shoulder_height",
+      "text": "That's high enough. Stop at shoulder height and control it down.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_raise_steady_body": {
+      "key": "coach_raise_steady_body",
+      "text": "Keep your torso still. Use a smooth, controlled motion.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_raise_slow_down": {
+      "key": "coach_raise_slow_down",
+      "text": "Slow it down. Quality over speed.",
+      "priority": 1,
+      "tts_enabled": true
+    },
+    "coach_row_steady_chest": {
+      "key": "coach_row_steady_chest",
+      "text": "Keep your chest facing forward. Don't rotate with the weight.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_row_elbow_to_hip": {
+      "key": "coach_row_elbow_to_hip",
+      "text": "Drive your elbow back toward your hip, not out to the side.",
+      "priority": 2,
+      "tts_enabled": true
+    },
+    "coach_row_slow_lowering": {
+      "key": "coach_row_slow_lowering",
+      "text": "Control the weight on the way down. Don't drop it.",
+      "priority": 1,
+      "tts_enabled": true
+    },
+    "coach_rep_milestone": {
+      "key": "coach_rep_milestone",
+      "text": "{count} reps done.",
+      "priority": 3,
+      "tts_enabled": true
+    },
+    "coach_set_complete": {
+      "key": "coach_set_complete",
+      "text": "Set complete. Nice work!",
+      "priority": 3,
+      "tts_enabled": true
+    },
+    "coach_rest_timer": {
+      "key": "coach_rest_timer",
+      "text": "Rest for {seconds} seconds.",
+      "priority": 3,
+      "tts_enabled": true
+    },
+    "coach_next_exercise": {
+      "key": "coach_next_exercise",
+      "text": "Next: {exercise_name}.",
+      "priority": 3,
+      "tts_enabled": true
+    },
+    "coach_switch_side": {
+      "key": "coach_switch_side",
+      "text": "Good. Now switch to the other side.",
+      "priority": 3,
+      "tts_enabled": true
+    },
+    "coach_pose_lost": {
+      "key": "coach_pose_lost",
+      "text": "I can't see you clearly. Move back to the center of the frame.",
+      "priority": 0,
+      "tts_enabled": true
+    },
+    "coach_positive_pace": {
+      "key": "coach_positive_pace",
+      "text": "Good pace. Keep it steady.",
+      "priority": 4,
+      "tts_enabled": true
+    },
+    "coach_positive_control": {
+      "key": "coach_positive_control",
+      "text": "Nice control on that rep.",
+      "priority": 4,
+      "tts_enabled": true
+    },
+    "coach_round_improvement": {
+      "key": "coach_round_improvement",
+      "text": "Looking much steadier this round. Keep it up.",
+      "priority": 4,
+      "tts_enabled": true
+    }
+  },
+  "exercise_tips": {
+    "seated_dumbbell_curl": {
+      "intro": "Seated Dumbbell Curl. Keep your back against the bench and elbows pinned to your sides. Curl up with control, lower slowly. 10 reps.",
+      "key_points": [
+        "Elbows stay fixed at your sides",
+        "No swinging your body",
+        "Lower the weight slowly on each rep"
+      ]
+    },
+    "seated_dumbbell_shoulder_press": {
+      "intro": "Seated Shoulder Press. Sit tall, press both dumbbells straight up. Lower them back to shoulder height with control. 8 reps.",
+      "key_points": [
+        "Keep your back straight, don't lean back",
+        "Press both sides evenly",
+        "Full range: down to shoulders, up to near straight"
+      ]
+    },
+    "seated_dumbbell_lateral_raise": {
+      "intro": "Seated Lateral Raise. Raise both arms out to the sides until they reach shoulder height. Keep your body still. 8 reps.",
+      "key_points": [
+        "Stop at shoulder height, no higher",
+        "Keep your torso still, no leaning",
+        "Smooth and controlled, not fast"
+      ]
+    },
+    "supported_dumbbell_row": {
+      "intro": "Supported Dumbbell Row. Hold the bench with one hand, row the dumbbell up by driving your elbow back toward your hip. Keep your chest steady. 8 reps each side.",
+      "key_points": [
+        "Keep your chest facing forward, don't rotate",
+        "Drive elbow back toward your hip",
+        "Lower with control, don't drop the weight"
+      ]
+    },
+    "seated_arm_circle": {
+      "intro": "Let's warm up. Small arm circles, 30 seconds. Get your shoulders moving.",
+      "key_points": []
+    },
+    "seated_scapular_retraction": {
+      "intro": "Now squeeze your shoulder blades together. Pull them back and hold for a moment, then release. 8 reps.",
+      "key_points": []
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "workouts": [
+    {
+      "workout_id": "bench_dumbbell_upper_body_beginner",
+      "display_name": "AI Bench Dumbbell Upper Body Starter",
+      "goal": "strength",
+      "level": "beginner",
+      "duration_minutes": 15,
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["dumbbells", "bench"],
+      "rounds": 2,
+      "blocks": [
+        {
+          "type": "warmup",
+          "items": [
+            { "exercise_id": "seated_arm_circle", "duration_seconds": 30 },
+            { "exercise_id": "seated_scapular_retraction", "duration_seconds": 20 }
+          ]
+        },
+        {
+          "type": "main",
+          "repeat": 2,
+          "items": [
+            { "exercise_id": "supported_dumbbell_row", "reps": 8, "per_side": true },
+            { "exercise_id": "seated_dumbbell_shoulder_press", "reps": 8 },
+            { "exercise_id": "seated_dumbbell_curl", "reps": 10 },
+            { "exercise_id": "seated_dumbbell_lateral_raise", "reps": 8 }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -9,3 +9,14 @@
 .customer-mode .phone-frame.native-frame{min-height:0}
 @media(min-width:701px){.customer-mode .phone-frame{height:var(--canvas-height,812px)}.customer-mode .phone-frame.home-frame{width:375px}}
 @media(max-width:700px){.app-review:not(.customer-mode) .review-rail{height:auto;max-height:96px;flex:none}.app-review:not(.customer-mode) .phone-stage{flex:1;height:auto;padding:8px}}
+
+@media(max-width:700px){
+  .app-review:not(.customer-mode) .phone-stage{width:100%}
+  .app-review:not(.customer-mode) .phone-frame{width:375px;max-width:none;height:var(--canvas-height,812px);min-height:0}
+  .app-review:not(.customer-mode) .sf-modal__footer .sf-button{min-height:56px}
+}
+
+@media(max-width:700px){
+  .customer-mode .phone-stage:has(.challenge-frame),.customer-mode .phone-stage:has(.membership-frame){height:100dvh;width:min(430px,100%)}
+  .customer-mode .phone-frame.challenge-frame,.customer-mode .phone-frame.membership-frame{height:100dvh;min-height:0;--canvas-height:100dvh!important;zoom:1}
+}

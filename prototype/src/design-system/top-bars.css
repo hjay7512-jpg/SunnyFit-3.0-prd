@@ -1,0 +1,5 @@
+/* A shared surface for page chrome; controls keep their own glass treatment. */
+.sf-ui{--sf-top-bar-background:linear-gradient(180deg,var(--sf-surface-solid),transparent)}
+.sf-top-bar-mask{background:var(--sf-top-bar-background);backdrop-filter:none;-webkit-backdrop-filter:none}
+.sf-ui[data-reduce-transparency=true] .sf-top-bar-mask{background:var(--sf-surface-solid)}
+@media(prefers-reduced-transparency:reduce){.sf-top-bar-mask{background:var(--sf-surface-solid)}}

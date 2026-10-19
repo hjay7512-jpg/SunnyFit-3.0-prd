@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "First and subsequent movements have preparation countdowns; pause freezes preparation and no workout time is charged",
+    "Only prescribed gaps rest; rest pauses, resumes, survives canceled exit, then naturally enters the next countdown without adding workout time or reps",
+    "Manual movement skip still prepares the next action; final completion goes directly to results without a trailing rest",
+    "Skip Rest is safe on repeated clicks; exiting a countdown asks once and goes straight to results",
+    "End workout from the pause dialog does not open a second confirmation",
+    "Vision framing is followed by preparation; view preferences and paused rest survive recognition fallback"
+  ],
+  "errors": [],
+  "status": "passed"
+}

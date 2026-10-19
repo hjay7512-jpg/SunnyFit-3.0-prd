@@ -4,6 +4,7 @@ const {civil}=require('./subscription-period.cjs')
 // All prices, quantities and targets below are editable local review fixtures.
 // They are not inferred production prices or approved membership grants.
 function ensureMvpDemo(store,filename,clockSource=()=>new Date().toISOString()){
+  require('./movement-demo.cjs').ensureMovementDemo(store)
   const db=new DatabaseSync(filename);db.exec('PRAGMA foreign_keys=ON')
   try{
     if(db.prepare("SELECT value FROM commerce_settings WHERE key='mvp-review-20261014'").get())return

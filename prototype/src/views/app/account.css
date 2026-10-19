@@ -61,3 +61,7 @@
 .app-review.sf-ui .mobile-primary{background:linear-gradient(180deg,rgba(255,255,255,.2),transparent 55%),var(--sf-action);border:1px solid rgba(255,255,255,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 3px 10px rgba(232,29,29,.12);min-height:48px;border-radius:14px}
 .app-review.sf-ui .mobile-secondary{background:linear-gradient(155deg,var(--sf-glass-highlight),transparent 60%),var(--sf-glass);border:1px solid var(--sf-glass-edge);box-shadow:var(--sf-glass-shadow);border-radius:18px;min-height:48px;backdrop-filter:blur(var(--sf-glass-blur))}
 .lab-phone{background:var(--sf-ambient)}.lab-phone .lab-phone-header.sf-header{display:grid;background:transparent;border-radius:0;border:0;box-shadow:none;backdrop-filter:none}
+
+.phone-frame.account-frame>.app-account-top{position:relative;grid-row:1 / 3;z-index:5;flex-shrink:0;min-height:44px;pointer-events:none}
+.app-account-top>.source-status{position:relative;width:100%;height:44px}
+.phone-frame.account-frame>.app-account-top>.mobile-header.sf-header{position:relative;left:auto;top:auto;width:calc(100% - 32px);height:auto;min-height:44px;margin:10px 16px 14px;padding:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none;pointer-events:auto}

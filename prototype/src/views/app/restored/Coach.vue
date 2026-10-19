@@ -43,7 +43,7 @@
 </div>
 <div class="sf-d14be32c5f" data-node-id="864:2822">
 <div class="sf-e975b61aa4" data-node-id="864:2831">
-<sf-message-composer :value="message" :disabled="inputLocked" @input="$emit('input',$event)" @send="$emit('send')" @resize="$emit('composer-resize',$event)"/>
+<sf-message-composer :value="message" :disabled="inputLocked" :send-disabled="sendDisabled" @input="$emit('input',$event)" @send="$emit('send')" @resize="$emit('composer-resize',$event)"/>
 <p class="sf-a6d2e0dc9e" data-node-id="864:2838">AI-generated content may be inaccurate.</p>
 </div>
 </div>
@@ -74,7 +74,7 @@
 </div>
 </div>
 </div>
-<div class="sf-4135bedc44" data-node-id="864:2843">
+<div class="sf-4135bedc44 sf-top-bar-mask" data-node-id="864:2843" aria-hidden="true">
 </div>
 <div class="sf-a6e1f7cb40" data-node-id="864:2844" data-name="StatusBar / iPhone X (or newer)">
 <div class="sf-a4dba46fb4" data-node-id="I864:2844;5:3003" data-name="Notch">
@@ -134,5 +134,5 @@
 </template>
 <script>
 import {SfAiBall,SfMessageComposer} from '@/design-system'
-export default {components:{SfAiBall,SfMessageComposer}, name: "SourceCoach", props: { message: String, aiState:String, inputLocked:Boolean } }
+export default {components:{SfAiBall,SfMessageComposer}, name: "SourceCoach", props: { message: String, aiState:String, inputLocked:Boolean,sendDisabled:Boolean } }
 </script>

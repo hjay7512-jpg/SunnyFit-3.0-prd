@@ -1,0 +1,18 @@
+<template>
+  <section class="coach-allowance" :class="{'coach-allowance--low':!view.unlimited&&view.percent!==null&&view.percent<=20}" aria-label="AI Coach conversation allowance">
+    <div class="coach-allowance__top"><span class="coach-allowance__icon"><sf-icon name="coach" :size="22"/></span><div><h3>AI Coach</h3><p>{{ view.unlimited?'Limited-time unlimited event':'Your conversation allowance' }}</p></div><span v-if="view.unlimited" class="coach-unlimited" aria-label="Unlimited conversations">∞</span><strong v-else-if="view.percent!==null" class="coach-percent">{{ view.percent }}<small>% left</small></strong></div>
+    <p v-if="view.unlimited" class="coach-allowance__detail"><span class="coach-included-dot"></span>Unlimited until {{ date(view.campaignEndsAt) }}. Your regular allowance applies after the event.</p>
+    <template v-else-if="view.percent!==null"><div class="coach-allowance__track" role="progressbar" aria-label="Conversation allowance remaining" :aria-valuenow="view.percent" aria-valuemin="0" aria-valuemax="100"><span :style="{width:view.percent+'%'}"></span></div><p v-if="view.percent<=20||view.resetAt" class="coach-allowance__detail">{{ view.percent===0?'You’ve used your conversation allowance.':view.percent<=20?'Your conversation allowance is running low.':'' }}<span v-if="view.resetAt"> Resets {{ date(view.resetAt) }}.</span></p></template>
+    <p v-else class="coach-allowance__detail">Your conversation allowance is temporarily unavailable.</p>
+    <p v-if="view.campaignEnded" class="coach-allowance__detail">The unlimited event has ended. Your regular allowance now applies.</p>
+    <button v-if="view.unlimited||view.percent>0" type="button" class="coach-allowance__action" @click="$emit('go','coach')">Talk to AI Coach <span aria-hidden="true">↗</span></button>
+    <button v-else-if="view.percent===null" type="button" class="coach-allowance__action" @click="$emit('retry')">Refresh allowance <sf-icon name="refresh" :size="16"/></button>
+    <template v-else-if="view.active"><p class="coach-allowance__detail">{{ view.resetAt?'Your next allowance refresh is shown above.':'New allowance is not available yet. Your training benefits and saved conversations remain available.' }}</p><button type="button" class="coach-allowance__action" @click="$emit('go','coach')">Back to AI Coach <span aria-hidden="true">↗</span></button></template>
+    <button v-else type="button" class="coach-allowance__action" @click="$emit('upgrade')">Get Premium allowance <span aria-hidden="true">↗</span></button>
+  </section>
+</template>
+<script>
+import {SfIcon} from '@/design-system'
+import {membershipDate} from './membership-view'
+export default {components:{SfIcon},props:{view:{type:Object,required:true}},methods:{date:membershipDate}}
+</script>

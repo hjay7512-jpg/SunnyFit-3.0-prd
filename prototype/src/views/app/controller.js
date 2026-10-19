@@ -1,14 +1,16 @@
 import { listUsers, finishService, startService, requestKey, getAsset, access,readWeeklyReport,joinChallenge } from '@/api/commerce';
 import commerceMixin from './commerceMixin';
+import mvpPreview from './mvp-preview';
 import AppIcon from './AppIcon';
 import SourceCanvas from './SourceCanvas';
 import ConsumerScreens from './ConsumerScreens';
-import MembershipUsage from './MembershipUsage';
+import MembershipUsage from './PremiumMembership';
 import PersonalCenter from './PersonalCenter';
 import ProfileSecondary from './ProfileSecondary';
 import V3WeeklyReport from './V3WeeklyReport';
 import V3Challenge from './V3Challenge';
 import V3ContentCollection from './V3ContentCollection';
+import MovementExperience from '@/features/movement/MovementExperience';
 import {profileScreens,profileTitle} from './profile-menu';
 import { pages, titles, notes } from './references';
 import './style.css';
@@ -23,12 +25,17 @@ function accountScrollKey(fullPath,userId){
   const [path,search='']=fullPath.split('?'),query=new URLSearchParams(search);
   return [query.get('user')||userId,path,query.get('profileSection')||'',query.get('profileItem')||''].join(':');
 }
+function withoutMembershipPreview(fullPath){
+  const [path,search='']=fullPath.split('?'),query=new URLSearchParams(search);
+  query.delete('membershipState');query.delete('chatRemaining');query.delete('membershipCycle');query.delete('allowanceMode');query.delete('mvpState');query.sort();
+  return path+'?'+query.toString();
+}
 export default {
   components: {
     AppIcon,
-    SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection
+    SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,MovementExperience
   },
-  mixins: [commerceMixin],
+  mixins: [commerceMixin,mvpPreview],
   data() {
     return {
       users: [],
@@ -66,7 +73,8 @@ export default {
       renewalTarget: null,
       locale: sessionStorage.getItem('sunnyfit-locale') || 'en-US',
       pages,
-      accountScrollPositions: {}
+      accountScrollPositions: {},
+      movementView:{stage:'prepare',landscape:false},movementReview:{source:'camera',performance:'auto',framed:false}
     };
   },
   computed: {
@@ -75,10 +83,14 @@ export default {
       return s || 'home';
     },
     screenTitle() {
+      if(this.screen==='movement-detail')return 'Workout details';
+      if(this.screen==='movement-training')return this.movementView.stage==='prepare'?'Get ready':this.movementView.stage==='setup'?'Camera setup':this.movementView.stage==='summary'?'Workout summary':'Movement training';
       if(profileScreens.includes(this.screen))return profileTitle(this.screen,this.$route.query.profileSection,this.$route.query.profileItem);
       return titles[this.screen];
     },
     isProfileSecondary(){return profileScreens.includes(this.screen);},
+    movementContent(){return this.collectionMovementContents.find(c=>c.id===this.contentId)||this.collectionMovementContents[0]},
+    collectionMovementContents(){return (this.presentationData?.contents||[]).filter(c=>c.contentType==='movement')},
     reviewMode() { return this.$route.query.review !== '0'; },
     objectKey() { return this.$route.query.object || (this.screen === 'weekly' ? 'demo-current-week' : 'demo-workout-01'); },
     hasInsight() { return !!(this.data && this.data.assets.some(a => a.type === 'report' && !a.locked && a.serviceCode === 'deep_analysis' && a.objectKey === this.objectKey)); },
@@ -109,33 +121,35 @@ export default {
       return this.data.services.find(s => s.id === this.serviceId);
     },
     courseContents() {
-      return this.data ? this.data.contents.filter(c => c.contentType === 'course') : [];
+      return this.presentationData ? this.presentationData.contents.filter(c => c.contentType === 'course') : [];
     },
     programContents() {
-      return this.data ? this.data.contents.filter(c => c.contentType === 'training_program') : [];
+      return this.presentationData ? this.presentationData.contents.filter(c => c.contentType === 'training_program') : [];
     },
     selectedContent() {
-      return this.data.contents.find(c => c.id === this.contentId) || this.courseContents[0];
+      if(this.screen==='course'&&['content-free','content-premium'].includes(this.mvpPageState))return this.courseContents.find(c=>c.tier===(this.mvpPageState==='content-free'?'free':'premium'))||this.courseContents[0];
+      return this.presentationData.contents.find(c => c.id === this.contentId) || this.courseContents[0];
     },
     selectedProgram() {
-      return this.data.contents.find(c => c.id === this.programId) || this.programContents[0];
+      if(this.screen==='program'&&['content-free','content-premium'].includes(this.mvpPageState))return this.programContents.find(c=>c.tier===(this.mvpPageState==='content-free'?'free':'premium'))||this.programContents[0];
+      return this.presentationData.contents.find(c => c.id === this.programId) || this.programContents[0];
     },
     programWorkout() {
       const members=(this.selectedProgram&&this.selectedProgram.membersPreview)||[];
       const member=members.find(m=>m.id===this.contentId)||members[0];
-      return member&&this.data.contents.find(c=>c.id===member.id);
+      return member&&this.presentationData.contents.find(c=>c.id===member.id);
     },
     nextProgramWorkout() {
       const members=(this.selectedProgram&&this.selectedProgram.membersPreview)||[];
       const index=members.findIndex(m=>this.programWorkout&&m.id===this.programWorkout.id);
       const member=members[(index+1)%members.length];
-      return member&&this.data.contents.find(c=>c.id===member.id);
+      return member&&this.presentationData.contents.find(c=>c.id===member.id);
     },
     displayContent() {
       if (this.screen==='course' && this.$route.query.fromProgram) {
-        const program=this.data.contents.find(c=>c.id===this.$route.query.fromProgram);
+        const program=this.presentationData.contents.find(c=>c.id===this.$route.query.fromProgram);
         const member=program&&(program.membersPreview||[]).find(m=>m.id===this.contentId);
-        if(member&&member.access.allowed) return {...this.selectedContent,access:member.access};
+        if(member&&member.access.allowed&&program.access.allowed) return {...this.selectedContent,access:member.access};
       }
       return (this.screen === 'program' ? this.selectedProgram : this.selectedContent) || {
         tier: 'free'
@@ -178,6 +192,8 @@ export default {
   },
   watch: {
     '$route.fullPath'(toPath,fromPath) {
+      if(fromPath&&withoutMembershipPreview(toPath)===withoutMembershipPreview(fromPath)){if(!this.mvpCheckoutApplying){this.cancelMvpPurchase();this.closeSheet()}return;}
+      if(!this.mvpCheckoutApplying)this.cancelMvpPurchase();this.mvpRequestToken++;clearTimeout(this.mvpTimer);
       if(this.$refs.accountScroll&&fromPath)this.accountScrollPositions[accountScrollKey(fromPath,this.userId)]=this.$refs.accountScroll.scrollTop;
       // Browser navigation can bypass go(). A quote belongs to the page that requested it.
       if (this.pendingService && !this.serviceRunning) this.busy = false;
@@ -190,6 +206,7 @@ export default {
       this.aiActivity = 'idle';
       const incoming = this.$route.query.user;
       if (incoming && incoming !== this.userId) {
+        this.mvpPendingPurchase=null;
         this.userId = incoming;
         this.data = null;
         this.sessionResults = [];
@@ -209,6 +226,11 @@ export default {
     try { this.users = await listUsers(); this.restoreUserState(); await this.load(); } catch(e) { this.error=e.message; }
   },
   methods: {
+    async authorizeMovement(){
+      const content=this.movementContent;if(!content||this.busy)return
+      this.busy=true;this.error=''
+      try{const decision=this.isMvpPreview?content.access:await access({userId:this.userId,contentId:content.id});if(decision.allowed){this.$refs.movement.begin()}else this.mvpUpgrade('movement',content)}catch(error){this.error=error.message}finally{this.busy=false}
+    },
     go(screen, extra = {}) {
       if (this.busy) return;
       const path = '/app/' + screen;
@@ -218,6 +240,12 @@ export default {
         program: this.programId,
         object: this.$route.query.object || 'demo-workout-01',
         review: this.reviewMode ? '1' : '0',
+        membershipState: this.$route.query.membershipState || undefined,
+        chatRemaining: this.$route.query.chatRemaining,
+        membershipCycle: this.$route.query.membershipCycle,
+        allowanceMode: this.$route.query.allowanceMode,
+        mvpState: screen===this.screen?this.$route.query.mvpState:screen===this.returnTo?this.$route.query.resumeState:undefined,
+        resumeState:this.$route.query.resumeState,
         fromProgram: this.$route.query.fromProgram || undefined,
         courseOrigin: this.$route.query.courseOrigin || undefined,
         returnTo: this.$route.query.returnTo || undefined,
@@ -287,6 +315,9 @@ export default {
     async handleAction(action) {
       if (this.busy) return;
       try {
+        if(action.startsWith('open-movement:')){this.contentId=action.slice(14);this.go('movement-detail');return;}
+        if(action.startsWith('start-content:')){const content=this.presentationData.contents.find(c=>c.id===action.slice(14));if(content?.contentType==='movement'){this.contentId=content.id;this.go('movement-training');return;}}
+        if(await this.handleMvpAction(action))return;
         if (action === 'back') { this.back(); return; }
         if(['existing-challenge','existing-challenges'].includes(action)){this.go('challenge');return;}
         if(action==='existing-world-tour'){this.go('world-tour',{collectionOrigin:this.screen});return;}
@@ -294,10 +325,10 @@ export default {
         if(action==='activate-plan'){this.serviceId='plan_activate';await this.reviewService();return;}
         if(action==='open-weekly'){if(this.data.weeklyReport?.available){await readWeeklyReport(this.userId,this.data.weeklyReport.id);this.go('weekly',{object:this.data.weeklyReport.id});}return;}
         if(action==='weekly-later'){if(this.data.weeklyReport?.available){await readWeeklyReport(this.userId,this.data.weeklyReport.id);await this.load();this.appToast='We’ll keep your report for you.';}return;}
-        if(action==='weekly-upgrade'){this.go('membership',{returnTo:'weekly',object:this.objectKey});return;}
+        if(action==='weekly-upgrade'){this.mvpUpgrade('weekly_insight');return;}
         if(action.startsWith('start-content:')){const content=this.data.contents.find(row=>row.id===action.slice(14));if(content)await this.openContent(content);return;}
         if(action.startsWith('join-challenge:')){
-          this.busy=true;try{const contentId=action.slice(15);const result=await joinChallenge({userId:this.userId,contentId,requestKey:'join-'+this.userId+'-'+contentId});await this.load();this.appToast='You joined the Challenge. Follow its workouts during the event.';this.flowState='Joined '+result.contentId;}catch(error){if(error.reason==='ENTITLEMENT_REQUIRED')this.gate={reason:error.reason,serviceName:'This limited Challenge'};else this.error=error.message;}finally{this.busy=false;}return;
+          this.busy=true;try{const contentId=action.slice(15);const result=await joinChallenge({userId:this.userId,contentId,requestKey:'join-'+this.userId+'-'+contentId});await this.load();this.appToast='You joined the Challenge. Follow its workouts during the event.';this.flowState='Joined '+result.contentId;}catch(error){if(error.reason==='ENTITLEMENT_REQUIRED')this.mvpUpgrade('limited_challenge',this.data.contents.find(c=>c.id===action.slice(15)));else this.error=error.message;}finally{this.busy=false;}return;
         }
         if (action.startsWith('open-course:') || action.startsWith('start-course:')) {
           const id=action.slice(action.indexOf(':')+1);

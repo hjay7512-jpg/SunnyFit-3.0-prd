@@ -1,3 +1,16 @@
+> 2026-10-18 Contextual subscription rule: lead with the experience gained for the current task, expand visibly into the complete Premium service, then offer monthly/yearly billing. The full benefits must not be hidden behind a disclosure. Preserve the original task for explicit continuation after payment.
+> 2026-10-18 体验评审：按用户目标组织节点。Free/到期用户的会员页服务于权益判断与订阅决策，需显示完整周期价格、有限额度规则及免费保留项；有效会员的同一页面服务于查用量与直接使用权益，提供实际入口。挑战需区分未开始、可报名、已报名、已结束，固定导航完整可见、内容独立滚动。当前 MVP 配置包含限时挑战资格，只有活动报名开放且会员能解决资格门槛时才推荐订阅；订阅成功后明确确认报名，继续前重新核对活动时间。待确认订单返回时恢复原资源与原查询；额度刷新结果不得重新打开已关闭的弹层。
+> 2026-10-17 用户补充确认：Free 用户首次订阅成功即发放新的 Premium 对话额度；原型用 100% 表示“新额度完整可用”，不代表 100 次对话。取消、失败、订单待确认时不得发放。有效 Premium 的额度耗尽不重复推荐购买会员。
+> 付费触发保留具体资源 ID、原动作、Program 所选节次、周报 ID 与聊天草稿；在原场景直接选择套餐，购买后由用户明确继续原动作。个人中心仍为 Membership & Usage 一体化入口。
+
+> 本轮前端原型最新确认（2026-10-16，对本轮原型优先于下方历史记录）：
+> - 身份为 Free 免费用户 + 唯一 Premium 付费会员；Premium 区分生效、关闭续订但仍有效、过期恢复 Free。
+> - 会员与权益用量保持同一个 Membership & Usage 入口；不要拆成独立会员卡和独立 AI 用量入口。
+> - Free 与 Premium 常规对话用量均有限。无限量仅是独立限时活动，必须注明活动截止时间；活动结束不改变会员身份。
+> - 延展沿用原 App /app/:screen 路由、左侧页面目录、V3 组件和共用弹层，不另建双页看板作为交付组织方式。
+> - 本轮新增状态只在明确评审参数下投影；AI 回复、Free 内容补位、订阅切换是本地原型样例，不写生产或真实用量。升级后保留原任务和聊天草稿。
+> - 正式价格、额度数量、额度刷新与消耗规则不由百分比原型推定。
+
 # SunnyFit V3.0 Monetization — Codex CLI Prototype Context
 
 Status: Working Context / Prototype Brief (NOT Approved Product Truth)

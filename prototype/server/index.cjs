@@ -29,7 +29,7 @@ const server = http.createServer(async (request, response) => {
     if (request.method !== 'GET') throw new DomainError(405, 'METHOD_NOT_ALLOWED', 'Only GET is supported for static files.')
     const file = path.resolve(dist, '.' + decodeURIComponent(route === '/' ? '/index.html' : route))
     if (!file.startsWith(dist + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) return json(response, 404, { code: 40400, message: 'Run npm run dev, or npm run build before starting the production preview.' })
-    const mime = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript', '.css': 'text/css', '.woff': 'font/woff', '.ttf': 'font/ttf', '.png': 'image/png', '.webp':'image/webp', '.svg': 'image/svg+xml' }
+    const mime = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript', '.css': 'text/css', '.woff': 'font/woff', '.ttf': 'font/ttf', '.png': 'image/png', '.webp':'image/webp', '.svg': 'image/svg+xml', '.mp4':'video/mp4', '.webm':'video/webm', '.wasm':'application/wasm' }
     response.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream' })
     fs.createReadStream(file).pipe(response)
   } catch (error) {

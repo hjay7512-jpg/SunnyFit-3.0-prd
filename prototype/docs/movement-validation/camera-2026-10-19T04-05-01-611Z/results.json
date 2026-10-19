@@ -1,0 +1,497 @@
+{
+  "samples": [
+    {
+      "stage": "setup",
+      "phase": "permission",
+      "stability": 0,
+      "visible": false,
+      "hint": "Allow camera access in your browser.",
+      "error": "",
+      "slow": false
+    },
+    {
+      "stage": "setup",
+      "phase": "model",
+      "stability": 0,
+      "visible": false,
+      "hint": "Camera is on. Loading body recognition...",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "model",
+      "stability": 0,
+      "visible": false,
+      "hint": "Camera is on. Loading body recognition...",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 0.04309999999403954,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 0.9664000000059605,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 1.2171999999880792,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 1.469300000011921,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 1.8065999999940396,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 2.047699999988079,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 2.302699999988079,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 2.6305999999940397,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "setup",
+      "phase": "ready",
+      "stability": 2.878699999988079,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "countdown",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    },
+    {
+      "stage": "training",
+      "phase": "ready",
+      "stability": 3,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "error": "",
+      "slow": false,
+      "delegate": "CPU"
+    }
+  ],
+  "errors": [],
+  "curlEvidence": [
+    {
+      "time": 0.180041,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/IDLE",
+      "angle": 108.72750210896676
+    },
+    {
+      "time": 0.289443,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/IDLE",
+      "angle": 139.7125014992444
+    },
+    {
+      "time": 0.410006,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/IDLE",
+      "angle": 119.43989040321571
+    },
+    {
+      "time": 0.471076,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/REST",
+      "angle": 103.86726216454343
+    },
+    {
+      "time": 0.5528,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/REST",
+      "angle": 90.42877369592246
+    },
+    {
+      "time": 0.65118,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/REST",
+      "angle": 92.64560852222596
+    },
+    {
+      "time": 0.733826,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/REST",
+      "angle": 101.87135171414855
+    },
+    {
+      "time": 0.820918,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/REST",
+      "angle": 106.43498125503676
+    },
+    {
+      "time": 0.930566,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/LIFT",
+      "angle": 108.34163676848112
+    },
+    {
+      "time": 0.997091,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/LIFT",
+      "angle": 108.3211949974179
+    },
+    {
+      "time": 1.067686,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 108.54076037911656
+    },
+    {
+      "time": 1.175645,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 108.91228099101374
+    },
+    {
+      "time": 1.276102,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 108.84796818842946
+    },
+    {
+      "time": 1.36372,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 108.73807908101271
+    },
+    {
+      "time": 1.413694,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 108.2942409531791
+    },
+    {
+      "time": 1.504202,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 107.65397935173694
+    },
+    {
+      "time": 1.584593,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 106.66263126428186
+    },
+    {
+      "time": 1.693331,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 106.8195634307957
+    },
+    {
+      "time": 1.810134,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 106.91943820669668
+    },
+    {
+      "time": 1.898398,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 107.45113012248022
+    },
+    {
+      "time": 1.976641,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 107.98515271178337
+    },
+    {
+      "time": 2.075122,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 107.12434439279195
+    },
+    {
+      "time": 2.142628,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 106.84326236171097
+    },
+    {
+      "time": 2.240606,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/TOP",
+      "angle": 99.22539468484655
+    },
+    {
+      "time": 2.321268,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/LOWER",
+      "angle": 91.2926835682714
+    },
+    {
+      "time": 2.403801,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 0,
+      "phase": "REST/LOWER",
+      "angle": 89.78937954044744
+    },
+    {
+      "time": 2.491471,
+      "visible": true,
+      "hint": "Person detected. Stay in view.",
+      "status": "active",
+      "reps": 1,
+      "phase": "REST/REST",
+      "angle": 89.37265368138554
+    }
+  ],
+  "pixelRecognizedReps": "1",
+  "highPullVideo": {
+    "src": "http://127.0.0.1:3040/assets/movement/real/high-pull-preview.mp4",
+    "width": 720,
+    "height": 720,
+    "playing": true
+  },
+  "status": "passed"
+}

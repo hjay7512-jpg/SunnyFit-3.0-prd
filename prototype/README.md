@@ -6,6 +6,18 @@
 
 ## 最新验证与更新方案
 
+2026-10-19 动作训练已按交互反馈重整：[本地体验入口](http://127.0.0.1:3020/#/app/movement?user=DEMO-2002&review=0)。选择首个 **Studio movement workout**，View Workout 先进入独立详情页，按阶段展示动作清单，再通过 Get Ready 进入准备页。准备页保留 SUNNYFIT `36:5886` 的预览和圆形开始语言，移除运动设备连接，恢复独立 Heart Rate 入口；页面只保留训练信息、心率及两种开始按钮，不再添加引导句和按钮副文案。心率面板可打开，当前浏览器原型未接入蓝牙配对。
+
+训练页保持浅色，默认展开操作面板，显示当前动作、目标进度、暂停、跳过和下一动作。收起后仅保留动作名、次数或时间、暂停，展开 / 收起改为面板顶部居中横条，支持点击和上下拖动，隐藏跳过和下一动作，竖屏画面增加超过 100px；横屏收起时取消固定侧栏，显示全幅视频和右下紧凑控制条。移除重复的运动总时长、阶段进度条和提示段落。暂停始终可直接点击；展开、暂停各自拥有至少 44px 点击区域。大小窗选择和面板状态不会被自动切动作、识别达标或手动跳过重置，只在新会话初始化。
+
+每个动作正式开始前都有 3 秒准备倒计时，只显示数字，不遮罩或模糊视频及摄像头画面，小窗仍可切换。动作结束后的间歇读取生成组合中对应步骤的 `restSeconds`，由计划在生成时安排；缺省或 0 表示没有休息，不会统一插入固定时长。Studio 示例在 Bicep Curl、JM Press 连续训练之后安排 30 秒休息，其余动作直接衔接；示例时长仅用于展示编排。休息可暂停、跳过或退出，结束后仍先准备倒计时；最后一个动作直接进入结果。倒计时和休息不计训练次数及运动时长。暂停弹窗的 End workout 直接进入结果，退出图标只显示一次确认。
+
+视觉模式默认调用真实摄像头，不依赖评审控件。Demo 检测到人连续入镜 3 秒后进入首动作准备倒计时，不要求全身 / 上半身完整，也不因躯干移动而重置；人离开画面或检测中断会重新计时。人体剪影仍使用跳绳模块 `6637:23125` 的原始 SVG，配置的全身 / 上半身仅决定指导剪影。GPU 初始化失败会尝试 CPU，随后通过采样性能判断是否可用；间歇慢帧和推理故障也会明确提示回退。处理在本地完成，画面不上传。评审侧栏仍可显式选择模拟画面，但模拟画面不会自行产生识别次数。当前结果仅显示于本次会话。
+
+新组合已接入用户提供的 Shoulder Rolls、Shoulder CAR、Bicep Curl、JM Press、High Pull、Woodchop、Arm Triceps Stretch、Chest Opener 八段真实视频，720px 播放副本和来源清单位于 `public/assets/movement/real/`。High Pull 已从静态参考升级为视频，位于 JM Press 之后，目标为 30 秒；未修改过的初始七动作示例会自动升级，并保留旧发布版本，已有草稿或定制配置不会被覆盖。Bicep Curl 支持交替手臂的完整周期计次，双臂同时完成只记一次；JM Press / High Pull / Woodchop 尚无已验证的计次检测器，当前明确使用计时目标。原始下载视频保留在 `runtime/movement-source-videos/`，运行 `node scripts/prepare-movement-resources.cjs` 可重新生成播放副本和封面，也可追加 `high-pull` 仅处理该动作。
+
+本地启动：`npm run build`，然后设置 `$env:API_PORT='3020'`、`$env:DEMO_DB_PATH='runtime/vision-guide-review.sqlite'` 并运行 `npm start`。`npm run test:movement` 包含 24 项专项测试、6 项倒计时 / 间歇 / 单次结束流程、19 项交互流程，以及真人视频像素识别、真实弯举计数、High Pull 播放的完整检查。最新证据见 [倒计时、休息与结束](docs/movement-validation/transitions-2026-10-19T04-06-36-105Z/results.json)、[识别与视频](docs/movement-validation/camera-2026-10-19T04-05-01-611Z/results.json)、[流程截图](docs/movement-validation/2026-10-19T04-05-01-605Z/results.json)、[无遮罩倒计时](docs/movement-validation/countdown-clear-2026-10-19T04-15-17-681Z/results.json)。录制画面经测试用摄像头流进入同一识别链路，没有注入关节点或强改阶段；这仍不能代替不同实体机型和真人的准确率评估。识别算法修改后需先在 `vision-guide/` 运行 `npm ci`，然后运行 `npm run build:vision`。本地和 Pages 构建可运行，静态产物在 `pages-dist/`；源码推送到仓库 `main` 后由现有 GitHub Actions 工作流构建并部署至 `/SunnyFit-3.0-prd/prototype/`。
+
 2026-10-16 按最新交付计划标记：MVP 覆盖会员商品 / SKU、订单订阅、有效权益与课程范围标记；完整权益管理及 AI Credits 闭环为 P1，独立 Credits 商品为 P2，兑换、限时挑战授权和活动发放为 P3。下面的权益模型描述用于完整业务评审，不代表全部纳入 MVP。后台右上角 Business rules 已独立承载全局规则，并按当前模块定位。详见[本轮后台交付与验证](docs/Admin_MVP_2026-10-16.md)。
 
 

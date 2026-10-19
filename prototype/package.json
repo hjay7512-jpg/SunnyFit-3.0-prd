@@ -23,6 +23,8 @@
     "test:commerce-ui": "node scripts/commerce-ui-check.cjs",
     "test:ai-ui": "node scripts/ai-ui-check.cjs",
     "test:ai-ball": "node --test tests/ai-ball-motion.test.mjs && node scripts/ai-ball-check.cjs",
+    "test:movement": "node --test tests/movement-training.test.cjs && node scripts/movement-transitions-check.cjs && node scripts/movement-training-check.cjs && node scripts/movement-camera-check.cjs",
+    "build:vision": "node scripts/build-vision-runtime.cjs",
     "demo:optimized": "powershell.exe -NoProfile -File scripts/open-demo.ps1",
     "demo:lab": "powershell.exe -NoProfile -File scripts/open-lab.ps1",
     "demo:components": "powershell.exe -NoProfile -File scripts/open-lab.ps1 -Components",

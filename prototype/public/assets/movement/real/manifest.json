@@ -1,0 +1,19 @@
+{
+  "source": "User-provided SunnyFit training resources",
+  "clips": {
+    "shoulder-rolls": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250312/M010_merged.mp4_slo_191154156w.mp4",
+    "shoulder-car": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250312/M011_merged.mp4_slo_191203577w.mp4",
+    "arm-triceps-stretch": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250312/M026.mp4_slo_191353523w.mp4",
+    "chest-opener": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250312/M024_merge_191345852d.mp4",
+    "jm-press": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250221/S175_output.mp4_slo_114508445w.mp4",
+    "bicep-curl": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250221/S173_output.mp4_slo_114346997w.mp4",
+    "woodchop": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250221/S179_output.mp4_slo_114622888w.mp4",
+    "high-pull": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250221/S184_output.mp4_slo_114841874w.mp4"
+  },
+  "highPull": {
+    "type": "video",
+    "source": "https://d36ltzaqhvxnap.cloudfront.net/movement/20250221/S184_output.mp4_slo_114841874w.mp4",
+    "referenceImage": "https://d36ltzaqhvxnap.cloudfront.net/icon/equip/20250421/S18_1337535474.png"
+  },
+  "previews": "720px H.264 copies of the original footage; no generated movement frames. JM Press, High Pull and Woodchop use timed targets because no validated repetition detector is configured."
+}

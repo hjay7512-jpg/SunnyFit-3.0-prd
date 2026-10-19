@@ -17,9 +17,11 @@ export const titles = {
   plan: 'Plan',
   history: 'Dialogue with History',
   membership: 'Membership & Usage', plans:'Plan & Benefits', billing:'Billing History',
-  wallet: 'Extra Credits', challenge:'Challenges',movement:'Movements','world-tour':'World Tour', profile:'Personal center', library:'Workouts', unlocked:'Unlocked content', weekly:'Weekly report', 'program-detail':'Training Program'
+  wallet: 'Extra Credits', challenge:'Challenges',movement:'Movements','movement-training':'Movement training','world-tour':'World Tour', profile:'Personal center', library:'Workouts', unlocked:'Unlocked content', weekly:'Weekly report', 'program-detail':'Training Program'
 };
 export const notes = {
+  'movement-detail':{title:'动作详情 · 动作清单与训练安排',url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=36-5886',lines:['View Workout 进入独立动作详情页，按 Warm-up / Workout / Cooldown 展示动作顺序及目标。Get Ready 再进入准备页。','详情可浏览；准备页的开始按钮才检查训练权限。']},
+  'movement-training':{title:'动作训练 · 准备、训练与计划间歇',url:'https://www.figma.com/design/Q2YjFPNeavj0zS6pHpr5Lk/SUNNYFIT?node-id=36-5886',lines:['准备页保留预览、训练信息、独立 Heart Rate 入口及两种开始按钮。心率面板可打开，当前浏览器原型未接入蓝牙配对。','面板顶部横条支持点击及上下拖动。大小窗和面板偏好不随动作、倒计时或休息切换而重置。','每个动作开始前倒计时 3 秒；仅在生成组合配置 restSeconds 的位置休息，0 或缺省则直接衔接。休息可跳过，暂停冻结当前阶段；准备及休息不累计训练量。结束只确认一次。','视觉引导仅需持续检测到人 3 秒，然后进入动作准备倒计时。识别在本地进行。Studio 使用 8 段真人视频；弯举按识别计次，JM Press / High Pull / Woodchop 暂用计时。']},
   home: {
     title: 'Home · 原导航与入口',
     url: formal + '7590-5619',
@@ -67,7 +69,7 @@ export const notes = {
   membership: {
     title: 'Membership & Usage · 原二级页',
     url:alpha+'249-2183',
-    lines: ['保留原当前方案卡片、主要按钮和 Plan & Benefits / Billing History / Restore Purchase。', '功能访问权与两种 Credits 分开；月赠按原订阅时区逐月刷新、不结转，自购永久有效。购买回到原任务，不自动生成。']
+    lines: ['本期为 Free 免费用户 + 单一 Premium 付费会员；区分有效、关闭续订但有效、到期恢复 Free。', '会员与权益用量保持同一个入口；Free 与 Premium 都有有限额度。只有限时活动显示 Unlimited 和活动截止时间。月付与年付是同一等级的不同周期。购买与续订为前端模拟，不创建订单；不将会员生效自动视为无限量。']
   },
   profile:{title:'Personal Center · 原个人中心',url:alpha+'249-2123',lines:['保留既有一级分组，菜单图标使用共用组件。二级条目来自现有原菜单与正式 Settings 截图。','Rewards / Badges 与 Credits 分开；会员和订单使用现有接口，未接入的服务显示明确 Demo 状态。']},
   devices:{title:'Devices & Health · 原菜单映射',url:alpha+'243-662',lines:['My Equipment / Health App / Shop Sunny Equipment 来自原 Equipment & Service 分组。','现有 Demo 没有账户设备和健康授权接口；不填入示例已连接设备。设备商城沿官方网页访问。']},
@@ -83,3 +85,13 @@ export const notes = {
     lines: ['AI Coach Credits 与 Content Credits 分开；自购永久有效，历史批次保留原期限；加购不要求先开会员。', '从受限入口加购后可返回原页面，保留输入和内容场景，不自动重试或扣费。']
   }
 };
+
+// Current frontend review definitions override older historical note text.
+Object.assign(notes,{
+  course:{...notes.course,lines:['保留原课程详情、预览与 Start。Free 可直接开始；Premium 内容在 Start 时展示场景化会员说明。','评审侧栏可切换 Free/Premium 内容、加载、失败和不可用。升级后回到原课程；开始训练不消耗对话用量。']},
+  'world-tour':{...notes['world-tour'],lines:['保留原 Workout → World Tour 入口及路线卡。Free/Premium 标记与 Start 权限一致。','原 App 侧栏切换路线、加载、失败、空态；缺失的 Free 路线为本地评审样例，不写入内容目录。']},
+  program:{...notes.program,lines:['沿用原 Program 与包内课程结构。加入/开始检查 Program 权益，进入包内课程保留父级上下文。','Free Program、Premium 门槛、可开始、空态与异常均在既有页面评审；不模拟真实训练进度。']},
+  weekly:{...notes.weekly,lines:['基础周数据和固定分析保持免费；Premium 个性化 Insight 具有锁定、生成中、失败、已就绪与历史已保存状态。','历史已保存结果在过期后仍可读；升级返回原周报。评审参数只影响展示，不标记真实报告已读。']},
+  coach:{...notes.coach,lines:['保留原聊天工具栏、输入框、历史与用量入口；0–100% 有限额度与限时无限量活动独立于会员身份。','额度不足统一进入 Membership & Usage 并保留草稿；AI 回复/失败为本地样例，不扣真实用量。Dynamic Plan 可讨论预览，Activate 时才检查会员权益。']},
+  plan:{...notes.plan,lines:['保留原计划详情、五日预览与 More 操作。新增待激活与已激活状态，不新增一级入口。','Activate 检查 Premium；激活已有计划不消耗对话额度。无限量活动不授予会员功能。']}
+})

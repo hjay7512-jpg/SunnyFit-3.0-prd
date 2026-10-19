@@ -132,6 +132,7 @@ function createCommerce({ db, now, transaction, audit, fail, suitDetail, catalog
       if (config.code === 'plan_activate' && (config.entitlementCode !== 'dynamic_plan' || config.scope !== 'all')) fields.push('Saved plan activation must check Dynamic Plan / ALL access.')
       }
     } else if (entity === 'content') {
+      if(config.contentType==='movement'&&config.training!==undefined)fields.push(...require('../config/movement-training.cjs').validateTraining(config.training))
       config.recommended = !!config.recommended
       if (!['course','world_tour','training_program','movement','limited_challenge'].includes(config.contentType)) fields.push('Choose a supported MVP content type.')
       if (original && original.published_version && config.contentType !== liveConfig(original).contentType) fields.push('Content type is fixed after first publication.')

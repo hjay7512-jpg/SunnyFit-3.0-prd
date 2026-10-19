@@ -1,0 +1,220 @@
+{
+  "exercises": [
+    {
+      "exercise_id": "seated_dumbbell_curl",
+      "display_name": "Seated Dumbbell Curl",
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["dumbbells", "bench"],
+      "body_position": "seated",
+      "training_role": ["upper_body", "arms", "pull_accessory"],
+      "sides": "bilateral",
+      "rep_target": 10,
+      "state_machine": {
+        "states": ["IDLE", "START", "CONCENTRIC", "PEAK", "ECCENTRIC"]
+      },
+      "form_rules": [
+        {
+          "issue_code": "elbow_drift_forward",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_curl_keep_elbows_still",
+          "thresholds": { "elbow_forward_offset_max": 0.08 }
+        },
+        {
+          "issue_code": "torso_swing",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_curl_reduce_swing",
+          "thresholds": { "hip_displacement_max": 0.04 }
+        },
+        {
+          "issue_code": "fast_eccentric",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 2,
+          "cooldown_seconds": 20,
+          "message_key": "coach_curl_slow_eccentric",
+          "thresholds": { "eccentric_duration_min_ms": 800 }
+        }
+      ],
+      "phase_thresholds": {
+        "start_angle": 150,
+        "peak_angle": 45,
+        "hysteresis": 10,
+        "concentric_trigger": 130,
+        "eccentric_trigger": 70
+      },
+      "tempo_bpm": 60
+    },
+    {
+      "exercise_id": "seated_dumbbell_shoulder_press",
+      "display_name": "Seated Dumbbell Shoulder Press",
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["dumbbells", "bench"],
+      "body_position": "seated",
+      "training_role": ["upper_body", "shoulders", "push"],
+      "sides": "bilateral",
+      "rep_target": 8,
+      "state_machine": {
+        "states": ["IDLE", "START", "CONCENTRIC", "PEAK", "ECCENTRIC"]
+      },
+      "form_rules": [
+        {
+          "issue_code": "torso_lean_back",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_press_stay_tall",
+          "thresholds": { "torso_lean_angle_max": 15 }
+        },
+        {
+          "issue_code": "asymmetric_press",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_press_symmetric",
+          "thresholds": { "wrist_height_diff_max": 0.1 }
+        },
+        {
+          "issue_code": "limited_range",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 2,
+          "cooldown_seconds": 15,
+          "message_key": "coach_press_full_range",
+          "thresholds": { "min_elbow_bend_angle": 80 }
+        }
+      ],
+      "phase_thresholds": {
+        "start_angle": 80,
+        "peak_angle": 165,
+        "hysteresis": 10,
+        "concentric_trigger": 110,
+        "eccentric_trigger": 140
+      },
+      "tempo_bpm": 60
+    },
+    {
+      "exercise_id": "seated_dumbbell_lateral_raise",
+      "display_name": "Seated Dumbbell Lateral Raise",
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["dumbbells", "bench"],
+      "body_position": "seated",
+      "training_role": ["upper_body", "shoulders", "abduction"],
+      "sides": "bilateral",
+      "rep_target": 8,
+      "state_machine": {
+        "states": ["IDLE", "START", "CONCENTRIC", "PEAK", "ECCENTRIC"]
+      },
+      "form_rules": [
+        {
+          "issue_code": "raise_too_high",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 2,
+          "cooldown_seconds": 15,
+          "message_key": "coach_raise_shoulder_height",
+          "thresholds": { "elbow_above_shoulder_max": 0.08 }
+        },
+        {
+          "issue_code": "torso_swing",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_raise_steady_body",
+          "thresholds": { "hip_displacement_max": 0.04 }
+        },
+        {
+          "issue_code": "movement_too_fast",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 20,
+          "message_key": "coach_raise_slow_down",
+          "thresholds": { "rep_duration_min_ms": 1200 }
+        }
+      ],
+      "phase_thresholds": {
+        "start_angle": 15,
+        "peak_angle": 80,
+        "hysteresis": 8,
+        "concentric_trigger": 35,
+        "eccentric_trigger": 60
+      },
+      "tempo_bpm": 50
+    },
+    {
+      "exercise_id": "supported_dumbbell_row",
+      "display_name": "Supported Dumbbell Row",
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["dumbbells", "bench"],
+      "body_position": "standing_bent",
+      "training_role": ["upper_body", "back", "pull"],
+      "sides": "unilateral",
+      "rep_target": 8,
+      "state_machine": {
+        "states": ["IDLE", "START", "CONCENTRIC", "PEAK", "ECCENTRIC"]
+      },
+      "form_rules": [
+        {
+          "issue_code": "torso_rotation",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_row_steady_chest",
+          "thresholds": { "shoulder_rotation_angle_max": 15 }
+        },
+        {
+          "issue_code": "elbow_path_out",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 3,
+          "cooldown_seconds": 15,
+          "message_key": "coach_row_elbow_to_hip",
+          "thresholds": { "elbow_lateral_offset_max": 0.12 }
+        },
+        {
+          "issue_code": "fast_eccentric",
+          "severity": "coaching",
+          "min_consecutive_occurrences": 2,
+          "cooldown_seconds": 20,
+          "message_key": "coach_row_slow_lowering",
+          "thresholds": { "eccentric_duration_min_ms": 800 }
+        }
+      ],
+      "phase_thresholds": {
+        "start_angle": 150,
+        "peak_angle": 50,
+        "hysteresis": 10,
+        "concentric_trigger": 120,
+        "eccentric_trigger": 80
+      },
+      "tempo_bpm": 55
+    },
+    {
+      "exercise_id": "seated_arm_circle",
+      "display_name": "Seated Arm Circle",
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["bench"],
+      "body_position": "seated",
+      "training_role": ["warmup", "shoulders"],
+      "sides": "bilateral",
+      "rep_target": 0,
+      "state_machine": { "states": ["ACTIVE"] },
+      "form_rules": [],
+      "phase_thresholds": {},
+      "tempo_bpm": 80
+    },
+    {
+      "exercise_id": "seated_scapular_retraction",
+      "display_name": "Seated Scapular Retraction",
+      "camera_profile_id": "portrait_bench_45_full",
+      "equipment": ["bench"],
+      "body_position": "seated",
+      "training_role": ["warmup", "back"],
+      "sides": "bilateral",
+      "rep_target": 8,
+      "state_machine": { "states": ["ACTIVE"] },
+      "form_rules": [],
+      "phase_thresholds": {},
+      "tempo_bpm": 80
+    }
+  ]
+}

@@ -47,7 +47,7 @@ export default {
         const data = await getStorefront(selected);
         if (selected === this.userId) {
           this.data = data;
-          if(this.screen==='weekly'&&data.weeklyReport?.available&&!data.weeklyReport.read){await readWeeklyReport(selected,data.weeklyReport.id);if(selected===this.userId)data.weeklyReport.read=true;}
+          if(!this.isMvpPreview&&this.screen==='weekly'&&data.weeklyReport?.available&&!data.weeklyReport.read){await readWeeklyReport(selected,data.weeklyReport.id);if(selected===this.userId)data.weeklyReport.read=true;}
           if(data.policyVersion===20261014){
             if(!data.contents.some(row=>row.id===this.contentId))this.contentId=(data.contents.find(row=>row.contentType==='course'&&row.tier==='premium')||data.contents.find(row=>row.contentType==='course')||{}).id;
             if(!data.contents.some(row=>row.id===this.programId))this.programId=(data.contents.find(row=>row.contentType==='training_program')||{}).id;
@@ -191,7 +191,11 @@ export default {
           this.serviceQuote = result.quote;
           this.key = requestKey();
           if (result.quote.billingSource==='feature'||snapshot.serviceId === 'ai_chat' && result.quote.billingSource === 'included') await this.runService();
-        } else { this.pendingService=null; this.busy=false; this.gate = result.decision; }
+        } else {
+          this.pendingService=null; this.busy=false;
+          if(this.data.policyVersion===20261014&&result.decision?.reason==='ENTITLEMENT_REQUIRED'&&['plan_activate','weekly_insight','deep_analysis'].includes(snapshot.serviceId))this.mvpUpgrade({plan_activate:'dynamic_plan',weekly_insight:'weekly_insight',deep_analysis:'workout_insight'}[snapshot.serviceId]);
+          else this.gate = result.decision;
+        }
       } catch (e) {
         if (this.pendingService === snapshot && snapshot.routePath === this.$route.fullPath) {
           this.pendingService=null;
@@ -270,7 +274,8 @@ export default {
               body: 'Your existing redemption is still valid. No additional Credits used.'
             };
           } else this.gate = {reason:result.reason||'CREDITS_INSUFFICIENT',credits:result.credits,creditType:result.creditType,available:result.available,message:result.message};
-        } else if (decision.reason === 'ENTITLEMENT_REQUIRED') this.gate = {
+        } else if (decision.reason === 'ENTITLEMENT_REQUIRED'&&this.data.policyVersion===20261014&&['course','world_tour','training_program'].includes(content.contentType)) this.mvpUpgrade(content.contentType,content);
+        else if (decision.reason === 'ENTITLEMENT_REQUIRED') this.gate = {
           ...decision,
           credits: 0
         };else this.error = decision.message;

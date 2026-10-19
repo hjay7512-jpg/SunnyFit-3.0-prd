@@ -4,6 +4,7 @@
       <template #back-icon><img class="v3-plan__back-icon" :src="asset('imgGroup257')" alt="" data-source-asset="true"></template>
       <template #trailing><button type="button" class="sf-icon-button sf-icon-button--compact v3-plan__more" aria-label="Plan actions" @click="actions=true"><sf-icon name="more"/></button></template>
       <section class="v3-plan__identity"><h1>{{ title }}</h1><div class="v3-plan__facts"><span><span class="v3-plan__fact-icon"><img :src="asset('img')" alt="" data-source-asset="true"></span>Weight Loss</span><span><span class="v3-plan__fact-icon"><img :src="asset('imgGroup259')" alt="" data-source-asset="true"></span>3 Stages</span><span><span class="v3-plan__fact-icon"><img :src="asset('img1')" alt="" data-source-asset="true"></span>4 Days / wk</span></div><div class="v3-plan__tags"><span v-for="tag in tags" :key="tag">{{ tag }}</span></div></section>
+      <mvp-coach-state v-if="previewMember&&['plan-preview','plan-active'].includes(previewState)" :member="previewMember" :state="previewState" @action="$emit('action',$event)"/>
       <sf-stage-card :stage-number="reference?2:1" :stage-label="isPaused?'Stage I':null" title="Awakening" :day-label="isPaused?'Paused':'Day 4'" :paused="isPaused" description="Develop simple exercise habits, starting with light aerobic exercise and flexibility training." :stages="reference?['Awakening','Lgnition','Shift']:['Awakening','Ignition','Shift']" :progress="reference?58/90*100:55" :marker-progress="reference?(isPaused?45.5/90*100:48.5/90*100):null" :detail="isPaused?'':'Current stage expected in ~12 days'" :divider="asset('imgVector70')" :marker="asset('imgEllipse202')"/>
       <sf-coach-workout-card v-if="isPaused" class="v3-plan__paused-coach" compact-copy :message="coachMessage"/>
       <section v-else class="v3-plan__forecast"><h2>Next 5 Days</h2><p class="v3-plan__hint">Tap a day to preview its training theme</p><sf-day-strip v-model="selectedDay" :days="days"/>
@@ -17,9 +18,10 @@
 import {SfPageLayout,SfStageCard,SfDayStrip,SfCoachWorkoutCard,SfIcon,SfSheet,SfMenuRow,SfButton} from '@/design-system'
 import {sceneAsset} from '@/design-system/assets/v3-scenes'
 import {planReferenceStates} from '@/design-system/assets/plan-states'
+import MvpCoachState from './MvpCoachState'
 export default {
-  name:'V3Plan',components:{SfPageLayout,SfStageCard,SfDayStrip,SfCoachWorkoutCard,SfIcon,SfSheet,SfMenuRow,SfButton},
-  props:{content:Object,courses:{type:Array,default:()=>[]},state:{type:String,default:'training',validator:value=>Object.keys(planReferenceStates).includes(value)},reference:Boolean},
+  name:'V3Plan',components:{MvpCoachState,SfPageLayout,SfStageCard,SfDayStrip,SfCoachWorkoutCard,SfIcon,SfSheet,SfMenuRow,SfButton},
+  props:{previewMember:Object,previewState:String,content:Object,courses:{type:Array,default:()=>[]},state:{type:String,default:'training',validator:value=>Object.keys(planReferenceStates).includes(value)},reference:Boolean},
   data(){return {selectedDay:this.reference?(planReferenceStates[this.state]||planReferenceStates.training).selectedDay:0,actions:false,title:'Muscles Targeted, Exercises & Tips',tags:['Beginner','Intermediate','Advanced','Knee-Friendly','Treadmill']}},
   computed:{
     // No pause/resume API exists. A paused fixture can only be shown in the workbench.

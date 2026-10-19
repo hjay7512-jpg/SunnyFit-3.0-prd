@@ -1,0 +1,12 @@
+{
+  "source": "Original authored motion illustrations for this local prototype. Not production trainer footage.",
+  "generator": "scripts/movement-demo-media.cjs",
+  "clips": [
+    "squat",
+    "curl",
+    "press",
+    "raise",
+    "arm-circles",
+    "stretch"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "engineFile": "engine.2952c23aa8981ea3.js",
+  "runtime": {
+    "package": "@mediapipe/tasks-vision",
+    "version": "0.10.35",
+    "license": "Apache-2.0",
+    "source": "https://github.com/google-ai-edge/mediapipe"
+  },
+  "model": {
+    "name": "MediaPipe Pose Landmarker Lite float16 v1",
+    "source": "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+    "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+  },
+  "processing": "On-device only; camera frames are never uploaded."
+}

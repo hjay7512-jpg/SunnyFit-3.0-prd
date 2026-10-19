@@ -9,6 +9,7 @@ import { money } from '@/api/commerce'
 import { labels, typeLabel } from '@/views/commercialization/commerce-definitions'
 import { dateTime,scopeLabel } from '@/utils/format'
 import {creditTypeLabel,creditGrantLabel} from '@/utils/entitlements'
+import {describeTraining} from '../../../config/movement-training.cjs'
 export default {
   name: 'CommerceSummary', props: { config: { type: Object, required: true }, references: { type: Object, default: () => ({}) },catalog:{type:Array,default:()=>[]} },
   computed: { rows() { return Object.entries(this.config).filter(([key]) => !['id','version','skus'].includes(key)).map(([key,value]) => ({ key, label: labels[key] || key, value: this.format(key,value) })) } },
@@ -19,6 +20,7 @@ export default {
       if (key === 'suitId') return this.references[value] || value
       if (key === 'scope') return scopeLabel(this.definition(this.config.entitlementCode),[value])
       if (key === 'members') return value.map(id => this.references[id] || id).join(', ') || '—'
+      if (key === 'training') return describeTraining(value)
       if (key === 'challengeRules') return `${dateTime(value.startsAt)} → ${dateTime(value.endsAt)} · ${value.target}`
       if (key === 'policyVersion') return value===20261014?'Current MVP definition · 2026-10-14':value
       if (key === 'credits' && typeof value === 'object') return `${value.amount} ${creditTypeLabel(value.creditType||'LEGACY_CREDIT')} · ${value.validityDays===null?'No expiry':value.validityDays+' days'}`

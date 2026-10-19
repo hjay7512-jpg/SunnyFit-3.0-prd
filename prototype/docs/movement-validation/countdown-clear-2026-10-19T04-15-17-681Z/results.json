@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "01-regular-portrait",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdrop": "none",
+      "pointerEvents": "none",
+      "text": "3",
+      "labels": 0
+    },
+    {
+      "name": "02-regular-landscape",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdrop": "none",
+      "pointerEvents": "none",
+      "text": "3",
+      "labels": 0
+    },
+    {
+      "name": "03-vision-camera-main",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdrop": "none",
+      "pointerEvents": "none",
+      "text": "3",
+      "labels": 0
+    },
+    {
+      "name": "04-vision-trainer-main",
+      "background": "rgba(0, 0, 0, 0)",
+      "backdrop": "none",
+      "pointerEvents": "none",
+      "text": "3",
+      "labels": 0
+    }
+  ],
+  "errors": []
+}
