@@ -177,7 +177,7 @@ export default {
       if (this.busy || this.serviceQuote) return;
       this.busy = true;
       this.error = '';
-      const snapshot={userId:this.userId,serviceId:this.serviceId,objectKey:this.objectKey,message:this.message,context:this.coachContext||'',routePath:this.$route.fullPath};
+      const snapshot={userId:this.userId,serviceId:this.serviceId,objectKey:this.objectKey,message:this.message,context:this.coachContext||'',rpe:this.resultRpe,routePath:this.$route.fullPath};
       this.pendingService=snapshot;
       try {
         const result = await quoteService({

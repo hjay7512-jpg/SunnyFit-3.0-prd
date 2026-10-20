@@ -2,6 +2,7 @@ import { listUsers, finishService, startService, requestKey, getAsset, access,re
 import commerceMixin from './commerceMixin';
 import mvpPreview from './mvp-preview';
 import reviewController,{reviewQueryKeys} from './review/review-controller';
+import resultFeedback from './result-feedback';
 import AppIcon from './AppIcon';
 import SourceCanvas from './SourceCanvas';
 import ConsumerScreens from './ConsumerScreens';
@@ -13,6 +14,7 @@ import V3Challenge from './V3Challenge';
 import V3ContentCollection from './V3ContentCollection';
 import V3WorldTour from './V3WorldTour';
 import V3Course from './V3Course';
+import V3WorkoutResult from './V3WorkoutResult';
 import MovementExperience from '@/features/movement/MovementExperience';
 import {profileScreens,profileTitle} from './profile-menu';
 import { pages, titles, notes } from './references';
@@ -37,9 +39,9 @@ function withoutMembershipPreview(fullPath){
 export default {
   components: {
     AppIcon,
-    SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,V3WorldTour,V3Course,MovementExperience
+    SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,V3WorldTour,V3Course,V3WorkoutResult,MovementExperience
   },
-  mixins: [commerceMixin,mvpPreview,reviewController],
+  mixins: [commerceMixin,mvpPreview,reviewController,resultFeedback],
   data() {
     return {
       users: [],
@@ -362,6 +364,7 @@ export default {
           return;
         }
         if (action === 'generate-insight') {
+          if(this.screen==='result'&&this.resultRpe===null)return;
           this.serviceId = 'deep_analysis';
           await this.reviewService();
           return;
@@ -377,7 +380,7 @@ export default {
           return;
         }
         if (action === 'coach-workout') {
-          this.coachContext = 'Workout · 40:23 · RPE 4/10';
+          this.coachContext = 'Workout · 40:23'+(this.resultRpe===null?'':' · RPE '+this.resultRpe+'/10');
           sessionStorage.setItem('sunnyfit-context-' + this.userId, this.coachContext);
           this.openedConversation = null;
           this.go('coach');
@@ -478,11 +481,11 @@ export default {
       this.error = '';
       let request;
       const quote = this.serviceQuote;
-      const snapshot = this.pendingService || {userId:this.userId,serviceId:this.serviceId,objectKey:this.objectKey,message:this.message,context:this.coachContext,routePath:this.$route.fullPath};
+      const snapshot = this.pendingService || {userId:this.userId,serviceId:this.serviceId,objectKey:this.objectKey,message:this.message,context:this.coachContext,rpe:this.resultRpe,routePath:this.$route.fullPath};
       const isCurrentPage = () => snapshot.userId === this.userId && snapshot.routePath === this.$route.fullPath;
       const serviceId = snapshot.serviceId;
       const displayMessage = snapshot.message;
-      const requestMessage = serviceId === 'deep_analysis' ? 'Analyze this workout · duration 40:23 · RPE 4/10' : (snapshot.context ? snapshot.context + '\n\n' : '') + displayMessage;
+      const requestMessage = serviceId === 'deep_analysis' ? 'Analyze this workout · duration 40:23'+(snapshot.rpe==null?'':' · RPE '+snapshot.rpe+'/10') : (snapshot.context ? snapshot.context + '\n\n' : '') + displayMessage;
       try {
         request = await startService({
           userId: snapshot.userId,

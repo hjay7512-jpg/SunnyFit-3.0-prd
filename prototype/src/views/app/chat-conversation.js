@@ -36,7 +36,6 @@ export default {
       const token=this.mvpRequestToken,origin=this.$route.path,user=this.userId
       this.mvpTimer=setTimeout(async()=>{
         if(token!==this.mvpRequestToken||this.$route.path!==origin||this.userId!==user)return
-        if(this.simulateFailure){this.$set(item,'delivery','failed');this.$set(item,'failure','network');this.setMvpPageState('default','reply');return}
         if(!this.mvpMember.unlimited&&!(this.mvpMember.percent>0)&&this.mvpChatUnitCost){const balance=this.mvpChatPurchasedCredits;if(balance<this.mvpChatUnitCost){this.$set(item,'delivery','failed');this.$set(item,'failure','allowance');this.setMvpPageState('default','reply');return}const patch={reviewAiCredits:String(balance-this.mvpChatUnitCost)};this.mvpInternalRoute=this.$router.resolve({path:this.$route.path,query:{...this.$route.query,...patch}}).route.fullPath;this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery(patch)}finally{this.mvpCheckoutApplying=false}}
         if(token!==this.mvpRequestToken||this.userId!==user)return
         this.$set(item,'body','Let’s make your next workout manageable. Tell me how much time you have, which equipment you want to use, and how you felt after your last session. We can use that to discuss a plan you can preview before activating.')

@@ -13,8 +13,8 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
   browser=await chromium.launch({channel:'msedge',headless:true});page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});page.setDefaultTimeout(10000)
   page.on('pageerror',e=>report.errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/')&&r.method()!=='GET')report.writes.push(r.method()+' '+r.url())})
   const placements=new Set()
-  for(const screen of ['course','world-tour-detail','program','plan','weekly','result','coach','challenge','membership']){
-    await open(screen);await tab('purchase','offer');await dialog().getByRole('radio').first().waitFor()
+  for(const screen of ['course','world-tour-detail','program','weekly','result','coach','challenge','membership','coach-plan']){
+    await open(screen==='coach-plan'?'coach':screen,screen==='coach-plan'?{reviewPlan:'plan-preview'}:screen==='result'?{reviewRpe:'reported'}:{});if(screen==='coach-plan')await page.getByRole('button',{name:'Activate Plan',exact:true}).click();else await tab('purchase','offer');await dialog().getByRole('radio').first().waitFor()
     const data=await state();assert.equal(data.wall.id,'sunnyfit-premium');assert.equal(data.wall.version,3);placements.add(data.wall.placementId)
     if(screen==='coach'){assert.equal(await dialog().locator('.conversation-offer h1').innerText(),data.wall.entry.title);assert.equal(data.context.resourceName,'AI Coach')}else assert.equal(await dialog().locator('.sf-premium-paywall__resource strong').innerText(),data.context.resourceName);assert.equal(await dialog().locator('[data-purchase-view=benefits]').isVisible(),screen==='membership')
     assert.equal(await dialog().locator('.sf-modal__footer .context-purchase-offers').count(),0)
@@ -32,9 +32,8 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
     assert.equal(await dialog().getByRole('button',{name:/free trial/}).count(),0);assert.equal(await dialog().getByText('30 days free',{exact:true}).count(),0)
   }
   await shot('standard-course');pass('Ineligible, unknown and expired offers safely fall back while preserving the original task and flow')
-  await tab('offer','unavailable');assert.equal(await dialog().getByRole('button',{name:'Plans unavailable',exact:true}).isDisabled(),true)
-  await dialog().getByRole('button',{name:'Try again',exact:true}).click();await dialog().getByRole('button',{name:'Continue with Premium',exact:true}).waitFor();assert.equal((await state()).context.flowId,initial.context.flowId)
-  pass('Unavailable catalog blocks payment and retry restores plans without dropping the selected resource')
+  assert.equal(await scope('offer').locator('[data-state=unavailable]').count(),0);assert.equal((await state()).context.flowId,initial.context.flowId)
+  pass('Loading-failure catalog demos are absent from the offer states')
   await dialog().getByRole('button',{name:'Restore purchases',exact:true}).click();await dialog().getByText('No active subscription was found for this account.',{exact:true}).waitFor();assert.equal((await state()).member,'free')
   pass('Restore checks existing ownership and reports no active subscription without granting demo membership')
   await dialog().getByRole('button',{name:'See what Premium includes',exact:true}).click();await dialog().getByRole('region',{name:'Before you decide'}).getByText('Is AI Coach unlimited?',{exact:true}).click();assert.match(await dialog().locator('details[open]').innerText(),/finite conversation allowance/)

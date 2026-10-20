@@ -11,22 +11,21 @@ async function layout(){assert.ok(await page.evaluate(()=>document.documentEleme
 ;(async()=>{
   fs.mkdirSync(dir,{recursive:true});browser=await chromium.launch({channel:'msedge',headless:true});page=await browser.newPage({viewport:{width:390,height:900},reducedMotion:'reduce'})
   page.on('pageerror',e=>report.errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/')&&r.method()!=='GET')report.writes.push(r.method()+' '+r.url())})
-  const matrix={course:['content-free','content-premium','loading','error','unavailable'],'world-tour':['content-free','content-premium','loading','error','empty'],program:['content-free','content-premium','empty','error'],weekly:['default','saved-insight','insight-loading','insight-error','empty','error'],coach:['default','plan-preview','plan-active','thinking','chat-error'],plan:['plan-preview','plan-active','error']}
+  const matrix={course:['content-free','content-premium','loading','unavailable'],'world-tour':['content-free','content-premium','loading','empty'],program:['content-free','content-premium','empty'],weekly:['default','saved-insight','insight-loading','empty'],coach:['default','plan-preview','plan-active','thinking'],plan:['plan-active','loading']}
   for(const width of [375,390,430]){
     await page.setViewportSize({width,height:900})
     for(const [screen,states]of Object.entries(matrix))for(const state of states){
       const member=screen==='weekly'&&state.startsWith('insight-')?'active':state==='plan-active'?'active':'free'
       await open(screen,state,member);await layout()
       if(width===390)await capture(screen+'-'+state)
-      if(state==='error'){await page.getByRole('button',{name:'Try again',exact:true}).click();await page.waitForFunction(()=>!new URLSearchParams(location.hash.split('?')[1]).get('mvpState'))}
     }
-    pass(width+'px: original six pages cover 28 loading/access/empty/AI states without horizontal overflow')
+    pass(width+'px: original six pages cover loading/access/empty/AI states without horizontal overflow')
   }
   await page.setViewportSize({width:390,height:900});
   await open('course','content-free','free',0);await page.locator('[data-action=start-course]').click();await page.getByRole('heading',{name:'Ready to train',exact:true}).waitFor();pass('Free training remains available at zero conversation allowance');
-  await open('course','content-premium','free',0);await page.locator('[data-action=start-course]').click();await page.getByRole('dialog').getByRole('radio',{name:/Monthly/}).waitFor();assert.ok(page.url().includes('/course?'));await capture('course-contextual-offer');await page.getByRole('button',{name:'Back to workout',exact:true}).click();pass('Contextual paywall presents plans without leaving the original course');
+  await open('course','content-premium','free',0);await page.locator('[data-action=start-course]').click();await page.getByRole('dialog').getByRole('radio',{name:/Monthly/}).waitFor();assert.ok(page.url().includes('/course?'));await capture('course-contextual-offer');await page.getByRole('button',{name:'Close',exact:true}).click();pass('Contextual paywall presents plans without leaving the original course');
   await open('weekly','saved-insight','expired');assert.match(await page.locator('[data-testid=weekly-ai-insight]').innerText(),/Saved AI insight/);
-  await open('weekly','insight-error','active');await page.getByRole('button',{name:'Try again',exact:true}).click();await page.locator('[data-testid=weekly-ai-insight]').waitFor();pass('Saved Insight survives expiry and Insight errors retry without hiding free stats');
+  await open('weekly','insight-loading','active');await page.locator('[data-testid=weekly-ai-insight]').waitFor();pass('Saved Insight survives expiry and loading does not hide free stats');
   await page.setViewportSize({width:1440,height:1000});await open('coach','plan-preview','free',65,'standard','1');await page.locator('.review-pages').getByRole('button',{name:'个人中心',exact:true}).click();await page.locator('.personal-center').waitFor();assert.equal(await page.locator('.review-pages [aria-current=page]').count(),1);await page.screenshot({path:path.join(dir,'original-app-review.png'),fullPage:true});pass('Original App sidebar continues to organize all page states');
   assert.deepEqual(report.errors,[]);assert.deepEqual(report.writes,[]);pass('No browser errors and no API mutations in review fixtures');report.status='passed'
 })().catch(async error=>{report.status='failed';report.error=error.stack;process.exitCode=1;if(page)await page.screenshot({path:path.join(dir,'failure.png')}).catch(()=>{})}).finally(async()=>{if(browser)await browser.close();fs.writeFileSync(path.join(dir,'results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({status:report.status,checks:report.checks.length,evidence:dir,error:report.error}))})

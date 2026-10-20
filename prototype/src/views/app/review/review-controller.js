@@ -1,14 +1,14 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit']
+export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit','reviewRpe','reviewRpeValue','reviewResultPanel']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
-    reviewPageState(){return pick(this.$route.query,'reviewPage',['loading','error','unavailable','empty'],['default','loading','error','unavailable','empty'])},
+    reviewPageState(){return pick(this.$route.query,'reviewPage',['loading','unavailable','empty'],['default','loading','unavailable','empty'])},
     mvpContentState(){return pick(this.$route.query,'reviewContent',['content-free','content-premium'],['default','content-free','content-premium'])},
-    mvpInsightState(){return pick(this.$route.query,'reviewInsight',['saved-insight','insight-loading','insight-error'],['default','locked','ready','saved-insight','insight-loading','insight-error'])},
-    mvpReplyState(){return pick(this.$route.query,'reviewReply',['thinking','chat-error'],['default','thinking','chat-error'])},
-    mvpPlanState(){return pick(this.$route.query,'reviewPlan',['plan-preview','plan-active'],['default','plan-preview','plan-active'])},
+    mvpInsightState(){return pick(this.$route.query,'reviewInsight',['saved-insight','insight-loading'],['default','locked','ready','saved-insight','insight-loading'])},
+    mvpReplyState(){return pick(this.$route.query,'reviewReply',['thinking'],['default','thinking'])},
+    mvpPlanState(){if(this.screen==='plan')return 'plan-active';return pick(this.$route.query,'reviewPlan',['plan-preview','plan-active'],['default','plan-preview','plan-active'])},
     mvpEventState(){return pick(this.$route.query,'reviewEvent',['upcoming','joined','ended'],['default','upcoming','joined','ended'])},
     reviewDocument(){return reviewModel(this)}
   },
@@ -58,16 +58,19 @@ export default {
         if(field){const patch={reviewFixture:'1',membershipState:'active',reviewMode:this.$refs.movement?.mode||'regular',reviewScene:this.movementView.stage||'prepare',[field]:value};if(scope==='page'&&value==='setup')patch.reviewMode='vision';if(scope==='training-mode'&&value==='regular'&&patch.reviewScene==='setup')patch.reviewScene='training';await this.replaceReviewQuery(patch);this.restoreReviewMovement();return}
       }
       let patch={reviewFixture:'1',membershipState:this.$route.query.membershipState||'free',chatRemaining:this.$route.query.chatRemaining||'65',mvpState:undefined}
-      if(scope==='page'){
+      if(scope==='rpe'){patch.reviewRpe=value;patch.reviewRpeValue=value==='reported'?'4':undefined;patch.reviewInsight=undefined}
+      else if(scope==='result-panel')patch.reviewResultPanel=value
+      else if(scope==='page'){
         if(['profile','membership','plans'].includes(this.screen))patch.membershipState=value
-        else if(this.screen==='plan'&&['plan-preview','plan-active'].includes(value)){patch.reviewPlan=value;patch.reviewPage=undefined}
+        else if(this.screen==='plan'&&value==='plan-active'){patch.reviewPlan=value;patch.reviewPage=undefined}
         else patch.reviewPage=value==='default'?undefined:value
       }else{
         const keys={content:'reviewContent',insight:'reviewInsight',reply:'reviewReply',plan:'reviewPlan',event:'reviewEvent',workouts:'reviewWorkouts','program-panel':'reviewProgramPanel',cycle:'membershipCycle'}
         if(keys[scope])patch[keys[scope]]=value
         if(scope==='access')patch.membershipState=value==='unlocked'?'active':'free'
         if(scope==='coach-membership')patch.membershipState=value
-        if(scope==='insight'&&['ready','insight-loading','insight-error'].includes(value))patch.membershipState='active'
+        if(scope==='insight'&&['ready','insight-loading'].includes(value))patch.membershipState='active'
+        if(this.screen==='result'&&scope==='insight')patch.reviewRpe='reported'
         if(scope==='insight'&&value==='locked')patch.membershipState='free'
         if(scope==='quota'){patch.reviewQuota=value==='unknown'?'unknown':undefined;patch.reviewAiCredits=undefined;patch.reviewAiCreditsTotal=undefined;patch.chatRemaining=value==='low20'?'20':value==='low5'?'5':['low','low10'].includes(value)?'10':value==='empty'?'0':['campaign','ended'].includes(value)?this.$route.query.chatRemaining||'65':'65';patch.allowanceMode=value==='campaign'?'campaign':value==='ended'?'ended':'standard'}
         if(scope==='reply'&&value!=='default'&&!this.message)this.setMessage('Help me plan a 20-minute workout.')
@@ -80,7 +83,7 @@ export default {
     },
     restoreReviewPaywall(){
       const variant=this.$route.query.reviewOffer,key=this.$route.path
-      if(!this.reviewMode||!this.data||this.loading||this.reviewWallKey===key)return
+      if(!this.reviewMode||!this.data||this.loading||this.screen==='plan'||this.screen==='result'&&this.resultRpe===null||this.reviewWallKey===key)return
       this.reviewWallKey=key;if(variant||this.$route.query.reviewPurchaseView)this.previewReviewPurchase('offer')
     },
     restoreReviewMovement(){
@@ -108,7 +111,8 @@ export default {
       if(Object.keys(patch).length)this.replaceReviewQuery(patch)
     },
     previewReviewPurchase(stage){
-      const kinds={course:'course',program:'training_program','world-tour':'world_tour','world-tour-detail':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',plan:'dynamic_plan',challenge:'limited_challenge','movement-training':'movement'}
+      if(this.screen==='plan'||this.screen==='result'&&this.resultRpe===null)return
+      const kinds={course:'course',program:'training_program','world-tour':'world_tour','world-tour-detail':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',challenge:'limited_challenge','movement-training':'movement'}
       const kind=kinds[this.screen]||'membership',content=kind==='training_program'?this.selectedProgram:kind==='movement'?this.movementContent:kind==='world_tour'?this.selectedWorldTour:kind==='limited_challenge'?this.challengeContents[0]:this.selectedContent
       this.mvpUpgrade(kind,content)
       if(this.mvpGate){const wall=this.mvpWall;this.mvpGate={...this.mvpGate,stage,offer:this.mvpGate.kind==='credits'?this.mvpCreditOffers[0]:wall.offers.find(item=>item.offerId===wall.defaultOfferId)};this.mvpPurchaseOutcome='success'}
