@@ -1,6 +1,6 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit']
+export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
@@ -38,10 +38,12 @@ export default {
         return
       }
       if(scope==='purchase'){
-        const flow=this.mvpGate;this.mvpRequestToken++;this.mvpCheckoutToken++;clearTimeout(this.mvpTimer)
+        let flow=this.mvpGate;this.mvpRequestToken++;this.mvpCheckoutToken++;clearTimeout(this.mvpTimer)
         if(value==='closed'){this.cancelMvpPurchase();this.mvpPendingPurchase=null;return}
+        if(!flow){this.previewReviewPurchase('offer');flow=this.mvpGate}
+        if(value==='success'&&flow?.kind==='credits'){this.mvpGate={...flow,stage:'offer'};this.mvpPurchaseOutcome='success';await this.purchaseMvpCredits(flow.offer||this.mvpCreditOffers[0]);return}
         if(value==='success'){this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery({membershipState:'active',chatRemaining:'100'})}finally{this.mvpCheckoutApplying=false}}
-        if(flow){const wall=this.mvpWall;this.mvpGate={...flow,stage:value,offer:flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId)}}else this.previewReviewPurchase(value)
+        if(flow){const wall=this.mvpWall;this.mvpGate={...flow,stage:value,offer:flow.offer||(flow.kind==='credits'?this.mvpCreditOffers[0]:wall.offers.find(item=>item.offerId===wall.defaultOfferId))}}else this.previewReviewPurchase(value)
         this.mvpPurchaseOutcome='success';if(value==='pending')this.mvpPendingPurchase=this.mvpGate
         return
       }
@@ -67,7 +69,7 @@ export default {
         if(scope==='coach-membership')patch.membershipState=value
         if(scope==='insight'&&['ready','insight-loading','insight-error'].includes(value))patch.membershipState='active'
         if(scope==='insight'&&value==='locked')patch.membershipState='free'
-        if(scope==='quota'){patch.reviewQuota=value==='unknown'?'unknown':undefined;patch.chatRemaining=value==='low'?'10':value==='empty'?'0':['campaign','ended'].includes(value)?this.$route.query.chatRemaining||'65':'65';patch.allowanceMode=value==='campaign'?'campaign':value==='ended'?'ended':'standard'}
+        if(scope==='quota'){patch.reviewQuota=value==='unknown'?'unknown':undefined;patch.reviewAiCredits=undefined;patch.reviewAiCreditsTotal=undefined;patch.chatRemaining=value==='low20'?'20':value==='low5'?'5':['low','low10'].includes(value)?'10':value==='empty'?'0':['campaign','ended'].includes(value)?this.$route.query.chatRemaining||'65':'65';patch.allowanceMode=value==='campaign'?'campaign':value==='ended'?'ended':'standard'}
         if(scope==='reply'&&value!=='default'&&!this.message)this.setMessage('Help me plan a 20-minute workout.')
       }
       await this.replaceReviewQuery(patch)
@@ -109,9 +111,9 @@ export default {
       const kinds={course:'course',program:'training_program','world-tour':'world_tour','world-tour-detail':'world_tour',weekly:'weekly_insight',result:'workout_insight',coach:'ai_allowance',plan:'dynamic_plan',challenge:'limited_challenge','movement-training':'movement'}
       const kind=kinds[this.screen]||'membership',content=kind==='training_program'?this.selectedProgram:kind==='movement'?this.movementContent:kind==='world_tour'?this.selectedWorldTour:kind==='limited_challenge'?this.challengeContents[0]:this.selectedContent
       this.mvpUpgrade(kind,content)
-      if(this.mvpGate){const wall=this.mvpWall;this.mvpGate={...this.mvpGate,stage,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId)};this.mvpPurchaseOutcome='success'}
+      if(this.mvpGate){const wall=this.mvpWall;this.mvpGate={...this.mvpGate,stage,offer:this.mvpGate.kind==='credits'?this.mvpCreditOffers[0]:wall.offers.find(item=>item.offerId===wall.defaultOfferId)};this.mvpPurchaseOutcome='success'}
     },
-    reviewDocumentAction(action){if(action==='purchase')this.previewReviewPurchase('offer');if(action==='movement-run')this.movementReview={...this.movementReview,pinned:false};if(action.startsWith('simulate-'))this.$refs.movement?.simulate(action.slice(9))},
+    reviewDocumentAction(action){if(action==='chat-send-example'){if(!this.message)this.setMessage('Can you help me plan my next workout?');this.handleAction('send');return}if(action==='purchase')this.previewReviewPurchase('offer');if(action==='movement-run')this.movementReview={...this.movementReview,pinned:false};if(action.startsWith('simulate-'))this.$refs.movement?.simulate(action.slice(9))},
     openReviewPreview(){this.go(this.screen,{review:'0',...(this.screen==='movement-training'?{reviewScene:undefined,reviewMode:undefined,reviewCamera:undefined}: {})})}
   }
 }

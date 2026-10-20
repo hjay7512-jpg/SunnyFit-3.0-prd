@@ -43,15 +43,15 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
   assert.equal(new Set(events.filter(e=>e.type==='paywall_view').map(e=>[e.flowId,e.eligibilityReason,e.offerId].join('|'))).size,events.filter(e=>e.type==='paywall_view').length)
   assert.equal(events.findLast(e=>e.type==='paywall_dismissed').billingPeriod,'annual');assert.match(await scope('paywall-events').innerText(),/关闭付费墙/)
   pass('Exposure is deduplicated; selections, expansion, restore and dismissal retain the same funnel attribution in the review document')
-  await open('coach');await page.locator('textarea').fill('Private saved training question');await page.getByRole('button',{name:'See Premium options',exact:true}).click();const draftFlow=(await state()).context.flowId
+  await open('coach');await page.locator('textarea').fill('Private saved training question');await page.getByRole('button',{name:'Send message',exact:true}).click();await page.getByRole('button',{name:'Upgrade to send',exact:true}).click();const draftFlow=(await state()).context.flowId
   assert.equal(await dialog().getByText('Message saved',{exact:true}).count(),1);await tab('offer','trial');assert.equal((await state()).context.flowId,draftFlow)
   await dialog().getByRole('button',{name:'Start 30-day free trial',exact:true}).click();await page.getByRole('dialog',{name:'You’re ready to continue',exact:true}).waitFor()
-  assert.equal(await page.locator('.actual-conversation .user-bubble').count(),0);assert.equal(await page.locator('textarea').inputValue(),'Private saved training question')
+  assert.equal(await page.locator('.coach-turn[data-delivery=failed]').count(),1);assert.equal(await page.locator('.actual-conversation .user-bubble').innerText(),'Private saved training question')
   const success=await state();assert.equal(success.offer.trialDays,30);assert.equal(success.member,'active');assert.equal(JSON.stringify(success.events).includes('Private saved'),false)
-  await dialog().getByRole('button',{name:'Send saved message',exact:true}).click();await page.locator('.actual-conversation .user-bubble').waitFor()
+  await dialog().getByRole('button',{name:'Resend message',exact:true}).click();await page.locator('.actual-conversation .user-bubble').waitFor()
   assert.ok((await state()).events.some(e=>e.type==='paywall_continue'));pass('Trial success keeps the draft private and waits for explicit continuation before sending it')
-  await open('coach',{membershipState:'active'});await page.locator('textarea').fill('Keep my message');await page.getByRole('button',{name:'View allowance',exact:true}).click();assert.equal(await dialog().getByRole('radio').count(),0)
-  pass('Existing Premium with empty chat allowance receives a usage explanation rather than another subscription wall')
+  await open('coach',{membershipState:'active'});await page.locator('textarea').fill('Keep my message');await page.getByRole('button',{name:'Send message',exact:true}).click();await page.getByRole('button',{name:'Add credits to send',exact:true}).click();assert.equal(await dialog().getByRole('radio').count(),0)
+  pass('Existing Premium with empty chat allowance receives a one-time AI credit pack rather than another subscription wall')
   for(const [width,height] of [[320,640],[375,667],[390,844],[430,932]]){
     await page.setViewportSize({width,height});await open('course',{review:'0'});await page.locator('[data-action=start-course]').click();await dialog().getByRole('radio').first().waitFor()
     await dialog().locator('.sf-modal__body').evaluate(e=>e.scrollTop=e.scrollHeight)

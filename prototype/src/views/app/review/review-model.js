@@ -11,7 +11,7 @@ const offerStates=[state('standard','常规订阅','没有适用试用活动时�
 const eventLabels={paywall_view:'付费引导曝光',paywall_offer_selected:'选择方案',paywall_details_view:'进入权益说明',paywall_quick_return:'返回快速订阅',paywall_benefit_explored:'了解具体权益',paywall_purchase_started:'发起购买',paywall_purchase_result:'购买结果',paywall_dismissed:'关闭付费墙',paywall_continue:'继续原任务',paywall_restore_started:'恢复购买',paywall_restore_result:'恢复结果'}
 function wallSections(vm,items){
   if(!items.some(item=>item.id==='purchase'))return items
-  if(['usage','unknown'].includes(vm.mvpGate?.kind))return items
+  if(['usage','unknown','credits'].includes(vm.mvpGate?.kind)||vm.screen==='coach'&&vm.mvpMember.active)return items
   const wall=vm.mvpWall,flow=vm.mvpGate,events=(vm.paywallEvents||[]).slice(-5).reverse()
   const offer={id:'offer',title:'活动与试用匹配',states:offerStates,active:vm.$route.query.reviewOffer||'standard',disabled:!!vm.mvpPendingPurchase||['processing','restoring'].includes(flow?.stage)}
   offer.description=offerStates.find(item=>item.id===offer.active)?.description||offerStates[0].description
@@ -29,7 +29,7 @@ function wallSections(vm,items){
 const accessStates=[state('locked','未解锁','浏览详情开放；执行 Start / Join / Activate 时才检查权限，并保留原任务用于订阅后返回。'),state('unlocked','已解锁','当前功能权限通过，可执行对应操作；开始训练或激活计划不消耗对话额度。')]
 const sections={
   quota:{id:'quota',title:'AI Coach 用量',states:quotaStates},
-  'coach-membership':{id:'coach-membership',title:'账户与额度承接',states:[state('free','免费用户','免费额度用尽后，在输入框上方显示一处简短提醒；点击 See Premium options 或输入区继续按钮，打开承接当前草稿的快速订阅页。'),state('active','会员有效','额度用尽只打开用量说明，不要求重复订阅；有服务端刷新日期才展示日期，未知时不承诺时间。训练权益保持可用。'),state('canceled','已关续订','有效期内与会员有效状态一致；用量与续订开关分别判断，不因关闭续订要求再次付费。'),state('expired','会员到期','草稿及历史对话保留；额度用尽时引导续订，付款成功后明确点击继续才发送原消息。')]},
+  'coach-membership':{id:'coach-membership',title:'付费承接',states:[state('free','免费用户','低额度提醒可了解 Premium；额度用尽后的失败消息提供 Upgrade to send。订阅成功后，由用户点击 Resend message 重发原消息。'),state('active','会员有效','低额度提醒和失败消息提供 Add credits，进入一次性 AI Coach 额度包。加购不变更会员状态、不重置订阅额度；付款后由用户确认重发原消息。'),state('canceled','已关续订','会员有效期内保留权益；额度不足时仍按一次性加购承接，不要求重开订阅。'),state('expired','会员到期','历史对话保留。额度用尽后的失败消息引导续订，成功后由用户确认重发，不重复追加同一条消息。')]},
   purchase:{id:'purchase',title:'Premium 付费墙',states:purchaseStates},
   access:{id:'access',title:'功能权限与开始操作',states:accessStates},
   'content-offer':{id:'content-offer',title:'详情页底部 CTA',states:[state('standard','常规引导','未解锁 Premium 内容显示 Unlock with Premium，文案读取统一配置；点击后承接当前内容进入快速订阅。Free 内容或已获授权的内容保留 Start / Select Program。'),state('trial','可用试用','只有活动及资格均确认有效时，底部按钮才显示 Start 30-day free trial；进入付费墙后匹配同一试用方案和价格。切换此状态只更新页面，不自动打开弹层。'),state('ineligible','无试用资格','不符合活动资格时回落到常规付费引导，不显示免费试用承诺。'),state('unknown','资格未知','资格尚未确认时显示常规付费引导。'),state('expired','活动已失效','过期活动不再用于底部 CTA，点击时按当前有效报价处理。')]},
@@ -57,7 +57,7 @@ const catalog={
   weekly:{title:'每周报告',states:[normal,state('empty','训练不足','训练不足以生成完整周报时展示空态。'),loading,error],description:['周统计与固定分析免费；AI 个性化洞察作为独立组件展示。'],sections:[{id:'stats',title:'基础数据与分享',description:['图表、训练统计及固定模板对所有账户开放。Share your week 仅导出免费基础数据。']},'insight','purchase']},
   result:{title:'运动结果',description:['基础指标、图表与训练信息始终可读，洞察组件独立变化。'],sections:[{id:'results',title:'训练数据',description:['保留已有结果结构；展示完成训练的数据，不由权限或洞察状态替换。']},'insight','purchase']},
   challenge:{title:'限时挑战',states:[normal,empty,loading,error],description:['保留原有分类与活动列表，报名时段和报名结果挂在挑战组件下。'],sections:['event','access','purchase']},
-  coach:{title:'AI Coach',description:['对话区专注聊天；额度只在输入框上方提示一处，按免费用户、有效会员、查询失败分别承接。','低额度不阻断发送；额度用尽保留可编辑草稿，点击继续才打开引导。订阅页提供直接购买与了解完整权益两条路径，付款后不自动发送。'],sections:['reply','quota','coach-membership','plan','purchase']},
+  coach:{title:'AI Coach',description:['页面专注对话，输入区与顶栏均不常驻展示额度；仅在发送新消息时核对余额。','低额度提示跟随触发它的消息；余额为 0 时先显示未发送消息，再由用户选择升级或加购。购买后重发原消息，不自动发送，也不重复创建一条。'],sections:['reply','quota','coach-membership','plan','purchase']},
   plan:{title:'Dynamic Plan',states:[state('plan-preview','待激活计划','展示五日预览与计划建议，Activate 时检查 Premium。'),state('plan-active','已激活计划','展示当前已激活计划及训练入口，激活已有计划不消耗对话额度。'),loading,error],sections:['access',{id:'plan-actions',title:'计划操作',description:['GO 打开对应课程；More 中的 Adjust today 返回 AI Coach 讨论计划。']},'purchase']},
   profile:{title:'个人中心',states:memberStates,sections:[{id:'member-entry',title:'会员与用量入口',description:['同一张卡展示会员有效状态、有效期和对话剩余额度；点击进入 Membership & Usage。']},'quota',{id:'profile-menu',title:'原有功能分组',description:['设备、健康、订单、设置和帮助保留原入口，Rewards / Badges 与 Credits 分开。']}]},
   membership:{title:'会员与用量',states:memberStates,sections:['quota','cycle','purchase',{id:'benefits',title:'会员权益',description:['Free 和单一 Premium 分开展示。课程、计划等功能权限不等于无限对话量。']}]},
@@ -100,6 +100,8 @@ export function reviewModel(vm){
   const unavailable=['loading','error','unavailable','empty'].includes(active)
   const items=(config.sections||[]).filter(item=>item!=='cycle'||vm.mvpMember.active).map(item=>{
     let section=typeof item==='string'?sections[item]:item
+    if(screen==='coach'&&section.id==='quota')section={...section,title:'发送时的额度检查',states:[state('available','额度充足','发送正常进行，不显示额度或付费提醒。'),state('low20','20%','发送新消息时首次达到 20% 或以下，在该消息下方轻提示；同一阈值不重复提醒。'),state('low10','10%','首次达到 10% 或以下时，在对应新消息下方提醒一次，回复照常进行。'),state('low5','5%','首次达到 5% 或以下时提醒一次；跨过多个阈值只提示当前最相关的一档。'),state('empty','额度为 0','点击发送后，原文出现在消息流并标记未发送，不生成 AI 回复；免费用户升级，会员单购额度。'),state('unknown','额度未知','点击发送后显示无法核对额度，可重试；不把查询失败当作用尽，不引导付款。'),state('campaign','活动无限量','活动期内正常发送，不显示额度提醒。'),state('ended','活动结束','发送时按当前剩余有限额度检查，不常驻展示活动或额度。')],actions:[{id:'chat-send-example',label:'发送示例消息'}]}
+    if(screen==='coach'&&section.id==='purchase'&&(vm.mvpMember.active||vm.mvpGate?.kind==='credits'))section={...section,title:'一次性额度加购',states:purchaseStates.filter(s=>s.id!=='restoring').map(s=>s.id==='offer'?state('offer','额度包','仅展示当前在售 AI Coach 额度包及一次性价格；不推荐重复订阅。'):s.id==='success'?state('success','加购成功','新增自购额度，与订阅余额分开。用户确认后重发失败消息；重复确认同一笔结果不会重复到账。'):s)}
     if(section.id==='access')section={...section,title:{course:'Start 与课程访问',program:'Program 开始与授权','world-tour':'路线 Start',coach:'计划激活权限',plan:'计划激活权限',challenge:'Join 与参与资格',movement:'训练访问权限'}[screen]||section.title}
     if(section.id==='purchase'&&vm.mvpGate){
       const extra={refreshing:state('refreshing','刷新用量','正在核对当前用量，保留草稿，不发起新的付款。'),'access-error':state('access-error','内容不可用','会员已生效，但原内容暂不可用；保留会员并返回原页检查。'),'event-closed':state('event-closed','报名已结束','订阅后重新检查活动时段，已结束的挑战不自动报名。')}
@@ -110,6 +112,7 @@ export function reviewModel(vm){
     let value={quota:quotaActive(vm.mvpMember),'coach-membership':vm.mvpMember.state,cycle:q.membershipCycle||'monthly',content:vm.mvpContentState==='default'?'all':vm.mvpContentState,access:vm.mvpMember.active?'unlocked':'locked',insight:vm.mvpInsightState==='default'?(vm.mvpMember.active?'ready':'locked'):vm.mvpInsightState,reply:vm.mvpReplyState,plan:vm.mvpPlanState,event:vm.mvpEventState,workouts:q.reviewWorkouts||'default',purchase:vm.mvpGate?.stage||'closed','content-offer':q.reviewContentOffer||q.reviewOffer||'standard','program-panel':q.reviewProgramPanel||'details'}[section.id]
     if(section.id==='content'&&value==='all'&&['course','program','world-tour-detail'].includes(screen))value=(vm.data?(screen==='course'?vm.selectedContent:screen==='world-tour-detail'?vm.selectedWorldTour:vm.selectedProgram):null)?.tier==='free'?'content-free':'content-premium'
     let choice=section.states?.find(option=>option.id===value)||section.states?.[0]
+    if(screen==='coach'&&section.id==='quota'){value=vm.mvpMember.unlimited?'campaign':vm.mvpMember.percent===null?'unknown':vm.mvpMember.campaignEnded?'ended':vm.mvpMember.percent===0?'empty':vm.mvpMember.percent<=5?'low5':vm.mvpMember.percent<=10?'low10':vm.mvpMember.percent<=20?'low20':'available';choice=section.states.find(s=>s.id===value)}
     if(section.id==='quota'&&typeof vm.mvpMember.percent==='number'&&['available','low'].includes(choice?.id))choice={...choice,description:choice.description.map(line=>line.replace(choice.id==='low'?'10%':'65%',vm.mvpMember.percent+'%'))}
     return {...section,active:choice?.id,description:choice?.description||section.description||[],disabled:unavailable}
   })

@@ -515,6 +515,7 @@ export default {
               ...saved,
               message: displayMessage,
               credits: request.credits,
+              quotaReminder: this.chatReminderFor(this.mvpMember),
               type: 'conversation'
             });
             if (this.message === displayMessage) this.message = '';

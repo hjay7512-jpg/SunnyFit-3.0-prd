@@ -1,6 +1,7 @@
 <template>
   <div class="context-subscription">
-    <sf-paywall v-if="showWall" :open="!!gate" :wall="wall" :draft="gate.context.draft" :selected-id="selectedId" :view="gate.view||'quick'" :benefit-id="gate.benefitTab" :positions="readingPositions" :processing="processing" :processing-label="gate.stage==='restoring'?'Restoring purchases…':'Confirming purchase…'" :disclosure="disclosure" :feedback="gate.feedback" :terms-url="resources.terms" :privacy-url="resources.privacy" @close="$emit('close',selectedOffer)" @select="selectOffer" @purchase="$emit('purchase',$event)" @restore="$emit('restore')" @reload="$emit('reload')" @view="$emit('view',{view:$event,offer:selectedOffer})" @benefit="$emit('benefit',$event)" @position="saveReading"/>
+    <coach-credits-purchase v-if="gate&&gate.kind==='credits'" :gate="gate" :offers="creditOffers" @close="$emit('close')" @select="$emit('select',$event)" @purchase="$emit('purchase',$event)" @resume="$emit('resume')" @retry="$emit('retry')" @check="$emit('check')"/>
+    <sf-paywall v-else-if="showWall" :open="!!gate" :wall="wall" :draft="gate.context.draft" :selected-id="selectedId" :view="gate.view||'quick'" :benefit-id="gate.benefitTab" :positions="readingPositions" :processing="processing" :processing-label="gate.stage==='restoring'?'Restoring purchases…':'Confirming purchase…'" :disclosure="disclosure" :feedback="gate.feedback" :terms-url="resources.terms" :privacy-url="resources.privacy" @close="$emit('close',selectedOffer)" @select="selectOffer" @purchase="$emit('purchase',$event)" @restore="$emit('restore')" @reload="$emit('reload')" @view="$emit('view',{view:$event,offer:selectedOffer})" @benefit="$emit('benefit',$event)" @position="saveReading"/>
     <coach-allowance-sheet v-else-if="gate&&['usage','unknown'].includes(gate.kind)&&['offer','refreshing'].includes(gate.stage)" :member="member" :unknown="gate.kind==='unknown'" :busy="processing" :draft="gate.context.draft" @close="$emit('close')" @refresh="$emit('refresh')" @usage="$emit('usage')"/>
     <sf-sheet v-else class="paywall-receipt" :open="!!gate" contained :resizable="false" :title="heading" :busy="processing" @input="$emit('close')">
       <template v-if="gate">
@@ -28,8 +29,9 @@ import {SfSheet,SfButton,SfIcon,SfPaywall} from '@/design-system'
 import {wallDisclosure} from './subscription-wall.cjs'
 import {profileResources} from './profile-menu'
 import CoachAllowanceSheet from './CoachAllowanceSheet'
+import CoachCreditsPurchase from './CoachCreditsPurchase'
 export default {
-  components:{CoachAllowanceSheet,SfSheet,SfButton,SfIcon,SfPaywall},props:{gate:Object,member:Object,wall:Object},data(){return{readingPositions:{quick:0,benefits:0},resources:profileResources}},
+  components:{CoachCreditsPurchase,CoachAllowanceSheet,SfSheet,SfButton,SfIcon,SfPaywall},props:{creditOffers:Array,gate:Object,member:Object,wall:Object},data(){return{readingPositions:{quick:0,benefits:0},resources:profileResources}},
   computed:{
     showWall(){return this.gate&&this.wall&&this.gate.kind==='membership'&&['offer','processing','restoring'].includes(this.gate.stage)},
     processing(){return ['processing','refreshing','restoring'].includes(this.gate?.stage)},
