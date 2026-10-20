@@ -13,7 +13,7 @@
     </button>
     <section class="profile-existing-menu" data-node-id="249:2148">
       <sf-menu-row icon="heart-pulse" label="Devices &amp; Health" description="My Equipment · Health App" @click="$emit('go','devices')" />
-      <sf-menu-row data-node-id="249:2154" icon="receipt-text" label="My Orders" description="Purchases &amp; subscription history" @click="$emit('go','billing',{parent:'profile'})" />
+      <sf-menu-row data-node-id="249:2154" icon="receipt-text" label="My Orders" description="Subscriptions · Exchanges · Content" @click="$emit('go','billing',{parent:'profile'})" />
       <sf-menu-row icon="users-round" label="Community &amp; Privacy" description="Snaps · Ranking · Privacy" @click="$emit('go','community')" />
       <sf-menu-row icon="settings" label="Settings" description="Account · Preferences · Legal" @click="$emit('go','settings')" />
       <sf-menu-row icon="circle-question-mark" label="Help &amp; Support" description="Guide · FAQs · Contact" @click="$emit('go','support')" />

@@ -44,6 +44,7 @@ export default {
         if(!this.mvpMember.unlimited&&!(this.mvpMember.percent>0)&&this.mvpChatUnitCost){const balance=this.mvpChatPurchasedCredits;if(balance<this.mvpChatUnitCost){this.$set(item,'delivery','failed');this.$set(item,'failure','allowance');this.setMvpPageState('default','reply');return}const patch={reviewAiCredits:String(balance-this.mvpChatUnitCost)};this.mvpInternalRoute=this.$router.resolve({path:this.$route.path,query:{...this.$route.query,...patch}}).route.fullPath;this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery(patch)}finally{this.mvpCheckoutApplying=false}}
         if(token!==this.mvpRequestToken||this.userId!==user)return
         this.$set(item,'body',item.planRequest?'Here’s your training direction. Review the stages below; you can discuss changes before activating your plan.':'Let’s make your next workout manageable. Tell me how much time you have, which equipment you want to use, and how you felt after your last session. We can use that to discuss a plan you can preview before activating.')
+        if(item.planRequest)this.$set(item,'planSnapshot',this.rememberGeneratedPlan(item))
         this.$set(item,'delivery','sent')
         if(item.planRequest){const patch={reviewReply:undefined,reviewPlan:'plan-preview',mvpState:undefined,planSetup:undefined};this.mvpInternalRoute=this.$router.resolve({path:this.$route.path,query:{...this.$route.query,...patch}}).route.fullPath;await this.replaceReviewQuery(patch)}else this.setMvpPageState('default','reply')
       },700)

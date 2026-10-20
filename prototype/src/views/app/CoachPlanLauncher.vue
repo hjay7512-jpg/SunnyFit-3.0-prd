@@ -1,6 +1,6 @@
 <template>
   <div class="coach-plan-tool">
-    <button type="button" class="coach-plan-tool__entry" :disabled="busy" @click="launch"><sf-icon name="calendar" :size="15"/>Dynamic Plan</button>
+    <button v-if="!noEntry" type="button" class="coach-plan-tool__entry" :disabled="busy" @click="launch"><sf-icon name="calendar" :size="15"/>Dynamic Plan</button>
     <sf-sheet v-model="open" title="Create your Dynamic Plan" contained :resizable="false">
       <div class="coach-plan-form">
         <fieldset><legend>Your goal</legend><div class="coach-plan-form__goals"><button v-for="option in goals" :key="option.value" type="button" :aria-pressed="goal===option.value?'true':'false'" @click="goal=option.value">{{ option.label }}</button></div></fieldset>
@@ -14,7 +14,7 @@
 <script>
 import {SfIcon,SfSheet,SfButton} from '@/design-system'
 export default {
-  components:{SfIcon,SfSheet,SfButton},props:{state:String,busy:Boolean},
+  components:{SfIcon,SfSheet,SfButton},props:{state:String,busy:Boolean,noEntry:Boolean},
   data(){return {open:false,goal:'fitness',days:4,minutes:30,goals:[{value:'fitness',label:'Build a habit'},{value:'weight-loss',label:'Weight loss'},{value:'strength',label:'Get stronger'}]}},
   methods:{launch(){if(this.state==='plan-active')this.$emit('action','plan');else if(this.state==='plan-preview')this.$emit('review');else this.open=true},generate(){this.open=false;this.$emit('generate',{goal:this.goal,days:this.days,minutes:this.minutes})},openSetup(){this.open=true}}
 }

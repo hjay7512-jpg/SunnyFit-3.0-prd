@@ -3,6 +3,8 @@ import commerceMixin from './commerceMixin';
 import mvpPreview from './mvp-preview';
 import reviewController,{reviewQueryKeys} from './review/review-controller';
 import resultFeedback from './result-feedback';
+import dynamicPlanState from './dynamic-plan-state';
+import orderCenterState from './order-center-state';
 import AppIcon from './AppIcon';
 import SourceCanvas from './SourceCanvas';
 import ConsumerScreens from './ConsumerScreens';
@@ -41,7 +43,7 @@ export default {
     AppIcon,
     SourceCanvas, ConsumerScreens, MembershipUsage, PersonalCenter, ProfileSecondary,V3WeeklyReport,V3Challenge,V3ContentCollection,V3WorldTour,V3Course,V3WorkoutResult,MovementExperience
   },
-  mixins: [commerceMixin,mvpPreview,reviewController,resultFeedback],
+  mixins: [commerceMixin,mvpPreview,reviewController,resultFeedback,dynamicPlanState,orderCenterState],
   data() {
     return {
       users: [],

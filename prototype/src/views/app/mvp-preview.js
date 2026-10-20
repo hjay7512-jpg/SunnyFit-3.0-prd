@@ -138,6 +138,7 @@ export default {
       const weekly=this.data.weeklyReport
       const intent={key:++this.mvpFlowSequence,flowId:requestKey(),placementId:item.placementId,entitlementCode:item.entitlementCode,scope:item.scope,userId:this.userId,kind,action:item.action,originScreen:this.screen,originPath:this.$route.path,originQuery:{...this.$route.query},originState:this.mvpPageState,resourceId:content?.id||(kind==='weekly_insight'?weekly?.id:this.$route.query.planId||'preview-dynamic-plan'),resourceName:content?.name||(kind==='weekly_insight'?'Week of '+weekly?.weekStart:'Your saved Dynamic Plan'),label:item.label,detail:kind==='training_program'?(content?.membersPreview?.length||0)+' workouts':content?.durationMinutes?content.durationMinutes+' min':undefined,programId:this.$route.query.fromProgram,stepId:kind==='training_program'?this.programWorkout?.id:undefined,draft:kind==='ai_allowance'?(options.draft===undefined?this.message:options.draft):undefined,messageId:options.messageId,continueLabel:item.continueLabel,cancelLabel:item.cancelLabel,success:item.success}
       if(kind==='limited_challenge'){intent.startsAt=content.challengeRules?.startsAt;intent.endsAt=content.challengeRules?.endsAt;intent.detail='Registration ends '+membershipDate(intent.endsAt)}
+      if(kind==='dynamic_plan'){const plan=options.planId?this.findDynamicPlan(options.planId):this.currentDynamicPlan;if(!plan)return;intent.resourceId=plan.id;intent.planId=plan.id;intent.resourceName=plan.title;intent.detail=plan.days+' days / week · '+plan.minutes+' min / session'}
       if(kind==='workout_insight'){intent.resourceId=this.objectKey;intent.resourceName='Your completed workout';intent.detail='40 min'+(this.resultRpe===null?'':' · Perceived effort '+this.resultRpe+' / 10')}
       if(kind==='membership'){intent.resourceId='premium';intent.resourceName='SunnyFit Premium'}
       if(kind==='ai_allowance'){if(options.messageId)intent.continueLabel='Resend message';if(!intent.draft)intent.continueLabel='Back to conversation';intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null&&!this.mvpMember.unlimited){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active&&!options.usage){this.mvpGate={kind:'credits',stage:'offer',title:'Add AI Coach Credits',context:intent,offer:this.mvpCreditOffers[0]};return}if(options.usage){this.mvpGate={kind:'usage',stage:'offer',title:'Conversation allowance',context:intent};return}}
@@ -197,7 +198,7 @@ export default {
       if(!this.mvpMember.active){this.mvpGate={...flow,stage:'failure'};return}
       if(intent.action==='membership'){this.cancelMvpPurchase();return}
       if(intent.action==='workout-insight'){if(this.objectKey!==intent.resourceId){this.mvpGate={...flow,stage:'access-error'};return}this.cancelMvpPurchase();await this.handleMvpAction('generate-insight');return}
-      if(intent.action==='activate-plan'){this.cancelMvpPurchase();this.setMvpPageState('plan-active');this.appToast='Your saved Dynamic Plan is active.';return}
+      if(intent.action==='activate-plan'){this.cancelMvpPurchase();if(this.activateDynamicPlan(intent.planId))this.appToast='Your Dynamic Plan is active.';else this.appToast='Your plan changed. Preview it before activating.';return}
       if(intent.action==='view-insight'){if(this.data.weeklyReport?.id!==intent.resourceId){this.mvpGate={...flow,stage:'access-error'};return}this.cancelMvpPurchase();this.setMvpPageState('default');this.$nextTick(()=>this.$el.querySelector('.weekly-ai-insight')?.scrollIntoView({block:'center'}));return}
       if(intent.action==='join-challenge'){
         if(Date.parse(intent.endsAt)<=Date.now()||Date.parse(intent.startsAt)>Date.now()){this.mvpGate={...flow,stage:'event-closed'};return}
@@ -213,6 +214,8 @@ export default {
       this.notice={title:'Ready to train',body:resource.name+' is ready to start.'}
     },
     async handleMvpAction(action){
+      if(action.startsWith('activate-plan:')){const id=action.slice(14),plan=this.findDynamicPlan(id);if(!plan)return true;if(this.mvpMember.active)this.activateDynamicPlan(id);else this.mvpUpgrade('dynamic_plan',null,{planId:id});return true}
+      if(action.startsWith('discuss-plan:')){const plan=this.findDynamicPlan(action.slice(13));if(plan&&!this.message.trim())this.setMessage('I’d like to adjust my '+plan.title.toLowerCase()+'. ');this.$nextTick(()=>this.$el.querySelector('textarea')?.focus());return true}
       if(action.startsWith('chat-pay:')){this.openChatPurchase(action.slice(9));return true}
       if(action.startsWith('chat-retry:')){await this.sendMvpConversation(action.slice(11));return true}
       if(action==='plan'&&this.screen==='coach'){this.go('plan',{returnTo:'coach'});return true}
@@ -243,7 +246,7 @@ export default {
       if(action==='retry-weekly'){this.setMvpPageState('default');return true}
       if(action==='activate-plan'){
         if(this.screen!=='coach'){this.go('coach',{reviewPlan:'plan-preview'});return true}
-        if(this.mvpMember.active){this.setMvpPageState('plan-active');this.appToast='Your Dynamic Plan is active. No conversation allowance was used.'}else this.mvpUpgrade('dynamic_plan')
+        if(this.mvpMember.active){if(this.activateDynamicPlan(this.currentDynamicPlan.id))this.appToast='Your Dynamic Plan is active.'}else this.mvpUpgrade('dynamic_plan')
         return true
       }
       if(action==='start-program'){
@@ -264,6 +267,7 @@ export default {
         else this.mvpUpgrade(content.contentType,content)
         return true
       }
+      if(action==='discuss-plan'){if(!this.message.trim())this.setMessage('I’d like to adjust my '+this.currentDynamicPlan.title.toLowerCase()+'. ');this.$nextTick(()=>this.$el.querySelector('textarea')?.focus());return true}
       if(action==='new-chat'){this.setMvpPageState('default');return false}
       if(action==='adjust-plan'||action==='create-plan'){this.coachContext=action==='create-plan'?'Discuss a new Dynamic Plan':'Discuss changes to my plan';this.go('coach',{reviewPlan:'default',planSetup:action==='create-plan'?'1':undefined,mvpState:undefined});return true}
       return false

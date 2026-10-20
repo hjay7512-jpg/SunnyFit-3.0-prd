@@ -1,13 +1,6 @@
 <template>
   <div class="consumer-pages" :data-screen="screen">
-    <template v-if="screen==='billing'">
-      <sf-feedback v-if="!data.orders.length" tone="empty" title="No purchases yet." description="Your purchases and scheduled plan changes will appear here."/>
-      <sf-card v-for="order in data.orders" :key="order.id" class="consumer-card consumer-order" :data-order-id="order.id" :title="order.product.name">
-        <template #accessory><sf-badge :tone="orderTone(order)">{{ orderStatus(order) }}</sf-badge></template>
-        <p class="consumer-order__price">{{ money(order.sku.priceCents,order.sku.currency) }}</p><p class="consumer-caption">{{ shortDate(order.createdAt) }}</p>
-        <p v-if="order.status==='scheduled'" class="consumer-caption">Starts {{ shortDate(order.startsAt) }}. No charge today.</p>
-      </sf-card>
-    </template>
+    <order-center v-if="screen==='billing'" :data="data" :tab="orderTab" :mode="orderMode" :locale="locale" @tab="$emit('order-tab',$event)" @detail="$emit('order-detail',$event)"/>
     <template v-if="screen==='plans'">
       <sf-card v-if="subscription" class="consumer-card membership-current" :title="subscription.productName">
         <p>{{ subscription.autoRenew?'Renews':'Active until' }} {{ shortDate(subscription.grant.expiresAt) }}</p>
@@ -41,11 +34,12 @@
   </div>
 </template>
 <script>
-import {SfCard,SfButton,SfBadge,SfFeedback} from '@/design-system'
+import {SfCard,SfButton,SfBadge} from '@/design-system'
+import OrderCenter from './OrderCenter'
 import {creditTypeLabel,creditGrantLabel} from '@/utils/entitlements'
 export default {
-  components:{SfCard,SfButton,SfBadge,SfFeedback},
-  props:{data:Object,screen:String,locale:String,busy:Boolean,creditType:String},
+  components:{SfCard,SfButton,SfBadge,OrderCenter},
+  props:{orderTab:String,orderMode:String,data:Object,screen:String,locale:String,busy:Boolean,creditType:String},
   data(){return{showSources:false}},
   computed:{
     subscription(){return this.data.subscriptions.find(s=>s.grant.status==='active')},

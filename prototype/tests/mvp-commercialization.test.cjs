@@ -28,6 +28,11 @@ test('MVP catalog is exactly five content, three feature, two credit items',t=>{
   assert.ok(!catalog.some(row=>['ai_coach_chat','human_coach_credits'].includes(row.code)))
   reject(()=>store.create({modelVersion:2,name:'Invalid credits feature',code:'invalid_credits_feature',type:'additional',status:'active',description:'',items:[{code:'ai_coach_credits'}],creditGrants:[]}),'INVALID_CONFIG')
 })
+
+test('Storefront exposes owned order and redemption history without creating transactions',t=>{
+  const {c}=fixture(t),before=c.userDetail('DEMO-1002'),view=c.storefront('DEMO-1002'),after=c.userDetail('DEMO-1002')
+  assert.deepEqual(view.redemptions,before.redemptions);assert.ok(view.redemptions.length>0);assert.ok(view.redemptions.every(row=>row.userId==='DEMO-1002'));assert.deepEqual(view.orders,before.orders);assert.deepEqual(after,before)
+})
 test('three feature services execute with no credit reservation or charge',t=>{
   const {c}=fixture(t),before=c.userDetail('DEMO-2002')
   for(const service of ['deep_analysis','weekly_insight','plan_activate']){const result=invoke(c,'DEMO-2002',service,'');assert.equal(result.quote.billingSource,'feature');assert.equal(result.finished.credits,0);assert.deepEqual(result.request.allocations,[])}

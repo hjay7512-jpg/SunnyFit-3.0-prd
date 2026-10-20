@@ -18,7 +18,7 @@
     <sf-button class="usage-main-action" :disabled="busy" @click="$emit('go','plans')">{{ subscription?'Manage membership':primaryLabel }}</sf-button>
     <section class="usage-menu">
       <sf-menu-row label="Plan &amp; Benefits" description="See what is included" @click="$emit('go','plans')" />
-      <sf-menu-row label="Billing History" description="Subscription purchases &amp; renewals" @click="$emit('go','billing',{parent:'membership'})" />
+      <sf-menu-row label="Order History" description="Subscriptions · Exchanges · Content" @click="$emit('go','billing',{parent:'membership'})" />
       <sf-menu-row label="Restore Purchase" :disabled="busy" @click="$emit('restore')" />
     </section>
     <section v-if="typedModel" class="usage-detail-card membership-access"><h3>Your access</h3><p v-if="!features.length">Your basic workouts and complete workout statistics stay free.</p><div v-for="feature in features" :key="feature.code" class="membership-access-row"><span>{{ feature.name }}</span><sf-badge tone="success">Included</sf-badge></div><p v-if="features.length" class="usage-caption">Automatic workout and weekly AI insights use no Credits.</p><div v-for="item in contentAccess" :key="item.code" class="membership-content-row"><strong>{{ item.name }}</strong><span>{{ item.scopes.map(scopeName).join(' · ') }}</span></div></section>
