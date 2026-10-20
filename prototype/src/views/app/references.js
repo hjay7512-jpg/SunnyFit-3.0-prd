@@ -1,7 +1,7 @@
 const mvp = 'https://www.figma.com/design/94S2EVx6mOkJRj8P0VyRLx/V3.0-MVP?node-id=';
 const alpha = 'https://www.figma.com/design/t7g261XYs61EdvYzIZn5YL/V3.0-Alpha?node-id=';
 const formal = 'https://www.figma.com/design/2AT0tm9mkFhes8T81YzA2L/V3.0?node-id=';
-export const pages = [['home', 'Home', '原稿'], ['workout', 'Workout · Course', '原稿'], ['course', '课程详情 · Start', '原稿'], ['program', 'Training Program 首页', '原稿'], ['weekly','Weekly Report · 基础与洞察','原稿'], ['challenge','Limited Challenge · Join','原稿'], ['movement','Movements · Start','组件延展'], ['world-tour','World Tour · Start','组件延展'], ['coach', 'AI Coach', '原稿'], ['result', 'Workout Data · Insight', '原稿'], ['plan', '当前 Plan 详情', '原稿'], ['profile','个人中心','原稿'], ['membership', 'Membership & Usage', '原稿'], ['plans','Plan & Benefits','原入口'], ['billing','Order History','原入口'], ['wallet', 'Credits · 加购', '新增']].map((item, index) => ({
+export const pages = [['home', 'Home', '原稿'], ['workout', 'Workout · Course', '原稿'], ['course', '课程详情 · Start', '原稿'], ['program', 'Training Program 首页', '原稿'], ['weekly','Weekly Report · 基础与洞察','原稿'], ['challenge','Limited Challenge · Join','原稿'], ['movement','Movements · Start','组件延展'], ['world-tour','World Tour · Start','组件延展'], ['coach', 'AI Coach', '原稿'], ['result', 'Workout Data · Insight', '原稿'], ['plan', '当前 Plan 详情', '原稿'], ['profile','个人中心','原稿'], ['membership', 'Membership & Usage', '原稿'], ['plans','Plan & Benefits','原入口'], ['billing','Billing History','原入口'], ['wallet', 'Credits · 加购', '新增']].map((item, index) => ({
   id: item[0],
   label: item[1],
   kind: item[2],
@@ -16,7 +16,7 @@ export const titles = {
   result: 'Workout Data',
   plan: 'Plan',
   history: 'Dialogue with History',
-  membership: 'Membership & Usage', plans:'Plan & Benefits', billing:'Order History',
+  membership: 'Membership & Usage', plans:'Plan & Benefits', billing:'Billing History',
   wallet: 'Extra Credits', challenge:'Challenges',movement:'Movements','movement-training':'Movement training','world-tour':'World Tour','world-tour-detail':'World Tour', profile:'Personal center', library:'Workouts', unlocked:'Unlocked content', weekly:'Weekly report', 'program-detail':'Training Program'
 };
 export const notes = {
@@ -80,7 +80,7 @@ export const notes = {
   invite:{title:'Invite Friends · 原入口',url:alpha+'249-2174',lines:['从现有邀请入口访问，复制官方 App 链接。','邀请奖励和计数接口尚未接入；没有生成推荐码或发放 Rewards / Credits。']},
   'equipment-shop':{title:'Shop Sunny Equipment · 原入口',url:alpha+'249-2179',lines:['保留现有设备商城入口，访问 Sunny 官方网站。','本地商业化 SKU 仅用于会员和 Credits；没有补造实体器材订单。']},
   plans:{title:'Plan & Benefits · 原入口内容',lines:['由 Membership & Usage 的原 Plan & Benefits / Explore Premium 进入，不新增一级入口。','查看当前权益快照、在售方案与订阅管理，内容 Scope、功能授权与额度发放分别呈现。']},
-  billing:{title:'Order History · 统一订单中心',url:'https://www.figma.com/design/EerstMudYhICy7qq49uCyd/V-2.7?node-id=1-5137',lines:['个人中心 My Orders 与会员页 Order History 进入同一订单中心。','Subscription / Points Exchange / Star Content 按类型切换。订单金额、积分与 Content Credits 分开显示；旧解锁记录保留原权益。']},
+  billing:{title:'Billing History · 原交易入口',lines:['原 Membership & Usage / My Orders 入口读取同一账户订单。','历史延期订单保留原记录；新版即时升级的结算仍待定，因此不生成付款。']},
   wallet: {
     title: '新增 My Credits 页面',
     lines: ['AI Coach Credits 与 Content Credits 分开；自购永久有效，历史批次保留原期限；加购不要求先开会员。', '从受限入口加购后可返回原页面，保留输入和内容场景，不自动重试或扣费。']

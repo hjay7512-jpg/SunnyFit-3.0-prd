@@ -1,11 +1,11 @@
 <template>
   <div class="coach-message-notice" :class="{'is-failed':failed,'is-urgent':!failed&&item.quotaReminder.threshold===5}" :role="failed?'alert':'status'" :data-threshold="item.quotaReminder&&item.quotaReminder.threshold">
-    <span v-if="failed" class="coach-message-notice__status"><span :title="failureDescription">{{ item.failure==='unknown'?'Allowance unavailable':'Allowance used up' }}</span></span>
-    <p v-else>{{ item.quotaReminder.percent }}% left</p>
+    <span v-if="failed" class="coach-message-notice__status"><span :title="failureDescription">{{ item.failure==='unknown'?'Allowance unavailable':$copy('actions.chat.empty') }}</span></span>
+    <p v-else>{{ $copy('actions.chat.low',{percent:item.quotaReminder.percent}) }}</p>
     <span class="coach-message-notice__separator" aria-hidden="true">·</span>
-    <button v-if="item.failure==='unknown'||item.failure==='network'" type="button" aria-label="Try again" @click.stop="$emit('action','chat-retry:'+item.id)">Retry</button>
-    <button v-else-if="failed&&canSend" type="button" aria-label="Resend message" @click.stop="$emit('action','chat-retry:'+item.id)">Resend</button>
-    <button v-else type="button" :aria-label="member.active?(failed?'Add credits to send':'Add credits'):(failed?'Upgrade to send':'Explore Premium')" @click.stop="$emit('action','chat-pay:'+item.id)">{{ member.active?'Add credits':'Upgrade' }}</button>
+    <button v-if="item.failure==='unknown'||item.failure==='network'" type="button" aria-label="Try again" @click.stop="$emit('action','chat-retry:'+item.id)">{{ $copy('actions.chat.check') }}</button>
+    <button v-else-if="failed&&canSend" type="button" :aria-label="$copy('actions.chat.resendMessage')" @click.stop="$emit('action','chat-retry:'+item.id)">{{ $copy('actions.chat.resend') }}</button>
+    <button v-else type="button" :aria-label="member.active?($copy('actions.chat.add')+(failed?' to send':'')):$copy(failed?'actions.chat.upgradeSend':'membership.preview.explore')" @click.stop="$emit('action','chat-pay:'+item.id)">{{ $copy(member.active?'actions.chat.add':'actions.chat.upgrade') }}</button>
   </div>
 </template>
 <script>

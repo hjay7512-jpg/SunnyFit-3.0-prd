@@ -9,6 +9,7 @@ if (!/^\/[a-zA-Z0-9/_.-]*\/$/.test(base) || base.split('/').includes('..')) thro
 const output = path.join(root, 'pages-dist')
 const runtime = path.join(root, 'public/demo-runtime')
 async function main() {
+  require('./prepare-copy-config.cjs').prepareCopyConfiguration()
   fs.mkdirSync(runtime, { recursive: true })
   for (const name of ['sql-wasm.js', 'sql-wasm.wasm']) fs.copyFileSync(path.join(root, 'node_modules/sql.js/dist', name), path.join(runtime, name))
   fs.copyFileSync(path.join(root, 'node_modules/sql.js/LICENSE'), path.join(runtime, 'sql.js-LICENSE'))

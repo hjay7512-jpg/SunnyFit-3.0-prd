@@ -5,15 +5,15 @@
       <div class="profile-rewards" data-node-id="249:2133"><div><strong>{{ data.user.rewards===undefined?'—':data.user.rewards }}</strong><small>Rewards</small></div><div><strong>{{ data.user.badges===undefined?'—':data.user.badges }}</strong><small>Badges</small></div></div>
     </section>
     <button type="button" class="profile-membership mvp-membership-card mvp-unified-entry" :class="['profile-membership--'+member.state,'profile-membership--quota-'+allowanceState,{'mvp-membership-card--active':member.active}]" :data-membership-state="member.state" :data-allowance-state="allowanceState" data-node-id="249:2140" @click="$emit('go','membership')">
-      <span class="profile-membership__top"><span class="profile-membership__icon" aria-hidden="true"><sf-icon name="membership" :size="18"/></span><span class="profile-membership__heading"><strong>Membership &amp; Usage</strong></span><span class="profile-membership__chevron" aria-hidden="true">›</span></span>
+      <span class="profile-membership__top"><span class="profile-membership__icon" aria-hidden="true"><sf-icon name="membership" :size="18"/></span><span class="profile-membership__heading"><strong>{{ $copy('profile.card.title') }}</strong></span><span class="profile-membership__chevron" aria-hidden="true">›</span></span>
       <span class="profile-membership__status"><sf-badge :tone="member.state==='expired'||member.state==='canceled'?'warning':member.active?'success':'neutral'">{{ statusLabel }}</sf-badge><span v-if="statusDetail" class="profile-membership__date">{{ statusDetail }}</span></span>
-      <span class="profile-usage-summary"><span>{{ allowanceState==='low'?'AI Coach · Running low':'AI Coach allowance' }}</span><strong v-if="member.unlimited" aria-label="Unlimited conversations">∞ <small>Limited-time</small></strong><strong v-else-if="member.percent!==null">{{ member.percent }}% <small>left</small></strong><span v-else>Unavailable</span></span>
+      <span class="profile-usage-summary"><span>{{ $copy(allowanceState==='low'?'profile.allowance.low':'profile.allowance.label') }}</span><strong v-if="member.unlimited" aria-label="Unlimited conversations">∞ <small>Limited-time</small></strong><strong v-else-if="member.percent!==null">{{ member.percent }}% <small>left</small></strong><span v-else>Unavailable</span></span>
       <span v-if="!member.unlimited&&member.percent!==null" class="coach-allowance__track" role="progressbar" aria-label="Conversation allowance remaining" :aria-valuenow="member.percent" aria-valuemin="0" aria-valuemax="100"><span :style="{width:member.percent+'%'}"></span></span>
       <span v-if="allowanceMessage" class="profile-membership__allowance-note">{{ allowanceMessage }}</span>
     </button>
     <section class="profile-existing-menu" data-node-id="249:2148">
       <sf-menu-row icon="heart-pulse" label="Devices &amp; Health" description="My Equipment · Health App" @click="$emit('go','devices')" />
-      <sf-menu-row data-node-id="249:2154" icon="receipt-text" label="My Orders" description="Subscriptions · Exchanges · Content" @click="$emit('go','billing',{parent:'profile'})" />
+      <sf-menu-row data-node-id="249:2154" icon="receipt-text" label="My Orders" description="Purchases &amp; subscription history" @click="$emit('go','billing',{parent:'profile'})" />
       <sf-menu-row icon="users-round" label="Community &amp; Privacy" description="Snaps · Ranking · Privacy" @click="$emit('go','community')" />
       <sf-menu-row icon="settings" label="Settings" description="Account · Preferences · Legal" @click="$emit('go','settings')" />
       <sf-menu-row icon="circle-question-mark" label="Help &amp; Support" description="Guide · FAQs · Contact" @click="$emit('go','support')" />
@@ -30,11 +30,11 @@ export default {
   computed:{
     member(){return membershipView(this.data,this.$route.query)},
     allowanceState(){return this.member.unlimited?'campaign':this.member.percent===null?'unavailable':this.member.percent===0?'empty':this.member.percent<=20?'low':'available'},
-    statusLabel(){return {free:'Free account',active:'Premium active',canceled:'Premium · Renewal off',expired:'Premium expired'}[this.member.state]},
+    statusLabel(){return this.$copy('profile.status.'+this.member.state)},
     statusDetail(){
       const m=this.member,expiry=this.shortDate(m.expiry)
-      if(m.state==='free')return 'Explore Premium'
-      if(m.state==='expired')return expiry?'Ended '+expiry:'Your account is now Free'
+      if(m.state==='free')return this.$copy('profile.card.freePrompt')
+      if(m.state==='expired')return expiry?'Ended '+expiry:this.$copy('profile.card.expiredPrompt')
       if(!expiry)return 'Date unavailable'
       if(m.state==='active')return 'Renews '+expiry
       const remaining=Math.max(0,Math.ceil((Date.parse(m.expiry)-Date.now())/86400000))
@@ -43,9 +43,9 @@ export default {
     allowanceMessage(){
       const m=this.member
       if(m.unlimited)return 'Unlimited event · Until '+membershipDate(m.campaignEndsAt)
-      if(m.percent===null)return 'Open to check your allowance.'
+      if(m.percent===null)return this.$copy('profile.allowance.unknown')
       if(m.campaignEnded)return 'Unlimited event ended · Regular allowance applies'
-      if(m.percent===0)return m.active?'Allowance used up · Training stays available':m.state==='expired'?'Allowance used up · Free workouts available':'Allowance used up · Explore Premium'
+      if(m.percent===0)return this.$copy(m.active?'profile.allowance.emptyMember':m.state==='expired'?'profile.allowance.emptyExpired':'profile.allowance.emptyFree')
       return ''
     }
   },

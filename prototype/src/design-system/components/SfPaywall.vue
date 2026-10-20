@@ -1,5 +1,5 @@
 <template>
-  <sf-sheet class="sf-premium-paywall" :class="{'is-guide':isGuide,'is-compact':compact,'is-conversation':isConversation}" :open="open" :title="isGuide?'Explore SunnyFit Premium':wall.entry.title.replace(/\n/g,' ')" contained :resizable="false" :busy="processing" content-class="sf-premium-paywall__panel" @input="$emit('close')">
+  <sf-sheet class="sf-premium-paywall" :class="{'is-guide':isGuide,'is-compact':compact,'is-conversation':isConversation}" :open="open" :title="isGuide?$copy('paywall.guideTitle'):wall.entry.title.replace(/\n/g,' ')" contained :resizable="false" :busy="processing" content-class="sf-premium-paywall__panel" @input="$emit('close')">
     <div class="sf-premium-paywall__navigation">
       <button v-if="isGuide" type="button" class="sf-premium-paywall__back" :aria-label="generalOverview?'Back to Membership & Usage':'Back to quick subscription'" :disabled="processing" @click="generalOverview?$emit('close'):$emit('view','quick')"><sf-icon name="back" :size="18"/></button>
       <sf-icon v-else name="membership" :size="17"/><span>SunnyFit <b>Premium</b></span>
@@ -9,7 +9,7 @@
         <sf-ai-ball :size="56" decorative motion-policy="reduce"/>
         <h1>{{ wall.entry.title }}</h1><p class="sf-premium-paywall__subtitle">{{ wall.entry.description }}</p>
         <div v-if="draft" class="conversation-offer__draft"><span>Message saved</span><p>{{ draft }}</p></div>
-        <div class="conversation-offer__benefits"><span><sf-icon name="coach" :size="18"/>Fresh AI Coach allowance</span><span><sf-icon name="play" :size="18"/>Premium workouts, plans & insights</span></div>
+        <div class="conversation-offer__benefits"><span><sf-icon name="coach" :size="18"/>{{ $copy('paywall.coachBenefit') }}</span><span><sf-icon name="play" :size="18"/>{{ $copy('paywall.trainingBenefit') }}</span></div>
       </div>
       <template v-else><div class="sf-premium-paywall__resource">
         <img v-if="resourceImage" :src="resourceImage" alt=""/>
@@ -18,7 +18,7 @@
       </div>
       <h1>{{ wall.entry.title }}</h1><p class="sf-premium-paywall__subtitle">{{ wall.entry.description }}</p>
       <p class="sf-premium-paywall__unlock"><sf-icon name="check" :size="15"/>{{ wall.entry.unlock }}</p>
-      <div class="sf-premium-paywall__beyond"><span>ALSO IN PREMIUM</span><p>Workouts · Personal plans · AI insights</p></div></template>
+      <div class="sf-premium-paywall__beyond"><span>{{ $copy('paywall.alsoLabel') }}</span><p>{{ $copy('paywall.alsoDescription') }}</p></div></template>
       <sf-paywall-plans :offers="wall.offers" :selected-id="selectedId" :disabled="processing" @select="$emit('select',$event)" @reload="$emit('reload')"/>
     </div>
     <div v-show="isGuide" data-purchase-view="benefits">
@@ -30,7 +30,7 @@
     <template #footer>
       <sf-button class="sf-premium-paywall__continue" :disabled="!selectedOffer||processing" @click="$emit('purchase',selectedOffer)">{{ processing?processingLabel:selectedOffer?selectedOffer.cta:'Plans unavailable' }}</sf-button>
       <p class="sf-premium-paywall__disclosure">{{ disclosure }}</p>
-      <button v-if="!isGuide" type="button" class="sf-premium-paywall__learn" :disabled="processing" @click="$emit('view','benefits')">See what Premium includes<sf-icon name="arrow" :size="13"/></button>
+      <button v-if="!isGuide" type="button" class="sf-premium-paywall__learn" :disabled="processing" @click="$emit('view','benefits')">{{ $copy('paywall.learn') }}<sf-icon name="arrow" :size="13"/></button>
       <div class="sf-premium-paywall__links"><button type="button" :disabled="processing" @click="$emit('restore')">Restore purchases</button><a :href="termsUrl" target="_blank" rel="noopener noreferrer">Terms</a><a :href="privacyUrl" target="_blank" rel="noopener noreferrer">Privacy</a></div>
     </template>
   </sf-sheet>

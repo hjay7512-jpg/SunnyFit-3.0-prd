@@ -7,9 +7,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import {initializeDemoAiMotion} from './demo/ai-motion'
+import {initializeCopy,installCopy} from './copy/operations-copy'
+import './copy/copy.css'
 
 Vue.use(ElementUI, { locale, size: 'small' })
 Vue.config.productionTip = false
 if (process.env.VUE_APP_DEMO_RUNTIME === 'browser') document.documentElement.classList.add('pages-review-host')
 initializeDemoAiMotion()
-new Vue({ router, store, render: h => h(App) }).$mount('#app')
+installCopy(Vue)
+initializeCopy().finally(()=>new Vue({ router, store, render: h => h(App) }).$mount('#app'))

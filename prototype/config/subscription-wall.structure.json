@@ -1,0 +1,831 @@
+{
+  "base": {
+    "id": "sunnyfit-premium",
+    "version": 3,
+    "variant": "two-path",
+    "defaultBillingPeriod": "monthly",
+    "cta": {
+      "$copy": "wall.base.cta"
+    },
+    "trialCta": {
+      "$copy": "wall.base.trialCta"
+    },
+    "contentCta": {
+      "$copy": "wall.base.contentCta"
+    },
+    "contentTrialCta": {
+      "$copy": "wall.base.contentTrialCta"
+    },
+    "maxVisibleBenefits": 3
+  },
+  "benefits": {
+    "workouts": {
+      "icon": "play",
+      "title": "Premium workouts & real-world routes"
+    },
+    "plans": {
+      "icon": "calendar",
+      "title": "Activate your Dynamic Plan"
+    },
+    "insights": {
+      "icon": "spark",
+      "title": "Workout & weekly AI insights"
+    },
+    "allowance": {
+      "icon": "coach",
+      "title": "A fresh AI Coach conversation allowance"
+    },
+    "program": {
+      "icon": "calendar",
+      "title": "Every workout in this Program"
+    },
+    "vision": {
+      "icon": "play",
+      "title": "Guided video & supported vision workouts"
+    },
+    "challenge": {
+      "icon": "check",
+      "title": "Access to eligible Premium challenges"
+    }
+  },
+  "placements": {
+    "course": {
+      "placementId": "course.detail.start",
+      "entitlementCode": "course_access",
+      "scope": "premium_content",
+      "title": {
+        "$copy": "wall.entryStories.course.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.course.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.course.description"
+      },
+      "artwork": "training",
+      "focus": "workouts",
+      "benefitIds": [
+        "workouts",
+        "plans",
+        "insights"
+      ],
+      "label": {
+        "$copy": "wall.placements.course.label"
+      },
+      "action": "start-workout",
+      "continueLabel": {
+        "$copy": "wall.placements.course.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.course.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.course.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.course.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.course.trialCta"
+      },
+      "contentCta": {
+        "$copy": "wall.placements.course.contentCta"
+      },
+      "contentTrialCta": {
+        "$copy": "wall.placements.course.contentTrialCta"
+      }
+    },
+    "world_tour": {
+      "placementId": "world_tour.route.start",
+      "entitlementCode": "world_tour_access",
+      "scope": "premium_content",
+      "title": {
+        "$copy": "wall.entryStories.world_tour.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.world_tour.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.world_tour.description"
+      },
+      "artwork": "route",
+      "focus": "workouts",
+      "benefitIds": [
+        "workouts",
+        "plans",
+        "insights"
+      ],
+      "label": {
+        "$copy": "wall.placements.world_tour.label"
+      },
+      "action": "start-workout",
+      "continueLabel": {
+        "$copy": "wall.placements.world_tour.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.world_tour.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.world_tour.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.world_tour.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.world_tour.trialCta"
+      },
+      "contentCta": {
+        "$copy": "wall.placements.world_tour.contentCta"
+      },
+      "contentTrialCta": {
+        "$copy": "wall.placements.world_tour.contentTrialCta"
+      }
+    },
+    "training_program": {
+      "placementId": "program.detail.start",
+      "entitlementCode": "training_program_access",
+      "scope": "premium_content",
+      "title": {
+        "$copy": "wall.entryStories.training_program.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.training_program.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.training_program.description"
+      },
+      "artwork": "plan",
+      "focus": "program",
+      "benefitIds": [
+        "program",
+        "workouts",
+        "insights"
+      ],
+      "label": {
+        "$copy": "wall.placements.training_program.label"
+      },
+      "action": "start-program",
+      "continueLabel": {
+        "$copy": "wall.placements.training_program.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.training_program.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.training_program.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.training_program.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.training_program.trialCta"
+      },
+      "contentCta": {
+        "$copy": "wall.placements.training_program.contentCta"
+      },
+      "contentTrialCta": {
+        "$copy": "wall.placements.training_program.contentTrialCta"
+      }
+    },
+    "movement": {
+      "placementId": "movement.preparation.start",
+      "entitlementCode": "movement_access",
+      "scope": "premium_content",
+      "title": {
+        "$copy": "wall.entryStories.movement.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.movement.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.movement.description"
+      },
+      "artwork": "training",
+      "focus": "vision",
+      "benefitIds": [
+        "vision",
+        "plans",
+        "insights"
+      ],
+      "label": {
+        "$copy": "wall.placements.movement.label"
+      },
+      "action": "start-workout",
+      "continueLabel": {
+        "$copy": "wall.placements.movement.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.movement.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.movement.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.movement.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.movement.trialCta"
+      }
+    },
+    "dynamic_plan": {
+      "placementId": "dynamic_plan.activate",
+      "entitlementCode": "dynamic_plan",
+      "scope": "all",
+      "title": {
+        "$copy": "wall.entryStories.dynamic_plan.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.dynamic_plan.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.dynamic_plan.description"
+      },
+      "artwork": "plan",
+      "focus": "plans",
+      "benefitIds": [
+        "plans",
+        "workouts",
+        "insights"
+      ],
+      "label": {
+        "$copy": "wall.placements.dynamic_plan.label"
+      },
+      "action": "activate-plan",
+      "continueLabel": {
+        "$copy": "wall.placements.dynamic_plan.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.dynamic_plan.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.dynamic_plan.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.dynamic_plan.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.dynamic_plan.trialCta"
+      }
+    },
+    "workout_insight": {
+      "placementId": "workout_result.insight",
+      "entitlementCode": "workout_result_ai_insight",
+      "scope": "all",
+      "title": {
+        "$copy": "wall.entryStories.workout_insight.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.workout_insight.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.workout_insight.description"
+      },
+      "artwork": "insight",
+      "focus": "insights",
+      "benefitIds": [
+        "insights",
+        "workouts",
+        "plans"
+      ],
+      "label": {
+        "$copy": "wall.placements.workout_insight.label"
+      },
+      "action": "workout-insight",
+      "continueLabel": {
+        "$copy": "wall.placements.workout_insight.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.workout_insight.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.workout_insight.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.workout_insight.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.workout_insight.trialCta"
+      }
+    },
+    "weekly_insight": {
+      "placementId": "weekly_report.insight",
+      "entitlementCode": "weekly_report_ai_insight",
+      "scope": "all",
+      "title": {
+        "$copy": "wall.entryStories.weekly_insight.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.weekly_insight.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.weekly_insight.description"
+      },
+      "artwork": "insight",
+      "focus": "insights",
+      "benefitIds": [
+        "insights",
+        "workouts",
+        "plans"
+      ],
+      "label": {
+        "$copy": "wall.placements.weekly_insight.label"
+      },
+      "action": "view-insight",
+      "continueLabel": {
+        "$copy": "wall.placements.weekly_insight.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.weekly_insight.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.weekly_insight.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.weekly_insight.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.weekly_insight.trialCta"
+      }
+    },
+    "ai_allowance": {
+      "placementId": "ai_coach.allowance_empty",
+      "entitlementCode": "ai_coach_chat",
+      "scope": "text",
+      "title": {
+        "$copy": "wall.entryStories.ai_allowance.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.ai_allowance.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.ai_allowance.description"
+      },
+      "artwork": "coach",
+      "focus": "allowance",
+      "benefitIds": [
+        "allowance",
+        "workouts",
+        "plans"
+      ],
+      "label": {
+        "$copy": "wall.placements.ai_allowance.label"
+      },
+      "action": "send-message",
+      "continueLabel": {
+        "$copy": "wall.placements.ai_allowance.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.ai_allowance.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.ai_allowance.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.ai_allowance.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.ai_allowance.trialCta"
+      }
+    },
+    "limited_challenge": {
+      "placementId": "challenge.join",
+      "entitlementCode": "challenge_access",
+      "scope": "limited_challenge",
+      "title": {
+        "$copy": "wall.entryStories.limited_challenge.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.limited_challenge.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.limited_challenge.description"
+      },
+      "artwork": "training",
+      "focus": "challenge",
+      "benefitIds": [
+        "challenge",
+        "workouts",
+        "plans"
+      ],
+      "label": {
+        "$copy": "wall.placements.limited_challenge.label"
+      },
+      "action": "join-challenge",
+      "continueLabel": {
+        "$copy": "wall.placements.limited_challenge.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.limited_challenge.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.limited_challenge.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.limited_challenge.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.limited_challenge.trialCta"
+      }
+    },
+    "membership": {
+      "placementId": "membership.explore",
+      "entitlementCode": null,
+      "scope": "all",
+      "title": {
+        "$copy": "wall.entryStories.membership.title"
+      },
+      "headline": {
+        "$copy": "wall.entryStories.membership.title"
+      },
+      "subtitle": {
+        "$copy": "wall.entryStories.membership.description"
+      },
+      "artwork": "membership",
+      "focus": "workouts",
+      "benefitIds": [
+        "workouts",
+        "plans",
+        "insights"
+      ],
+      "label": {
+        "$copy": "wall.placements.membership.label"
+      },
+      "action": "membership",
+      "continueLabel": {
+        "$copy": "wall.placements.membership.continueLabel"
+      },
+      "cancelLabel": {
+        "$copy": "wall.placements.membership.cancelLabel"
+      },
+      "success": {
+        "$copy": "wall.placements.membership.success"
+      },
+      "cta": {
+        "$copy": "wall.placements.membership.cta"
+      },
+      "trialCta": {
+        "$copy": "wall.placements.membership.trialCta"
+      }
+    }
+  },
+  "entryStories": {
+    "course": {
+      "title": {
+        "$copy": "wall.entryStories.course.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.course.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.course.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.course.category"
+      },
+      "defaultBenefit": "workouts",
+      "image": "assets/figma/restored/source_course_current/imgPexelsAndreaPiacquadio3757944.webp",
+      "next": {
+        "$copy": "wall.entryStories.course.next"
+      }
+    },
+    "world_tour": {
+      "title": {
+        "$copy": "wall.entryStories.world_tour.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.world_tour.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.world_tour.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.world_tour.category"
+      },
+      "defaultBenefit": "workouts",
+      "next": {
+        "$copy": "wall.entryStories.world_tour.next"
+      }
+    },
+    "training_program": {
+      "title": {
+        "$copy": "wall.entryStories.training_program.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.training_program.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.training_program.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.training_program.category"
+      },
+      "defaultBenefit": "workouts",
+      "image": "assets/figma/restored/source_program/img.webp",
+      "next": {
+        "$copy": "wall.entryStories.training_program.next"
+      }
+    },
+    "movement": {
+      "title": {
+        "$copy": "wall.entryStories.movement.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.movement.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.movement.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.movement.category"
+      },
+      "defaultBenefit": "workouts",
+      "next": {
+        "$copy": "wall.entryStories.movement.next"
+      }
+    },
+    "dynamic_plan": {
+      "title": {
+        "$copy": "wall.entryStories.dynamic_plan.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.dynamic_plan.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.dynamic_plan.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.dynamic_plan.category"
+      },
+      "defaultBenefit": "plans",
+      "next": {
+        "$copy": "wall.entryStories.dynamic_plan.next"
+      }
+    },
+    "workout_insight": {
+      "title": {
+        "$copy": "wall.entryStories.workout_insight.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.workout_insight.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.workout_insight.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.workout_insight.category"
+      },
+      "defaultBenefit": "insights",
+      "next": {
+        "$copy": "wall.entryStories.workout_insight.next"
+      }
+    },
+    "weekly_insight": {
+      "title": {
+        "$copy": "wall.entryStories.weekly_insight.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.weekly_insight.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.weekly_insight.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.weekly_insight.category"
+      },
+      "defaultBenefit": "insights",
+      "next": {
+        "$copy": "wall.entryStories.weekly_insight.next"
+      }
+    },
+    "ai_allowance": {
+      "title": {
+        "$copy": "wall.entryStories.ai_allowance.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.ai_allowance.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.ai_allowance.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.ai_allowance.category"
+      },
+      "defaultBenefit": "coach",
+      "next": {
+        "$copy": "wall.entryStories.ai_allowance.next"
+      }
+    },
+    "limited_challenge": {
+      "title": {
+        "$copy": "wall.entryStories.limited_challenge.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.limited_challenge.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.limited_challenge.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.limited_challenge.category"
+      },
+      "defaultBenefit": "workouts",
+      "next": {
+        "$copy": "wall.entryStories.limited_challenge.next"
+      }
+    },
+    "membership": {
+      "title": {
+        "$copy": "wall.entryStories.membership.title"
+      },
+      "description": {
+        "$copy": "wall.entryStories.membership.description"
+      },
+      "unlock": {
+        "$copy": "wall.entryStories.membership.unlock"
+      },
+      "category": {
+        "$copy": "wall.entryStories.membership.category"
+      },
+      "defaultBenefit": "workouts",
+      "next": {
+        "$copy": "wall.entryStories.membership.next"
+      }
+    }
+  },
+  "education": {
+    "title": {
+      "$copy": "wall.education.title"
+    },
+    "description": {
+      "$copy": "wall.education.description"
+    },
+    "stories": [
+      {
+        "id": "workouts",
+        "label": {
+          "$copy": "wall.education.stories.0.label"
+        },
+        "icon": "play",
+        "title": {
+          "$copy": "wall.education.stories.0.title"
+        },
+        "description": {
+          "$copy": "wall.education.stories.0.description"
+        },
+        "artwork": "training",
+        "examples": [
+          {
+            "$copy": "wall.education.stories.0.examples.0"
+          },
+          {
+            "$copy": "wall.education.stories.0.examples.1"
+          },
+          {
+            "$copy": "wall.education.stories.0.examples.2"
+          },
+          {
+            "$copy": "wall.education.stories.0.examples.3"
+          }
+        ],
+        "detail": "Eligible Limited Challenges give you another reason to show up. Registration dates and event rules apply."
+      },
+      {
+        "id": "plans",
+        "label": {
+          "$copy": "wall.education.stories.1.label"
+        },
+        "icon": "calendar",
+        "title": {
+          "$copy": "wall.education.stories.1.title"
+        },
+        "description": {
+          "$copy": "wall.education.stories.1.description"
+        },
+        "artwork": "plan",
+        "examples": [
+          {
+            "$copy": "wall.education.stories.1.examples.0"
+          },
+          {
+            "$copy": "wall.education.stories.1.examples.1"
+          },
+          {
+            "$copy": "wall.education.stories.1.examples.2"
+          }
+        ],
+        "detail": "Plan activation is a Premium feature. It does not use your conversation allowance."
+      },
+      {
+        "id": "insights",
+        "label": {
+          "$copy": "wall.education.stories.2.label"
+        },
+        "icon": "spark",
+        "title": {
+          "$copy": "wall.education.stories.2.title"
+        },
+        "description": {
+          "$copy": "wall.education.stories.2.description"
+        },
+        "artwork": "insight",
+        "examples": [
+          {
+            "$copy": "wall.education.stories.2.examples.0"
+          },
+          {
+            "$copy": "wall.education.stories.2.examples.1"
+          }
+        ],
+        "detail": "Your workout records and basic weekly stats remain free. AI insights do not use conversation allowance."
+      },
+      {
+        "id": "coach",
+        "label": {
+          "$copy": "wall.education.stories.3.label"
+        },
+        "icon": "coach",
+        "title": {
+          "$copy": "wall.education.stories.3.title"
+        },
+        "description": {
+          "$copy": "wall.education.stories.3.description"
+        },
+        "artwork": "coach",
+        "examples": [
+          {
+            "$copy": "wall.education.stories.3.examples.0"
+          },
+          {
+            "$copy": "wall.education.stories.3.examples.1"
+          }
+        ],
+        "detail": "Premium includes a finite conversation allowance. Your first subscription adds fresh allowance immediately; it is not unlimited chat."
+      }
+    ],
+    "comparison": [
+      [
+        "Courses, routes & movements",
+        "Free selection",
+        "Free + Premium"
+      ],
+      [
+        "Training Programs",
+        "Free selection",
+        "Free + Premium"
+      ],
+      [
+        "Dynamic Plan",
+        "Preview",
+        "Preview + activate"
+      ],
+      [
+        "AI insights",
+        "Basic stats",
+        "Workout + weekly insights"
+      ],
+      [
+        "AI Coach",
+        "Free allowance",
+        "Member allowance"
+      ],
+      [
+        "Limited Challenges",
+        "—",
+        "Eligible events"
+      ]
+    ],
+    "questions": [
+      {
+        "title": {
+          "$copy": "wall.education.questions.0.title"
+        },
+        "answer": {
+          "$copy": "wall.education.questions.0.answer"
+        }
+      },
+      {
+        "title": {
+          "$copy": "wall.education.questions.1.title"
+        },
+        "answer": {
+          "$copy": "wall.education.questions.1.answer"
+        }
+      },
+      {
+        "title": {
+          "$copy": "wall.education.questions.2.title"
+        },
+        "answer": {
+          "$copy": "wall.education.questions.2.answer"
+        }
+      }
+    ]
+  },
+  "fullBenefits": [
+    "Premium courses, World Tours & Training Programs",
+    "Dynamic Plan activation",
+    "Workout & weekly AI insights",
+    "Finite AI Coach conversation allowance",
+    "Eligible Limited Challenges"
+  ]
+}

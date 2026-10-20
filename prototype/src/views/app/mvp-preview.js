@@ -1,4 +1,5 @@
 import chatConversation from './chat-conversation'
+import {currentWallCopy} from '@/copy/operations-copy'
 import {membershipView, membershipDate} from './membership-view'
 import {premiumOffers,premiumActivationQuery} from './premium-offers'
 import {placementFor,resolveSubscriptionWall,reviewPromotion} from './subscription-wall.cjs'
@@ -23,6 +24,7 @@ export default {
   data(){return {mvpRequestToken:0,mvpTimer:null,mvpGate:null,mvpFlowSequence:0,mvpCheckoutToken:0,mvpCheckoutApplying:false,mvpPurchaseOutcome:'success',mvpPendingPurchase:null,paywallEvents:[],paywallViewKeys:[]}},
   computed:{
     mvpMember(){return this.data?membershipView(this.data,this.reviewMode?{...this.$route.query,reviewFixture:'1'}:this.$route.query):{}},
+    mvpDisplayGate(){const flow=this.mvpGate;if(!flow||flow.kind!=='membership')return flow;const copy=placementFor(flow.context.kind,currentWallCopy()),context=flow.context;return {...flow,title:copy.title,context:{...context,label:copy.label,cancelLabel:copy.cancelLabel,success:copy.success,continueLabel:context.action==='send-message'?(context.messageId?this.$copy('actions.chat.resendMessage'):context.continueLabel):copy.continueLabel}}},
     isMvpPreview(){return this.reviewMode||this.$route.query.reviewFixture==='1'||['free','active','canceled','expired'].includes(this.$route.query.membershipState)},
     mvpPageState(){const value=this.isMvpPreview?this.$route.query.reviewPage||this.$route.query.mvpState||'default':'default';return ['error','insight-error','chat-error'].includes(value)?'default':this.screen==='plan'&&value==='plan-preview'?'plan-active':value},
     mvpOptions(){return pageStates[this.screen]||[]},
@@ -67,7 +69,7 @@ export default {
   methods:{
     wallInput(now){
       const provided=this.data?.subscriptionOffer||{},requested=this.isMvpPreview?(this.$route.query.reviewContentOffer||this.$route.query.reviewOffer):undefined,variant=requested==='unavailable'?undefined:requested,promotion=variant?reviewPromotion(variant,now):provided
-      return {member:this.mvpMember,offers:this.mvpOffers,campaign:promotion.campaign,eligibility:promotion.eligibility,channel:provided.channel||'web_demo',currency:provided.currency,now}
+      return {configuration:currentWallCopy(),member:this.mvpMember,offers:this.mvpOffers,campaign:promotion.campaign,eligibility:promotion.eligibility,channel:provided.channel||'web_demo',currency:provided.currency,now}
     },
     contentStartAction(content){return contentAction(content,this.wallInput(Date.now()))},
     resolveCurrentWall(now){const context=this.mvpGate?.context||{};return resolveSubscriptionWall({...this.wallInput(now),kind:context.kind||'membership',resource:{id:context.resourceId,name:context.resourceName,detail:context.detail,image:context.image,draft:!!context.draft}})},
@@ -134,7 +136,7 @@ export default {
     },
     mvpUpgrade(kind,content,options={}){
       if(this.mvpPendingPurchase){this.mvpGate=this.mvpPendingPurchase;return}
-      const item=placementFor(kind)
+      const item=placementFor(kind,currentWallCopy())
       const weekly=this.data.weeklyReport
       const intent={key:++this.mvpFlowSequence,flowId:requestKey(),placementId:item.placementId,entitlementCode:item.entitlementCode,scope:item.scope,userId:this.userId,kind,action:item.action,originScreen:this.screen,originPath:this.$route.path,originQuery:{...this.$route.query},originState:this.mvpPageState,resourceId:content?.id||(kind==='weekly_insight'?weekly?.id:this.$route.query.planId||'preview-dynamic-plan'),resourceName:content?.name||(kind==='weekly_insight'?'Week of '+weekly?.weekStart:'Your saved Dynamic Plan'),label:item.label,detail:kind==='training_program'?(content?.membersPreview?.length||0)+' workouts':content?.durationMinutes?content.durationMinutes+' min':undefined,programId:this.$route.query.fromProgram,stepId:kind==='training_program'?this.programWorkout?.id:undefined,draft:kind==='ai_allowance'?(options.draft===undefined?this.message:options.draft):undefined,messageId:options.messageId,continueLabel:item.continueLabel,cancelLabel:item.cancelLabel,success:item.success}
       if(kind==='limited_challenge'){intent.startsAt=content.challengeRules?.startsAt;intent.endsAt=content.challengeRules?.endsAt;intent.detail='Registration ends '+membershipDate(intent.endsAt)}
@@ -144,7 +146,7 @@ export default {
       if(kind==='ai_allowance'){if(options.messageId)intent.continueLabel='Resend message';if(!intent.draft)intent.continueLabel='Back to conversation';intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null&&!this.mvpMember.unlimited){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active&&!options.usage){this.mvpGate={kind:'credits',stage:'offer',title:'Add AI Coach Credits',context:intent,offer:this.mvpCreditOffers[0]};return}if(options.usage){this.mvpGate={kind:'usage',stage:'offer',title:'Conversation allowance',context:intent};return}}
       intent.image=content?.coverUrl||''
       const requestedView=this.reviewMode&&['quick','benefits'].includes(this.$route.query.reviewPurchaseView)?this.$route.query.reviewPurchaseView:null
-      this.mvpGate={...item,kind:'membership',stage:'offer',view:requestedView||(kind==='membership'?'benefits':'quick'),benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
+      this.mvpGate={...item,kind:'membership',stage:'offer',view:options.view||requestedView||(kind==='membership'?'benefits':'quick'),benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
       const wall=this.mvpWall;this.mvpGate={...this.mvpGate,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:this.mvpGate.benefitTab||wall.entry.defaultBenefit}
     },
     cancelMvpPurchase(reason,offer){if(reason==='dismiss')this.emitPaywallEvent('paywall_dismissed',offer,{reason:'user_dismissed'});this.mvpCheckoutToken++;this.mvpGate=null},

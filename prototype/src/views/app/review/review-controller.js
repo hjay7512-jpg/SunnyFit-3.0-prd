@@ -1,6 +1,6 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit','reviewRpe','reviewRpeValue','reviewResultPanel','reviewResultStage','reviewAchievement','planSetup','orderType','reviewOrders']
+export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit','reviewRpe','reviewRpeValue','reviewResultPanel','reviewResultStage','reviewAchievement','planSetup']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
@@ -62,12 +62,11 @@ export default {
       else if(scope==='result-panel')patch.reviewResultPanel=value
       else if(scope==='page'){
         if(['profile','membership','plans'].includes(this.screen))patch.membershipState=value
-        else if(this.screen==='billing'){patch.orderType=value;if(this.$route.query.reviewOrders==='empty')patch.reviewOrders=undefined}
         else if(this.screen==='result')patch.reviewResultStage=value
         else if(this.screen==='plan'&&value==='plan-active'){patch.reviewPlan=value;patch.reviewPage=undefined}
         else patch.reviewPage=value==='default'?undefined:value
       }else{
-        const keys={content:'reviewContent',insight:'reviewInsight',reply:'reviewReply',plan:'reviewPlan',event:'reviewEvent',workouts:'reviewWorkouts','program-panel':'reviewProgramPanel','order-data':'reviewOrders',achievement:'reviewAchievement',cycle:'membershipCycle'}
+        const keys={content:'reviewContent',insight:'reviewInsight',reply:'reviewReply',plan:'reviewPlan',event:'reviewEvent',workouts:'reviewWorkouts','program-panel':'reviewProgramPanel',achievement:'reviewAchievement',cycle:'membershipCycle'}
         if(keys[scope])patch[keys[scope]]=value
         if(scope==='access')patch.membershipState=value==='unlocked'?'active':'free'
         if(scope==='coach-membership')patch.membershipState=value

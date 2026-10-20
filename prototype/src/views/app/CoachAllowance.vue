@@ -8,7 +8,7 @@
     <button v-if="view.unlimited||view.percent>0" type="button" class="coach-allowance__action" @click="$emit('go','coach')">Talk to AI Coach <span aria-hidden="true">↗</span></button>
     <button v-else-if="view.percent===null" type="button" class="coach-allowance__action" @click="$emit('retry')">Refresh allowance <sf-icon name="refresh" :size="16"/></button>
     <template v-else-if="view.active"><p class="coach-allowance__detail">{{ view.resetAt?'Your next allowance refresh is shown above.':'New allowance is not available yet. Your training benefits and saved conversations remain available.' }}</p><button type="button" class="coach-allowance__action" @click="$emit('go','coach')">Back to AI Coach <span aria-hidden="true">↗</span></button></template>
-    <button v-else type="button" class="coach-allowance__action" @click="$emit('upgrade')">Get Premium allowance <span aria-hidden="true">↗</span></button>
+    <button v-else type="button" class="coach-allowance__action" @click="$emit('upgrade')">{{ $copy('actions.allowance.upgrade') }} <span aria-hidden="true">↗</span></button>
   </section>
 </template>
 <script>
