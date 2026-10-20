@@ -15,7 +15,7 @@ export function membershipView(data, query = {}) {
   const available = batches.reduce((sum,row)=>sum+(Number(row.available)||0),0)
   const walletPercent = issued>0?Math.max(0,Math.min(100,Math.round(available/issued*100))):account&&account.available===0?0:null
   const rawPercent = typeof query.chatRemaining === 'string' && query.chatRemaining.trim() !== '' ? Number(query.chatRemaining) : NaN
-  const percent = preview && Number.isFinite(rawPercent) ? Math.max(0,Math.min(100,Math.round(rawPercent))) : allowance && allowance.amount > 0 ? Math.max(0,Math.min(100,Math.round(allowance.remaining / allowance.amount * 100))) : walletPercent
+  const percent = preview && query.reviewQuota === 'unknown' ? null : preview && Number.isFinite(rawPercent) ? Math.max(0,Math.min(100,Math.round(rawPercent))) : allowance && allowance.amount > 0 ? Math.max(0,Math.min(100,Math.round(allowance.remaining / allowance.amount * 100))) : walletPercent
   const unlimited = preview && query.allowanceMode === 'campaign'
   const campaignEndsAt = unlimited ? '2026-10-23T12:00:00Z' : null
   const expiry = preview ? state === 'expired' ? '2026-10-15T12:00:00Z' : active ? query.membershipCycle==='annual'?'2027-10-16T12:00:00Z':'2026-11-16T12:00:00Z' : null : active ? (current && current.grant.expiresAt) || data.effective.base.expiresAt : ended && ended.grant.expiresAt

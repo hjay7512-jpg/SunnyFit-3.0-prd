@@ -19,20 +19,21 @@
       <div class="source-home-indicator"></div>
     </div>
     <template v-if="screen==='coach'">
-      <source-coach :send-disabled="!!mvpMember&&!mvpMember.unlimited&&(mvpMember.percent===0||mvpMember.percent===null)" :input-locked="inputLocked" :ai-state="aiState" :message="message" @composer-resize="composerHeight=$event" @input="$emit('input',$event)" @send="$emit('action','send')" />
+      <source-coach :quota-blocked="!!mvpMember&&!mvpMember.unlimited&&(mvpMember.percent===0||mvpMember.percent===null)" :send-label="quotaSendLabel" :input-locked="inputLocked" :ai-state="aiState" :message="message" @composer-resize="composerHeight=$event" @input="$emit('input',$event)" @send="$emit('action',quotaSendAction)"><template #allowance><coach-quota-dock v-if="mvpMember" :member="mvpMember" @action="$emit('action',$event)"/></template></source-coach>
       <div v-if="!sampleConversation || messages.length || openedAsset" class="actual-conversation">
         <template v-if="openedAsset"><p class="history-date">Saved conversation · reading is free</p><sf-message-bubble :text="openedAsset.body"/></template>
         <template v-else-if="!messages.length"><sf-chat-greeting class="coach-greeting" :name="name"/><p v-if="context" class="coach-context">{{ context }}</p></template>
         <mvp-coach-state v-if="mvpMember" :member="mvpMember" :state="planState||mvpState" :reply-state="replyState||mvpState" @action="$emit('action',$event)"/>
         <template v-for="item in (openedAsset?[]:messages)"><sf-message-bubble v-if="item.message" :key="item.id+'q'" role="user" :text="item.message"/><sf-message-bubble :key="item.id" :text="item.body"/></template>
       </div>
-      <button v-if="commercial" class="coach-credit-hint" @click.stop="$emit('action','usage')">{{ chatLabel }} · View usage</button>
+      <button v-if="commercial&&!mvpMember" class="coach-credit-hint" @click.stop="$emit('action','usage')">{{ chatLabel }} · View usage</button>
     </template>
   </div>
 </template>
 <script>
 import V3Home from './V3Home'
 import MvpCoachState from './MvpCoachState'
+import CoachQuotaDock from './CoachQuotaDock'
 import SourceCoach from './restored/Coach'
 import V3Program from './V3Program'
 import V3Plan from './V3Plan'
@@ -49,10 +50,10 @@ import ResultFooter from './restored/ResultFooter'
 import './restored/source.css'
 import {SfChatGreeting,SfMessageBubble,SfInsightCard} from '@/design-system'
 export default {
-  components:{MvpCoachState,V3Home,V3Plan,V3Course,V3Workout,V3Program,SourceCoach,SfChatGreeting,SfMessageBubble,SfInsightCard,ResultHeader,ResultBackdrop,ResultStats,ResultCalories,ResultFruit,ResultChart,ResultCourse,ResultFooter},
+  components:{CoachQuotaDock,MvpCoachState,V3Home,V3Plan,V3Course,V3Workout,V3Program,SourceCoach,SfChatGreeting,SfMessageBubble,SfInsightCard,ResultHeader,ResultBackdrop,ResultStats,ResultCalories,ResultFruit,ResultChart,ResultCourse,ResultFooter},
   data(){return {composerHeight:48}},
   props:{programPanel:String,startLabel:String,mvpMember:Object,mvpState:String,insightState:String,planState:String,replyState:String,user:Object,report:Object,inputLocked:Boolean,aiState:String,screen:String,name:String,message:String,messages:Array,openedAsset:Object,context:String,balance:Number,commercial:Boolean,sampleConversation:Boolean,hasInsight:Boolean,insightBody:String,analysisCredits:Number,chatCredits:Number,tier:String,redemptionCredits:Number,content:Object,courses:Array,workout:Object,nextWorkout:Object,chargeLabel:String,chatLabel:String},
-  computed:{statusAsset(){return '/assets/figma/restored/source_home/imgRightSide.svg'},contentAccessLabel(){return this.content.access&&this.content.access.reason==='PROGRAM_INCLUDED'?'Program':this.content.access&&this.content.access.reason==='REDEEMED'?'Unlocked':this.tier==='featured'?'Unlock · '+this.redemptionCredits+' Credits':this.tier==='premium'?'Premium':'Free'}},
+  computed:{quotaSendAction(){const m=this.mvpMember;return !m||m.unlimited||m.percent>0?'send':'quota-options'},quotaSendLabel(){const m=this.mvpMember;return !m||m.unlimited||m.percent>0?'Send message':m.percent===null?'Check allowance before sending':m.active?'View allowance before sending':'Continue with Premium'},statusAsset(){return '/assets/figma/restored/source_home/imgRightSide.svg'},contentAccessLabel(){return this.content.access&&this.content.access.reason==='PROGRAM_INCLUDED'?'Program':this.content.access&&this.content.access.reason==='REDEEMED'?'Unlocked':this.tier==='featured'?'Unlock · '+this.redemptionCredits+' Credits':this.tier==='premium'?'Premium':'Free'}},
   methods:{dispatch(event){if(event.target.closest('.sf-message-composer,.sf-insight-card'))return;if(['home','workout','course','plan','program'].includes(this.screen))return;const target=event.target.closest('[data-action]');if(target){event.preventDefault();this.$emit('action',target.dataset.action)}},dispatchSpace(event){if(event.target.matches('[role="button"]'))this.dispatch(event)}}
 }
 </script>

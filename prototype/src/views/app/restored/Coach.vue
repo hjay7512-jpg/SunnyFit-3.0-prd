@@ -42,8 +42,9 @@
 <div class="sf-b54a01ab67" data-node-id="864:2821">
 </div>
 <div class="sf-d14be32c5f" data-node-id="864:2822">
-<div class="sf-e975b61aa4" data-node-id="864:2831">
-<sf-message-composer :value="message" :disabled="inputLocked" :send-disabled="sendDisabled" @input="$emit('input',$event)" @send="$emit('send')" @resize="$emit('composer-resize',$event)"/>
+<div ref="dock" class="sf-e975b61aa4 coach-composer-dock" data-node-id="864:2831">
+<slot name="allowance"/>
+<sf-message-composer :value="message" :disabled="inputLocked" :send-disabled="sendDisabled" :quota-blocked="quotaBlocked" :send-label="sendLabel" @input="$emit('input',$event)" @send="$emit('send')"/>
 <p class="sf-a6d2e0dc9e" data-node-id="864:2838">AI-generated content may be inaccurate.</p>
 </div>
 </div>
@@ -134,5 +135,5 @@
 </template>
 <script>
 import {SfAiBall,SfMessageComposer} from '@/design-system'
-export default {components:{SfAiBall,SfMessageComposer}, name: "SourceCoach", props: { message: String, aiState:String, inputLocked:Boolean,sendDisabled:Boolean } }
+export default {components:{SfAiBall,SfMessageComposer}, name: "SourceCoach", props: { message: String, aiState:String, inputLocked:Boolean,sendDisabled:Boolean,quotaBlocked:Boolean,sendLabel:String },mounted(){const update=()=>this.$emit('composer-resize',this.$refs.dock.offsetHeight);this.$nextTick(update);if(typeof ResizeObserver!=='undefined'){this.dockObserver=new ResizeObserver(update);this.dockObserver.observe(this.$refs.dock)}},beforeDestroy(){if(this.dockObserver)this.dockObserver.disconnect()} }
 </script>

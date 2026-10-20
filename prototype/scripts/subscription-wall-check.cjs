@@ -16,7 +16,7 @@ const shot=name=>page.locator('.phone-frame').screenshot({path:path.join(dir,nam
   for(const screen of ['course','world-tour-detail','program','plan','weekly','result','coach','challenge','membership']){
     await open(screen);await tab('purchase','offer');await dialog().getByRole('radio').first().waitFor()
     const data=await state();assert.equal(data.wall.id,'sunnyfit-premium');assert.equal(data.wall.version,3);placements.add(data.wall.placementId)
-    assert.equal(await dialog().locator('.sf-premium-paywall__resource strong').innerText(),data.context.resourceName);assert.equal(await dialog().locator('[data-purchase-view=benefits]').isVisible(),screen==='membership')
+    if(screen==='coach'){assert.equal(await dialog().locator('.conversation-offer h1').innerText(),data.wall.entry.title);assert.equal(data.context.resourceName,'AI Coach')}else assert.equal(await dialog().locator('.sf-premium-paywall__resource strong').innerText(),data.context.resourceName);assert.equal(await dialog().locator('[data-purchase-view=benefits]').isVisible(),screen==='membership')
     assert.equal(await dialog().locator('.sf-modal__footer .context-purchase-offers').count(),0)
     if(['course','coach','weekly','program','world-tour'].includes(screen))await shot('entry-'+screen)
   }

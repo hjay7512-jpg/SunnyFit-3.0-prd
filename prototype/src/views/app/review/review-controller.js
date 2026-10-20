@@ -1,6 +1,6 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit']
+export const reviewQueryKeys=['reviewFixture','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
@@ -64,9 +64,10 @@ export default {
         const keys={content:'reviewContent',insight:'reviewInsight',reply:'reviewReply',plan:'reviewPlan',event:'reviewEvent',workouts:'reviewWorkouts','program-panel':'reviewProgramPanel',cycle:'membershipCycle'}
         if(keys[scope])patch[keys[scope]]=value
         if(scope==='access')patch.membershipState=value==='unlocked'?'active':'free'
+        if(scope==='coach-membership')patch.membershipState=value
         if(scope==='insight'&&['ready','insight-loading','insight-error'].includes(value))patch.membershipState='active'
         if(scope==='insight'&&value==='locked')patch.membershipState='free'
-        if(scope==='quota'){patch.chatRemaining=value==='low'?'10':value==='empty'?'0':['campaign','ended'].includes(value)?this.$route.query.chatRemaining||'65':'65';patch.allowanceMode=value==='campaign'?'campaign':value==='ended'?'ended':'standard'}
+        if(scope==='quota'){patch.reviewQuota=value==='unknown'?'unknown':undefined;patch.chatRemaining=value==='low'?'10':value==='empty'?'0':['campaign','ended'].includes(value)?this.$route.query.chatRemaining||'65':'65';patch.allowanceMode=value==='campaign'?'campaign':value==='ended'?'ended':'standard'}
         if(scope==='reply'&&value!=='default'&&!this.message)this.setMessage('Help me plan a 20-minute workout.')
       }
       await this.replaceReviewQuery(patch)

@@ -130,7 +130,7 @@ export default {
       const route={path:this.$route.path,query};this.mvpInternalRoute=this.$router.resolve(route).route.fullPath
       this.$router.replace(route,()=>{})
     },
-    mvpUpgrade(kind,content){
+    mvpUpgrade(kind,content,options={}){
       if(this.mvpPendingPurchase){this.mvpGate=this.mvpPendingPurchase;return}
       const item=placementFor(kind)
       const weekly=this.data.weeklyReport
@@ -138,7 +138,7 @@ export default {
       if(kind==='limited_challenge'){intent.startsAt=content.challengeRules?.startsAt;intent.endsAt=content.challengeRules?.endsAt;intent.detail='Registration ends '+membershipDate(intent.endsAt)}
       if(kind==='workout_insight'){intent.resourceId=this.objectKey;intent.resourceName='Your completed workout';intent.detail='40 min · Perceived effort 4 / 10'}
       if(kind==='membership'){intent.resourceId='premium';intent.resourceName='SunnyFit Premium'}
-      if(kind==='ai_allowance'){intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active){this.mvpGate={kind:'usage',stage:'offer',title:this.mvpMember.campaignEnded?'Your unlimited event has ended':'Your allowance is used up',context:intent};return}}
+      if(kind==='ai_allowance'){if(!intent.draft)intent.continueLabel='Back to conversation';intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null&&!this.mvpMember.unlimited){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active||options.usage){this.mvpGate={kind:'usage',stage:'offer',title:'Conversation allowance',context:intent};return}}
       intent.image=content?.coverUrl||''
       const requestedView=this.reviewMode&&['quick','benefits'].includes(this.$route.query.reviewPurchaseView)?this.$route.query.reviewPurchaseView:null
       this.mvpGate={...item,kind:'membership',stage:'offer',view:requestedView||(kind==='membership'?'benefits':'quick'),benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
@@ -173,7 +173,7 @@ export default {
       await this.load()
       if(token!==this.mvpCheckoutToken||this.userId!==flow.context.userId||this.mvpGate?.context.key!==flow.context.key)return
       if(this.error||this.mvpMember.percent===null){this.mvpGate={...flow,stage:'offer'};return}
-      if(this.mvpMember.percent>0||this.mvpMember.unlimited)this.mvpGate={...flow,stage:'success'}
+      if(this.mvpMember.percent>0||this.mvpMember.unlimited)this.mvpGate={...flow,stage:'success',context:{...flow.context,success:'Your allowance is available. You decide when to send your message.'}}
       else this.mvpUpgrade('ai_allowance')
     },
     viewMvpUsage(){const context=this.mvpGate?.context;this.cancelMvpPurchase();this.go('membership',{returnTo:context?.originScreen||this.screen,resumeState:context?.originState||this.mvpPageState})},
@@ -183,7 +183,7 @@ export default {
       if(intent.userId!==this.userId){this.cancelMvpPurchase();return}
       this.emitPaywallEvent('paywall_continue',flow.offer,{result:'requested',reason:intent.action})
       const restoredQuery={...intent.originQuery}
-      for(const key of ['membershipState','chatRemaining','membershipCycle','allowanceMode']){if(this.$route.query[key]!==undefined)restoredQuery[key]=this.$route.query[key];else delete restoredQuery[key]}
+      for(const key of ['membershipState','chatRemaining','membershipCycle','allowanceMode','reviewQuota']){if(this.$route.query[key]!==undefined)restoredQuery[key]=this.$route.query[key];else delete restoredQuery[key]}
       const sameQuery=Object.keys({...restoredQuery,...this.$route.query}).every(key=>restoredQuery[key]===this.$route.query[key])
       if(this.$route.path!==intent.originPath||!sameQuery){this.mvpCheckoutApplying=true;try{await new Promise(resolve=>this.$router.push({path:intent.originPath,query:restoredQuery},resolve,resolve))}finally{this.mvpCheckoutApplying=false}}
       if(intent.kind==='course'||intent.kind==='world_tour')this.contentId=intent.resourceId
@@ -210,6 +210,7 @@ export default {
       this.notice={title:'Ready to train',body:resource.name+' is ready to start.'}
     },
     async handleMvpAction(action){
+      if(action==='allowance-details'&&(this.isMvpPreview||this.data.policyVersion===20261014)){this.mvpUpgrade('ai_allowance',null,{usage:true});return true}
       if(action==='quota-options'&&(this.isMvpPreview||this.data.policyVersion===20261014)){this.mvpUpgrade('ai_allowance');return true}
       if(!this.isMvpPreview)return false
       if(action==='generate-insight'){

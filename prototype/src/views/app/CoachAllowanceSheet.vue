@@ -1,0 +1,23 @@
+<template>
+  <sf-sheet class="coach-allowance-sheet" :open="true" contained :resizable="false" :title="unknown?'Check your allowance':'Conversation allowance'" :busy="busy" @input="$emit('close')">
+    <template v-if="unknown"><span class="coach-allowance-sheet__icon"><sf-icon name="refresh" :size="26"/></span><h3>Let’s check that again.</h3><p>We couldn’t load your allowance. Your message hasn’t been sent.</p></template>
+    <template v-else>
+      <div class="coach-allowance-sheet__balance"><strong>{{ member.unlimited?'∞':member.percent+'%' }}</strong><span>{{ member.unlimited?'Unlimited event':'remaining' }}</span><small>{{ member.active?'Premium':'Free' }}</small></div>
+      <div v-if="!member.unlimited" class="coach-allowance-sheet__track" role="progressbar" aria-label="Conversation allowance remaining" :aria-valuenow="member.percent" aria-valuemin="0" aria-valuemax="100"><span :style="{width:member.percent+'%'}"/></div>
+      <p v-if="member.unlimited">Unlimited conversations until {{ date(member.campaignEndsAt) }}. Your regular allowance applies after the event.</p>
+      <template v-else-if="member.percent===0"><h3>You’ve used this allowance.</h3><p v-if="member.resetAt">Your next allowance refreshes {{ date(member.resetAt) }}.</p><p v-else>A new allowance isn’t available yet. Check back here for an update.</p></template>
+      <p v-else>You can keep chatting with your current allowance.</p>
+      <p v-if="member.active&&!member.unlimited" class="coach-allowance-sheet__benefits"><sf-icon name="check" :size="16"/>Your Premium workouts, plans and insights are still available.</p>
+    </template>
+    <div v-if="draft" class="coach-allowance-sheet__draft"><small>YOUR UNSENT MESSAGE</small><p>{{ draft }}</p></div>
+    <template #footer><sf-button v-if="unknown" :disabled="busy" @click="$emit('refresh')">{{ busy?'Checking allowance…':'Check allowance again' }}</sf-button><sf-button v-else @click="$emit('close')">Back to conversation</sf-button><button v-if="unknown" type="button" class="coach-allowance-sheet__secondary" :disabled="busy" @click="$emit('close')">Back to conversation</button><button v-else type="button" class="coach-allowance-sheet__secondary" @click="$emit('usage')">View Membership & Usage</button></template>
+  </sf-sheet>
+</template>
+<script>
+import {SfSheet,SfButton,SfIcon} from '@/design-system'
+import {membershipDate} from './membership-view'
+export default {components:{SfSheet,SfButton,SfIcon},props:{member:Object,unknown:Boolean,busy:Boolean,draft:String},methods:{date:membershipDate}}
+</script>
+<style scoped>
+.coach-allowance-sheet >>> .sf-modal{border-radius:24px 24px 0 0;background:var(--sf-page);color:var(--sf-text);max-height:calc(100% - 44px)}.coach-allowance-sheet >>> .sf-modal__header h2{font-size:18px;line-height:26px}.coach-allowance-sheet >>> .sf-modal__footer{border:0;background:transparent}.coach-allowance-sheet__balance{display:flex;align-items:baseline;gap:8px;margin:9px 0 16px}.coach-allowance-sheet__balance strong{font-size:44px;line-height:52px;letter-spacing:-1.5px;color:var(--sf-text)}.coach-allowance-sheet__balance span{font-size:14px;color:var(--sf-text-secondary)}.coach-allowance-sheet__balance small{margin-left:auto;font-size:12px;background:var(--sf-content-surface);border:1px solid var(--sf-content-edge);padding:5px 10px;border-radius:20px}.coach-allowance-sheet__track{height:5px;border-radius:4px;background:#e4e8ef;overflow:hidden;margin-bottom:24px}.coach-allowance-sheet__track span{display:block;height:100%;background:var(--sf-action)}.coach-allowance-sheet h3{font-size:20px;line-height:28px;margin:0 0 8px;letter-spacing:-.3px}.coach-allowance-sheet p{font-size:14px;line-height:22px;color:var(--sf-text-secondary);margin:0 0 18px}.coach-allowance-sheet__benefits{display:flex;gap:8px;align-items:flex-start;padding-top:16px;border-top:1px solid #e4e8ef}.coach-allowance-sheet__benefits .sf-icon{color:#4f8568;flex-shrink:0;margin-top:3px}.coach-allowance-sheet__draft{padding:14px 16px;background:var(--sf-content-surface);border:1px solid var(--sf-content-edge);border-radius:var(--sf-radius-row)}.coach-allowance-sheet__draft small{font-size:10px;letter-spacing:.7px;color:var(--sf-text-secondary)}.coach-allowance-sheet__draft p{margin:7px 0 0;color:var(--sf-text);max-height:88px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.coach-allowance-sheet__secondary{min-height:44px;border:0;background:none;color:var(--sf-text-secondary);font:13px/20px var(--sf-font-family);width:100%;cursor:pointer}.coach-allowance-sheet__icon{display:grid;place-items:center;width:52px;height:52px;border-radius:18px;background:var(--sf-content-surface);color:var(--sf-action);margin:4px 0 20px}
+</style>

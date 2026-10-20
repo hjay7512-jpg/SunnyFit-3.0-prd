@@ -23,3 +23,4 @@
 
 @media(max-width:700px){.customer-mode .phone-stage:has(.content-detail-frame),.customer-mode .phone-stage:has(.tour-browse-frame){height:100dvh;width:min(430px,100%)}.customer-mode .phone-frame.content-detail-frame,.customer-mode .phone-frame.tour-browse-frame{height:100dvh;min-height:0;--canvas-height:100dvh!important;zoom:1}}
 @media(max-width:700px){.customer-mode .content-detail-frame .source-visual--native{height:100%;min-height:0}.customer-mode .content-detail-frame .source-viewport{height:100%}}
+@media(max-width:700px){.customer-mode .phone-stage:has(.coach-frame){height:100dvh;width:min(430px,100%)}.customer-mode .phone-frame.coach-frame{height:100dvh;min-height:0;--canvas-height:100dvh!important;zoom:1}}

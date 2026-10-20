@@ -4,13 +4,14 @@ const loading=state('loading','加载中','页面数据加载期间显示加载�
 const error=state('error','加载失败','数据请求失败时提供重试入口；重试恢复当前页面，不丢失入口上下文。')
 const empty=state('empty','暂无内容','当前没有可展示的内容，保留页面标题及返回入口，不显示伪造记录。')
 const memberStates=[state('free','未订阅','显示 Free 账户及有限的 AI Coach 用量。可从原入口了解 Premium。'),state('active','会员有效','Premium 权益有效，显示续订日期。会员身份和对话剩余额度分别呈现。'),state('canceled','已关续订','当前周期内仍保留 Premium 权益；显示有效期，不视为已经过期。'),state('expired','会员已到期','恢复 Free 权限，保留已保存的历史内容；新请求按当前权限处理。')]
-const quotaStates=[state('available','额度充足','显示 65% 剩余对话额度，进度条与数值一致。'),state('low','额度较低','剩余 10% 时显示低额度提示，不影响已拥有的训练功能。'),state('empty','额度用尽','显示 0%；聊天草稿保留，发送时引导查看用量或订阅。训练和已保存结果仍可使用。'),state('campaign','限时无限量','活动期显示无限量和截止时间，会员功能授权保持独立。'),state('ended','活动已结束','取消无限量标记，恢复显示有限额度，不改变会员有效状态。')]
+const quotaStates=[state('available','额度充足','剩余对话额度 65%；对话页以紧凑状态显示，会员中心的进度条与数值一致。'),state('low','额度较低','剩余 10% 时显示低额度提示，不影响已拥有的训练功能。'),state('empty','额度用尽','额度已用尽，聊天草稿保留，发送时引导查看用量或订阅。训练和已保存结果仍可使用。'),state('unknown','额度未知','未取得额度时不当作用尽，不展示付费引导；保留草稿并提供重试。'),state('campaign','限时无限量','活动期显示无限量和截止时间，会员功能授权保持独立。'),state('ended','活动已结束','取消无限量标记，恢复显示有限额度，不改变会员有效状态。')]
 const insightStates=[state('locked','待解锁','基础数据可读；洞察区域展示 Premium 入口，点击后打开当前场景的订阅说明。'),state('ready','已就绪','Premium 可使用个性化洞察；运动结果页可点击生成，周报展示就绪内容，不消耗对话额度。'),state('insight-loading','生成中','仅洞察组件显示生成状态，基础数据继续可读；生成按钮避免重复提交。'),state('insight-error','生成失败','仅洞察组件显示失败与重试入口，基础数据不受影响。'),state('saved-insight','已保存','展示已保存的洞察。会员到期后，原结果仍可阅读。')]
 const purchaseStates=[state('closed','收起','从原型中的 Premium 入口打开付费引导，保留当前内容、位置和聊天草稿。'),state('offer','付费引导','先承接原任务，提供直接订阅和了解完整权益两条路径。两种页面共用方案、优惠和购买处理，购买后返回原任务。'),state('processing','处理中','平台处理期间避免重复付款，等待当前请求确认。'),state('restoring','恢复购买','核对当前账户的已有订阅，避免重复购买；无有效订阅时保留当前方案和任务并显示结果。'),state('success','购买成功','展示成功反馈并保留原任务；点击继续后才开始训练或发送草稿。此状态只更新评审展示。'),state('failure','付款失败','展示付款失败与重试操作，保留原始任务，不自动开始训练或发送消息。'),state('cancelled','取消付款','取消后保留原内容与草稿，可返回页面或重新选择方案。'),state('pending','待确认','付款待确认时不重复下单，提供查询结果入口。')]
 const offerStates=[state('standard','常规订阅','没有适用试用活动时，按在售 SKU 展示真实周期与价格。默认月付；切换方案同步更新按钮及扣费说明。'),state('trial','30 天试用','评审示例：已核实当前账户符合活动资格，仅年付方案享 30 天免费。默认选中年付，按钮为 Start 30-day free trial；显示今天 $0 和试用后的完整年费。切换月付恢复常规订阅。'),state('ineligible','无试用资格','活动仍有效，但当前账户没有试用资格；展示常规订阅，不保留免费标签或免费按钮。'),state('unknown','资格未知','资格尚未核实，展示常规订阅。只有平台确认有效资格后才允许承诺试用。'),state('expired','活动已失效','活动过期后回落到常规方案；付款前重新核对活动、资格、SKU 与价格，变化时要求重新选择。'),state('unavailable','方案不可用','方案未取得时禁止付款，保留原任务并提供重新加载入口。')]
 const eventLabels={paywall_view:'付费引导曝光',paywall_offer_selected:'选择方案',paywall_details_view:'进入权益说明',paywall_quick_return:'返回快速订阅',paywall_benefit_explored:'了解具体权益',paywall_purchase_started:'发起购买',paywall_purchase_result:'购买结果',paywall_dismissed:'关闭付费墙',paywall_continue:'继续原任务',paywall_restore_started:'恢复购买',paywall_restore_result:'恢复结果'}
 function wallSections(vm,items){
   if(!items.some(item=>item.id==='purchase'))return items
+  if(['usage','unknown'].includes(vm.mvpGate?.kind))return items
   const wall=vm.mvpWall,flow=vm.mvpGate,events=(vm.paywallEvents||[]).slice(-5).reverse()
   const offer={id:'offer',title:'活动与试用匹配',states:offerStates,active:vm.$route.query.reviewOffer||'standard',disabled:!!vm.mvpPendingPurchase||['processing','restoring'].includes(flow?.stage)}
   offer.description=offerStates.find(item=>item.id===offer.active)?.description||offerStates[0].description
@@ -28,6 +29,7 @@ function wallSections(vm,items){
 const accessStates=[state('locked','未解锁','浏览详情开放；执行 Start / Join / Activate 时才检查权限，并保留原任务用于订阅后返回。'),state('unlocked','已解锁','当前功能权限通过，可执行对应操作；开始训练或激活计划不消耗对话额度。')]
 const sections={
   quota:{id:'quota',title:'AI Coach 用量',states:quotaStates},
+  'coach-membership':{id:'coach-membership',title:'账户与额度承接',states:[state('free','免费用户','免费额度用尽后，在输入框上方显示一处简短提醒；点击 See Premium options 或输入区继续按钮，打开承接当前草稿的快速订阅页。'),state('active','会员有效','额度用尽只打开用量说明，不要求重复订阅；有服务端刷新日期才展示日期，未知时不承诺时间。训练权益保持可用。'),state('canceled','已关续订','有效期内与会员有效状态一致；用量与续订开关分别判断，不因关闭续订要求再次付费。'),state('expired','会员到期','草稿及历史对话保留；额度用尽时引导续订，付款成功后明确点击继续才发送原消息。')]},
   purchase:{id:'purchase',title:'Premium 付费墙',states:purchaseStates},
   access:{id:'access',title:'功能权限与开始操作',states:accessStates},
   'content-offer':{id:'content-offer',title:'详情页底部 CTA',states:[state('standard','常规引导','未解锁 Premium 内容显示 Unlock with Premium，文案读取统一配置；点击后承接当前内容进入快速订阅。Free 内容或已获授权的内容保留 Start / Select Program。'),state('trial','可用试用','只有活动及资格均确认有效时，底部按钮才显示 Start 30-day free trial；进入付费墙后匹配同一试用方案和价格。切换此状态只更新页面，不自动打开弹层。'),state('ineligible','无试用资格','不符合活动资格时回落到常规付费引导，不显示免费试用承诺。'),state('unknown','资格未知','资格尚未确认时显示常规付费引导。'),state('expired','活动已失效','过期活动不再用于底部 CTA，点击时按当前有效报价处理。')]},
@@ -55,7 +57,7 @@ const catalog={
   weekly:{title:'每周报告',states:[normal,state('empty','训练不足','训练不足以生成完整周报时展示空态。'),loading,error],description:['周统计与固定分析免费；AI 个性化洞察作为独立组件展示。'],sections:[{id:'stats',title:'基础数据与分享',description:['图表、训练统计及固定模板对所有账户开放。Share your week 仅导出免费基础数据。']},'insight','purchase']},
   result:{title:'运动结果',description:['基础指标、图表与训练信息始终可读，洞察组件独立变化。'],sections:[{id:'results',title:'训练数据',description:['保留已有结果结构；展示完成训练的数据，不由权限或洞察状态替换。']},'insight','purchase']},
   challenge:{title:'限时挑战',states:[normal,empty,loading,error],description:['保留原有分类与活动列表，报名时段和报名结果挂在挑战组件下。'],sections:['event','access','purchase']},
-  coach:{title:'AI Coach',description:['保留聊天区、输入框、历史和用量入口。回复、额度与计划卡分别切换，可组合查看。'],sections:['reply','quota','plan','access','purchase']},
+  coach:{title:'AI Coach',description:['对话区专注聊天；额度只在输入框上方提示一处，按免费用户、有效会员、查询失败分别承接。','低额度不阻断发送；额度用尽保留可编辑草稿，点击继续才打开引导。订阅页提供直接购买与了解完整权益两条路径，付款后不自动发送。'],sections:['reply','quota','coach-membership','plan','purchase']},
   plan:{title:'Dynamic Plan',states:[state('plan-preview','待激活计划','展示五日预览与计划建议，Activate 时检查 Premium。'),state('plan-active','已激活计划','展示当前已激活计划及训练入口，激活已有计划不消耗对话额度。'),loading,error],sections:['access',{id:'plan-actions',title:'计划操作',description:['GO 打开对应课程；More 中的 Adjust today 返回 AI Coach 讨论计划。']},'purchase']},
   profile:{title:'个人中心',states:memberStates,sections:[{id:'member-entry',title:'会员与用量入口',description:['同一张卡展示会员有效状态、有效期和对话剩余额度；点击进入 Membership & Usage。']},'quota',{id:'profile-menu',title:'原有功能分组',description:['设备、健康、订单、设置和帮助保留原入口，Rewards / Badges 与 Credits 分开。']}]},
   membership:{title:'会员与用量',states:memberStates,sections:['quota','cycle','purchase',{id:'benefits',title:'会员权益',description:['Free 和单一 Premium 分开展示。课程、计划等功能权限不等于无限对话量。']}]},
@@ -65,7 +67,7 @@ const catalog={
   movement:{title:'动作训练列表',description:['浏览训练组合，通过 View Workout 查看详情，再进入运动准备页。'],sections:['access',{id:'training-group',title:'训练组合与视觉能力',description:['视觉支持在组合生成时配置，准备页再按设备性能决定是否显示可用的视觉开始入口。']}]},
   'movement-detail':{title:'动作训练详情',description:['按 Warm-up / Workout / Cooldown 展示动作顺序、目标和计划休息。Get Ready 进入准备页。'],sections:[{id:'steps',title:'动作清单',description:['使用实际视频及目标，不在准备页重复堆叠动作列表。']},{id:'recovery',title:'计划间歇',description:['读取生成组合的 restSeconds，0 或缺省直接衔接，不统一插入固定休息。']}]}
 }
-function quotaActive(member){return member.unlimited?'campaign':member.campaignEnded?'ended':member.percent===0?'empty':member.percent<=20?'low':'available'}
+function quotaActive(member){return member.unlimited?'campaign':member.percent===null?'unknown':member.campaignEnded?'ended':member.percent===0?'empty':member.percent<=20?'low':'available'}
 function movementModel(vm){
   const view=vm.movementView,player=vm.$refs.movement,q=vm.$route.query
   const states=[state('prepare','运动准备','保留预览、训练信息及心率入口。支持视觉识别的组合提供两种开始方式，不显示设备连接入口。'),state('setup','入镜引导','视觉模式默认竖屏，以识别区域和半透明剪影引导摆放手机。连续检测到人 3 秒后进入动作倒计时。'),state('countdown','动作倒计时','每个动作开始前准备 3 秒，仅显示数字；不遮罩或模糊画面，不累计训练量。'),state('training','正式训练','视觉计次动作按真实执行次数推进；计时动作只计时。可手动跳过剩余目标，窗口偏好不随动作切换重置。'),state('rest','计划休息','只在生成组合安排了 restSeconds 的位置休息。可暂停或跳过，结束后进入下一动作倒计时。'),state('summary','运动结果','展示目标完成情况和本次训练量。结束只确认一次；此处结果为演示数据，不新增训练记录。')]
@@ -102,10 +104,10 @@ export function reviewModel(vm){
     if(section.id==='purchase'&&vm.mvpGate){
       const extra={refreshing:state('refreshing','刷新用量','正在核对当前用量，保留草稿，不发起新的付款。'),'access-error':state('access-error','内容不可用','会员已生效，但原内容暂不可用；保留会员并返回原页检查。'),'event-closed':state('event-closed','报名已结束','订阅后重新检查活动时段，已结束的挑战不自动报名。')}
       const current=extra[vm.mvpGate.stage];if(current)section={...section,states:[...section.states,current]}
-      if(vm.mvpGate.stage==='offer'&&['usage','unknown'].includes(vm.mvpGate.kind))section={...section,title:'对话用量反馈',states:section.states.map(item=>item.id==='offer'?state('offer','用量说明',vm.mvpGate.kind==='usage'?'会员仍有效，对话额度已用尽；训练权益保持可用，不要求重复订阅。':'暂时无法确认用量，保留草稿并提供重新查询入口。'):item)}
+      if(['usage','unknown'].includes(vm.mvpGate.kind))section={...section,title:'对话用量反馈',states:[state('closed','收起','关闭说明后保留当前草稿和对话。'),state('offer','用量说明',vm.mvpGate.kind==='usage'?'展示当前剩余额度；会员额度用尽时不要求重复订阅，有已知刷新时间才显示日期。':'暂时无法确认用量，保留草稿并提供重新查询入口。'),...(vm.mvpGate.kind==='unknown'?[state('refreshing','查询中','核对当前额度，保留草稿，不发起付款。'),state('success','额度已就绪','额度已确认可用；用户明确点击继续才发送草稿。')]:[])]}
     }
     if(section.id==='content'&&['course','program','world-tour-detail'].includes(screen))section={...section,states:section.states.filter(item=>item.id!=='all')}
-    let value={quota:quotaActive(vm.mvpMember),cycle:q.membershipCycle||'monthly',content:vm.mvpContentState==='default'?'all':vm.mvpContentState,access:vm.mvpMember.active?'unlocked':'locked',insight:vm.mvpInsightState==='default'?(vm.mvpMember.active?'ready':'locked'):vm.mvpInsightState,reply:vm.mvpReplyState,plan:vm.mvpPlanState,event:vm.mvpEventState,workouts:q.reviewWorkouts||'default',purchase:vm.mvpGate?.stage||'closed','content-offer':q.reviewContentOffer||q.reviewOffer||'standard','program-panel':q.reviewProgramPanel||'details'}[section.id]
+    let value={quota:quotaActive(vm.mvpMember),'coach-membership':vm.mvpMember.state,cycle:q.membershipCycle||'monthly',content:vm.mvpContentState==='default'?'all':vm.mvpContentState,access:vm.mvpMember.active?'unlocked':'locked',insight:vm.mvpInsightState==='default'?(vm.mvpMember.active?'ready':'locked'):vm.mvpInsightState,reply:vm.mvpReplyState,plan:vm.mvpPlanState,event:vm.mvpEventState,workouts:q.reviewWorkouts||'default',purchase:vm.mvpGate?.stage||'closed','content-offer':q.reviewContentOffer||q.reviewOffer||'standard','program-panel':q.reviewProgramPanel||'details'}[section.id]
     if(section.id==='content'&&value==='all'&&['course','program','world-tour-detail'].includes(screen))value=(vm.data?(screen==='course'?vm.selectedContent:screen==='world-tour-detail'?vm.selectedWorldTour:vm.selectedProgram):null)?.tier==='free'?'content-free':'content-premium'
     let choice=section.states?.find(option=>option.id===value)||section.states?.[0]
     if(section.id==='quota'&&typeof vm.mvpMember.percent==='number'&&['available','low'].includes(choice?.id))choice={...choice,description:choice.description.map(line=>line.replace(choice.id==='low'?'10%':'65%',vm.mvpMember.percent+'%'))}
