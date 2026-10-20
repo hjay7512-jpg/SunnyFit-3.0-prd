@@ -24,8 +24,8 @@
         <template v-if="openedAsset"><p class="history-date">Saved conversation · reading is free</p><sf-message-bubble :text="openedAsset.body"/></template>
         <template v-else-if="!messages.length"><sf-chat-greeting class="coach-greeting" :name="name"/><p v-if="context" class="coach-context">{{ context }}</p></template>
         <div v-for="item in (openedAsset?[]:messages)" :key="item.id" class="coach-turn" :data-delivery="item.delivery||'sent'">
-          <sf-message-bubble v-if="item.message" role="user" :text="item.message"/>
-          <coach-message-notice v-if="mvpMember&&(item.delivery==='failed'||item.delivery!=='pending'&&item.quotaReminder)" :item="item" :member="mvpMember" :can-send="canSendChat" @action="$emit('action',$event)"/>
+          <sf-message-bubble v-if="item.message" role="user"><button v-if="item.delivery==='failed'" type="button" class="coach-turn__retry" aria-label="Retry message" title="Not sent. Retry message" @click.stop="$emit('action','chat-retry:'+item.id)"><sf-icon name="alert" :size="14"/></button>{{ item.message }}</sf-message-bubble>
+          <coach-message-notice v-if="mvpMember&&(item.delivery==='failed'&&['allowance','unknown'].includes(item.failure)||item.delivery==='sent'&&item.quotaReminder)" :item="item" :member="mvpMember" :can-send="canSendChat" @action="$emit('action',$event)"/>
           <div v-if="item.delivery==='pending'" class="coach-turn__thinking" role="status" aria-label="AI Coach is preparing your reply"><span>•••</span></div>
           <sf-message-bubble v-if="item.body" :text="item.body"/>
         </div>
@@ -53,9 +53,9 @@ import ResultChart from './restored/ResultChart'
 import ResultCourse from './restored/ResultCourse'
 import ResultFooter from './restored/ResultFooter'
 import './restored/source.css'
-import {SfChatGreeting,SfMessageBubble,SfInsightCard} from '@/design-system'
+import {SfIcon,SfChatGreeting,SfMessageBubble,SfInsightCard} from '@/design-system'
 export default {
-  components:{CoachMessageNotice,MvpCoachState,V3Home,V3Plan,V3Course,V3Workout,V3Program,SourceCoach,SfChatGreeting,SfMessageBubble,SfInsightCard,ResultHeader,ResultBackdrop,ResultStats,ResultCalories,ResultFruit,ResultChart,ResultCourse,ResultFooter},
+  components:{SfIcon,CoachMessageNotice,MvpCoachState,V3Home,V3Plan,V3Course,V3Workout,V3Program,SourceCoach,SfChatGreeting,SfMessageBubble,SfInsightCard,ResultHeader,ResultBackdrop,ResultStats,ResultCalories,ResultFruit,ResultChart,ResultCourse,ResultFooter},
   data(){return {composerHeight:48}},
   props:{canSendChat:Boolean,programPanel:String,startLabel:String,mvpMember:Object,mvpState:String,insightState:String,planState:String,replyState:String,user:Object,report:Object,inputLocked:Boolean,aiState:String,screen:String,name:String,message:String,messages:Array,openedAsset:Object,context:String,balance:Number,commercial:Boolean,sampleConversation:Boolean,hasInsight:Boolean,insightBody:String,analysisCredits:Number,chatCredits:Number,tier:String,redemptionCredits:Number,content:Object,courses:Array,workout:Object,nextWorkout:Object,chargeLabel:String,chatLabel:String},
   watch:{messages:{deep:true,handler(){this.$nextTick(()=>{const feed=this.$refs.conversation;if(feed)feed.scrollTop=feed.scrollHeight})}}},

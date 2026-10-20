@@ -22,3 +22,5 @@
 
 .result-top-bar{position:sticky;top:0;height:88px;margin-bottom:-88px;z-index:5;pointer-events:none}.result-top-bar .result-header{pointer-events:auto}
 .source-visual .sf-4135bedc44.sf-top-bar-mask{pointer-events:none}
+
+.visual-coach .coach-turn>.user-bubble{position:relative}.visual-coach .coach-turn__retry{position:absolute;right:calc(100% + 6px);top:50%;transform:translateY(-50%);display:grid;place-items:center;width:20px;height:20px;padding:0;border:0;background:none;color:var(--sf-action);cursor:pointer}.visual-coach .coach-turn__retry:after{content:'';position:absolute;width:44px;height:44px;left:50%;top:50%;transform:translate(-50%,-50%)}
