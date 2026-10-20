@@ -215,6 +215,7 @@ export default {
     async handleMvpAction(action){
       if(action.startsWith('chat-pay:')){this.openChatPurchase(action.slice(9));return true}
       if(action.startsWith('chat-retry:')){await this.sendMvpConversation(action.slice(11));return true}
+      if(action==='plan'&&this.screen==='coach'){this.go('plan',{returnTo:'coach'});return true}
       if(action==='send'&&(this.isMvpPreview||this.data.policyVersion===20261014&&!this.canSendMvpChat)){await this.sendMvpConversation();return true}
       if(action==='allowance-details'&&(this.isMvpPreview||this.data.policyVersion===20261014)){this.mvpUpgrade('ai_allowance',null,{usage:true});return true}
       if(action==='quota-options'&&(this.isMvpPreview||this.data.policyVersion===20261014)){this.mvpUpgrade('ai_allowance');return true}
@@ -264,7 +265,7 @@ export default {
         return true
       }
       if(action==='new-chat'){this.setMvpPageState('default');return false}
-      if(action==='adjust-plan'||action==='create-plan'){this.coachContext=action==='create-plan'?'Discuss a new Dynamic Plan':'Discuss changes to my plan';this.go('coach',{reviewPlan:action==='create-plan'?'plan-preview':'default',mvpState:undefined});return true}
+      if(action==='adjust-plan'||action==='create-plan'){this.coachContext=action==='create-plan'?'Discuss a new Dynamic Plan':'Discuss changes to my plan';this.go('coach',{reviewPlan:'default',planSetup:action==='create-plan'?'1':undefined,mvpState:undefined});return true}
       return false
     }
   }

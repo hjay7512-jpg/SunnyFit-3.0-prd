@@ -22,13 +22,18 @@ export default {
       if(reminder){this.chatWarningLevels=reminder.seen;sessionStorage.setItem(key,JSON.stringify(reminder.seen));return {threshold:reminder.threshold,percent:reminder.percent}}
       return null
     },
-    async sendMvpConversation(messageId){
+    async generateChatPlan(request){
+      if(this.screen!=='coach'||!['fitness','weight-loss','strength'].includes(request.goal)||![3,4,5].includes(request.days)||![15,30,45].includes(request.minutes))return
+      const goal={fitness:'build a consistent fitness habit','weight-loss':'work towards weight loss',strength:'get stronger'}[request.goal]
+      await this.sendMvpConversation(null,{draft:'Create a Dynamic Plan to '+goal+', '+request.days+' days a week, '+request.minutes+' minutes per session.',planRequest:{...request}})
+    },
+    async sendMvpConversation(messageId,options={}){
       if(this.chatSending||this.mvpReplyState==='thinking')return
       let item=messageId&&this.sessionResults.find(m=>m.id===messageId&&m.type==='conversation')
       if(messageId&&(!item||item.delivery!=='failed'))return
-      const draft=item?item.message:this.message.trim();if(!draft)return
+      const draft=item?item.message:options.draft||this.message.trim();if(!draft)return
       this.openedConversation=null;this.sampleConversation=false
-      if(!item){item={id:'preview-chat-'+requestKey(),type:'conversation',message:draft,body:'',delivery:'pending',failure:null,quotaReminder:null};this.sessionResults.push(item);this.setMessage('')}
+      if(!item){item={id:'preview-chat-'+requestKey(),type:'conversation',message:draft,body:'',delivery:'pending',failure:null,quotaReminder:null,...(options.planRequest?{planRequest:options.planRequest}:{})};this.sessionResults.push(item);if(!options.draft)this.setMessage('')}
       this.$set(item,'failure',null);this.$set(item,'delivery','pending')
       if(!this.canSendMvpChat){this.$set(item,'delivery','failed');this.$set(item,'failure',this.mvpMember.percent===null?'unknown':'allowance');this.setMvpPageState('default','reply');return}
       if(!item.quotaReminder)this.$set(item,'quotaReminder',this.chatReminderFor(this.mvpMember))
@@ -38,8 +43,9 @@ export default {
         if(token!==this.mvpRequestToken||this.$route.path!==origin||this.userId!==user)return
         if(!this.mvpMember.unlimited&&!(this.mvpMember.percent>0)&&this.mvpChatUnitCost){const balance=this.mvpChatPurchasedCredits;if(balance<this.mvpChatUnitCost){this.$set(item,'delivery','failed');this.$set(item,'failure','allowance');this.setMvpPageState('default','reply');return}const patch={reviewAiCredits:String(balance-this.mvpChatUnitCost)};this.mvpInternalRoute=this.$router.resolve({path:this.$route.path,query:{...this.$route.query,...patch}}).route.fullPath;this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery(patch)}finally{this.mvpCheckoutApplying=false}}
         if(token!==this.mvpRequestToken||this.userId!==user)return
-        this.$set(item,'body','Let’s make your next workout manageable. Tell me how much time you have, which equipment you want to use, and how you felt after your last session. We can use that to discuss a plan you can preview before activating.')
-        this.$set(item,'delivery','sent');this.setMvpPageState('default','reply')
+        this.$set(item,'body',item.planRequest?'Here’s your training direction. Review the stages below; you can discuss changes before activating your plan.':'Let’s make your next workout manageable. Tell me how much time you have, which equipment you want to use, and how you felt after your last session. We can use that to discuss a plan you can preview before activating.')
+        this.$set(item,'delivery','sent')
+        if(item.planRequest){const patch={reviewReply:undefined,reviewPlan:'plan-preview',mvpState:undefined,planSetup:undefined};this.mvpInternalRoute=this.$router.resolve({path:this.$route.path,query:{...this.$route.query,...patch}}).route.fullPath;await this.replaceReviewQuery(patch)}else this.setMvpPageState('default','reply')
       },700)
     },
     openChatPurchase(messageId){

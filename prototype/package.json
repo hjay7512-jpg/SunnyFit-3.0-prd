@@ -8,7 +8,7 @@
     "api": "node server/index.cjs",
     "build": "node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js build",
     "start": "node server/index.cjs",
-    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs tests/subscription-wall.test.cjs tests/content-presentation.test.cjs tests/chat-allowance.test.cjs",
+    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs tests/subscription-wall.test.cjs tests/content-presentation.test.cjs tests/chat-allowance.test.cjs tests/workout-recap.test.cjs",
     "test:consumer": "node scripts/optimized-demo-check.cjs",
     "test:layout": "node scripts/check-demo-layout.cjs",
     "test:foundation": "node --test tests/demo-runtime.test.cjs && node scripts/demo-foundation-check.cjs",

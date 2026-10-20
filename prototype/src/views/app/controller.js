@@ -278,6 +278,7 @@ export default {
       }, () => {});
     },
     back() {
+      if(this.screen==='plan'&&this.returnTo==='coach'){this.go('coach',{returnTo:undefined,reviewPlan:'plan-active'});return;}
       if(['movement','world-tour'].includes(this.screen)&&['home','workout','plan','program'].includes(this.$route.query.collectionOrigin)){this.go(this.$route.query.collectionOrigin,{collectionOrigin:undefined,returnTo:undefined,intent:undefined});return;}
       if(this.isProfileSecondary){
         const {profileItem,profileSection,profileParent}=this.$route.query;

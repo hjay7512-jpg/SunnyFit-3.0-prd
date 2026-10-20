@@ -44,6 +44,7 @@
 <div class="sf-d14be32c5f" data-node-id="864:2822">
 <div ref="dock" class="sf-e975b61aa4 coach-composer-dock" data-node-id="864:2831">
 <slot name="allowance"/>
+<slot name="tools"/>
 <sf-message-composer :value="message" :disabled="inputLocked" :send-disabled="sendDisabled" :quota-blocked="quotaBlocked" :send-label="sendLabel" @input="$emit('input',$event)" @send="$emit('send')"/>
 <p class="sf-a6d2e0dc9e" data-node-id="864:2838">AI-generated content may be inaccurate.</p>
 </div>

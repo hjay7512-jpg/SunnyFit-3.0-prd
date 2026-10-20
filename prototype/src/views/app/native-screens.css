@@ -16,7 +16,7 @@
 .visual-coach .coach-turn{display:flex;flex-direction:column;gap:6px;min-width:0;flex-shrink:0}.visual-coach .coach-turn>.assistant-bubble{margin-top:8px}.visual-coach .coach-turn__thinking{align-self:flex-start;display:flex;align-items:center;min-height:42px;padding:8px 14px;margin-top:8px;background:var(--sf-content-surface);border-radius:var(--sf-radius-row);color:var(--sf-action);font-size:19px;letter-spacing:4px}.visual-coach .actual-conversation{gap:20px}.visual-coach .coach-message-notice.is-failed~.assistant-bubble{display:none}
 .source-visual.visual-result,.visual-result .result-composition{height:auto;min-height:1350px;overflow:visible}.result-detail-flow{position:relative;padding:442px 16px 52px;display:flex;flex-direction:column;gap:24px}.result-detail-flow>.result-insight,.result-detail-flow>.result-chart,.result-detail-flow>.result-course,.result-detail-flow>.result-footer{position:relative;inset:auto;width:100%;flex:none}.result-detail-flow>.result-insight{height:auto}.result-detail-flow>.result-chart{height:483px}.result-detail-flow>.result-course{height:64px}.result-detail-flow>.result-footer{height:48px}
 
-.sf-ui .source-visual .mvp-dynamic-preview .sf-button{color:#fff;font:600 16px/24px var(--sf-font-family);padding:11px 16px;min-height:48px}
+.sf-ui .source-visual .mvp-dynamic-preview .sf-button--v3-full{color:#fff;font:600 16px/24px var(--sf-font-family);padding:11px 16px;min-height:48px}
 .sf-ui .source-visual .mvp-coach-state .sf-feedback__action{color:var(--sf-action);min-height:44px;padding:8px 12px;font:600 14px/22px var(--sf-font-family)}
 .weekly-upgrade>p{font-size:13px;line-height:21px;color:var(--sf-text-secondary);margin:10px 0}
 

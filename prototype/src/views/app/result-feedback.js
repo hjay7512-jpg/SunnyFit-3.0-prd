@@ -1,8 +1,11 @@
+import {workoutRecap} from './workout-recap.cjs'
 // Local prototype feedback is isolated by account and workout; it never writes a training record.
 export default {
-  data(){return {resultFeedback:null}},
+  data(){return {resultFeedback:null,resultRecapSeen:false}},
   computed:{
     resultFeedbackKey(){return 'sunnyfit-result-rpe:'+this.userId+':'+this.objectKey},
+    resultWorkout(){return workoutRecap(this.$route.query.reviewAchievement||'personal-best')},
+    resultStage(){const stage=this.$route.query.reviewResultStage;return ['complete','effort','summary'].includes(stage)?stage:this.resultRpe!==null||this.resultRecapSeen?'summary':'complete'},
     resultRpe(){
       if(this.isMvpPreview&&this.$route.query.reviewRpe==='unreported')return null
       if(this.isMvpPreview&&this.$route.query.reviewRpe==='reported'){
@@ -11,21 +14,23 @@ export default {
       }
       return this.resultFeedback?.rpe||null
     },
-    resultAnalysisBody(){return !this.isMvpPreview&&this.hasInsight?this.insightBody:'You completed a 40-minute session and rated your effort '+this.resultRpe+' out of 10. Review your heart rate alongside that effort, and use how you feel after this session to plan your next workout.'},
+    resultAnalysisBody(){return !this.isMvpPreview&&this.hasInsight?this.insightBody:'You rode '+this.resultWorkout.distance+' mi in '+this.resultWorkout.duration+' — 0.5 mi farther than your last 40-minute ride. Your average heart rate was 126 BPM, compared with 122 BPM last time.\n\nYou rated this workout '+this.resultRpe+' out of 10. Keep that effort rating with this session when discussing your next ride with AI Coach.'},
     resultHasInsight(){return this.resultRpe!==null&&(this.mvpHasInsight||this.isMvpPreview&&this.mvpMember.active&&!['locked','insight-loading'].includes(this.mvpInsightState))}
   },
   watch:{resultFeedbackKey:{immediate:true,handler(){
-    this.resultFeedback=null
-    try{const record=JSON.parse(localStorage.getItem(this.resultFeedbackKey)||'null');if(Number.isInteger(record?.rpe)&&record.rpe>=1&&record.rpe<=10)this.resultFeedback=record}catch(_){}
+    this.resultFeedback=null;this.resultRecapSeen=false
+    try{const record=JSON.parse(localStorage.getItem(this.resultFeedbackKey)||'null');if(Number.isInteger(record?.rpe)&&record.rpe>=1&&record.rpe<=10)this.resultFeedback=record;this.resultRecapSeen=localStorage.getItem(this.resultFeedbackKey+':seen')==='1'}catch(_){}
   }}},
   methods:{
     async submitResultRpe(rpe){
       if(!Number.isInteger(rpe)||rpe<1||rpe>10||this.screen!=='result')return
       const record={rpe,recordedAt:new Date().toISOString()}
-      localStorage.setItem(this.resultFeedbackKey,JSON.stringify(record));this.resultFeedback=record
-      if(this.isMvpPreview)await this.replaceReviewQuery({reviewRpe:'reported',reviewRpeValue:String(rpe),reviewInsight:undefined,mvpState:undefined})
+      try{localStorage.setItem(this.resultFeedbackKey,JSON.stringify(record));localStorage.setItem(this.resultFeedbackKey+':seen','1')}catch(_){}
+      this.resultFeedback=record;this.resultRecapSeen=true
+      if(this.isMvpPreview)await this.replaceReviewQuery({reviewRpe:'reported',reviewRpeValue:String(rpe),reviewResultStage:'summary',reviewInsight:undefined,mvpState:undefined})
       if(this.mvpMember.active)await this.handleAction('generate-insight')
     },
-    setResultPanel(value){if(this.isMvpPreview)this.replaceReviewQuery({reviewResultPanel:value})}
+    setResultPanel(value){if(this.isMvpPreview)this.replaceReviewQuery({reviewResultPanel:value})},
+    setResultStage(value){if(!['complete','effort','summary'].includes(value))return;if(value==='summary'){this.resultRecapSeen=true;try{localStorage.setItem(this.resultFeedbackKey+':seen','1')}catch(_){}}this.replaceReviewQuery({reviewResultStage:value})}
   }
 }
