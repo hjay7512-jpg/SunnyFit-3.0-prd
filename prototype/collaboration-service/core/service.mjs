@@ -6,7 +6,7 @@ const now=()=>new Date().toISOString(),uuid=()=>crypto.randomUUID();
 const string=(value,max,label)=>typeof value==='string'&&value.trim()&&[...value].length<=max?value.trim():fail(400,label+'格式不正确。');
 const operation=value=>/^[a-zA-Z0-9-]{16,80}$/.test(value||'')?value:fail(400,'缺少有效的操作标识。');
 const contextOf=input=>Object.fromEntries(['page','state','path'].filter(key=>typeof input?.[key]==='string').map(key=>[key,input[key].slice(0,500)]));
-export function createCollaborationService({db,registry,adminKey='',allowedOrigins=/** @type {string[]} */([])}){
+export function createCollaborationService({db,registry,adminKey='',editPassword='',allowedOrigins=/** @type {string[]} */([])}){
   const fields=new Map(registry.fields.map(field=>[field.key,field]));
   const hasBlock=id=>Object.prototype.hasOwnProperty.call(registry.blocks,id);
   const blockFor=id=>hasBlock(id)?registry.blocks[id]:fail(404,'此区块已不在当前原型中。');
@@ -20,13 +20,21 @@ export function createCollaborationService({db,registry,adminKey='',allowedOrigi
     }return values;
   };
   async function authorize(request,id,edit=false){
-    const token=(request.headers.get('Authorization')||'').replace(/^Bearer /,'');if(!/^[\w-]{40,100}$/.test(token))fail(401,'请使用有效的协作链接。');
+    const token=(request.headers.get('Authorization')||'').replace(/^Bearer /,'');
+    if(token.startsWith('pw1.')){
+      const parts=token.split('.');if(!editPassword||!adminKey||parts.length!==3||parts[1].length>100||!equal(parts[2],await sign(parts[1])))fail(401,'协作链接已失效，请联系原型维护者。');
+      return {id:'password:'+parts[1],role:'editor',scopes_json:JSON.stringify(Object.keys(registry.blocks)),expires_at:null,auth_type:'password'};
+    }
+    if(!/^[\w-]{40,100}$/.test(token))fail(401,'请使用有效的协作链接。');
     const capability=await db.first('SELECT * FROM capabilities WHERE token_hash=?',[await hash(token)]);
     if(!capability||capability.revoked_at||capability.expires_at<=now())fail(401,'协作链接已失效，请联系原型维护者。');
     if(edit&&capability.role!=='editor')fail(403,'当前链接可评论，不能修改文案。');
     if(id&&!JSON.parse(capability.scopes_json).some(scope=>scope==='*'||scope===id))fail(403,'当前链接无权操作此区块。');
     return capability;
   }
+  function equal(a,b){if(typeof a!=='string'||a.length!==b.length)return false;let difference=0;for(let i=0;i<a.length;i++)difference|=a.charCodeAt(i)^b.charCodeAt(i);return difference===0}
+  async function sign(value){const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(adminKey+':'+editPassword),{name:'HMAC',hash:'SHA-256'},false,['sign']);return Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(value)))).map(byte=>byte.toString(16).padStart(2,'0')).join('')}
+  const sessionFor=cap=>({role:cap.role,label:cap.auth_type==='password'?'Password editor':cap.label,scopes:JSON.parse(cap.scopes_json),expiresAt:cap.expires_at,authType:cap.auth_type||'link',persistent:cap.auth_type==='password'});
   async function bodyOf(request){if(Number(request.headers.get('Content-Length'))>32000)fail(413,'内容过长。');const text=await request.text();if(text.length>32000)fail(413,'内容过长。');try{return JSON.parse(text)}catch{fail(400,'提交内容不是有效 JSON。')}}
   const json=(data,status=200,origin)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff',...(origin?{'Access-Control-Allow-Origin':origin,'Vary':'Origin'}:{})}});
   return async function handle(request){
@@ -36,7 +44,19 @@ export function createCollaborationService({db,registry,adminKey='',allowedOrigi
       if(origin&&!permitted)fail(403,'此预览来源未获授权。');
       if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{...(permitted?{'Access-Control-Allow-Origin':origin,'Vary':'Origin'}:{}),'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Max-Age':'600'}});
       const reply=(data,status=200)=>json(data,status,permitted?origin:null);
-      if(path==='/health'&&request.method==='GET')return reply({status:'ok',registryVersion:registry.registryVersion});
+      if(path==='/rpc'&&request.method==='POST'){
+        const input=await bodyOf(request);if(!/^\/(session|blocks\/[\w.-]+(?:\/comments)?|comments\/[\w-]+\/resolve)$/.test(input.path||'')||!['GET','POST'].includes(input.method))fail(400,'协作请求无效。');
+        const headers=new Headers({'Content-Type':'application/json'});if(origin)headers.set('Origin',origin);if(input.credential)headers.set('Authorization','Bearer '+input.credential);
+        return handle(new Request(url.origin+'/api/collaboration'+input.path,{method:input.method,headers,body:input.method==='POST'?JSON.stringify(input.body||{}):undefined}));
+      }
+      if(path==='/password-session'&&request.method==='POST'){
+        if(!editPassword||!adminKey)fail(503,'密码编辑尚未启用。');const input=await bodyOf(request),date=now(),window='login:'+date.slice(0,16)+':'+(await hash(request.headers.get('CF-Connecting-IP')||'local')).slice(0,16);
+        await db.batch([{sql:'INSERT INTO comment_limits (window,count) VALUES (?,1) ON CONFLICT(window) DO UPDATE SET count=count+1',params:[window]},{sql:"DELETE FROM comment_limits WHERE window LIKE 'login:%' AND window<?",params:['login:'+new Date(Date.now()-120000).toISOString().slice(0,16)]}]);
+        if((await db.first('SELECT count FROM comment_limits WHERE window=?',[window])).count>20)fail(429,'验证次数较多，请稍后再试。');
+        if(typeof input.password!=='string'||input.password.length>128||!equal(await hash(input.password),await hash(editPassword)))fail(401,'编辑密码不正确。');
+        const nonce=uuid(),token='pw1.'+nonce+'.'+await sign(nonce),cap=await authorize(new Request(request.url,{headers:{Authorization:'Bearer '+token}}));return reply({token,session:sessionFor(cap)});
+      }
+      if(path==='/health'&&request.method==='GET')return reply({status:'ok',registryVersion:registry.registryVersion,passwordEnabled:!!editPassword});
       if(path.startsWith('/admin/')){
         const token=(request.headers.get('Authorization')||'').replace(/^Bearer /,'');if(!adminKey||!token||await hash(token)!==await hash(adminKey))fail(401,'管理凭证无效。');
         if(path==='/admin/links'&&request.method==='GET')return reply({links:await db.all('SELECT id,label,role,scopes_json,created_at,expires_at,revoked_at FROM capabilities ORDER BY created_at DESC LIMIT 100')});
@@ -55,7 +75,7 @@ export function createCollaborationService({db,registry,adminKey='',allowedOrigi
         for(const row of rows){if(!hasBlock(row.id))continue;revisions[row.id]=row.revision;for(const[key,value]of Object.entries(JSON.parse(row.values_json)))if(fields.has(key))values[key]=value;}
         return reply({schemaVersion:1,registryVersion:registry.registryVersion,values,revisions});
       }
-      if(path==='/session'&&request.method==='POST'){const cap=await authorize(request);return reply({role:cap.role,label:cap.label,scopes:JSON.parse(cap.scopes_json),expiresAt:cap.expires_at});}
+      if(path==='/session'&&request.method==='POST'){return reply(sessionFor(await authorize(request)));}
       const match=path.match(/^\/blocks\/([\w.-]+)$/);
       if(match){
         const id=match[1];blockFor(id);const cap=await authorize(request,id,request.method==='POST');

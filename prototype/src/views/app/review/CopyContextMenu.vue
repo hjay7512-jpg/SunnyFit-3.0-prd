@@ -4,24 +4,26 @@
       <div class="copy-context-outline" :style="outlineStyle"/>
       <div ref="menu" class="copy-context-menu" :style="menuStyle" role="menu" :aria-label="label+'操作'" @keydown="navigateMenu" @contextmenu.prevent>
         <div class="copy-context-menu__label">{{ label }}</div>
-        <button v-if="editable" type="button" role="menuitem" tabindex="-1" :disabled="state.busy" @click.stop="select('edit')">编辑文案</button>
-        <template v-else-if="needsVerification"><p class="copy-context-menu__status" role="status">{{ state.authStatus==='invalid'?'编辑链接已失效':state.authBusy?'正在验证编辑权限…':'编辑权限暂未验证' }}</p><button type="button" role="menuitem" tabindex="-1" data-copy-auth-retry :disabled="state.busy||state.authBusy" @click.stop="retryAuth">{{ state.authBusy?'验证中…':'重试编辑权限' }}</button></template>
+        <button v-if="hasCopy" type="button" role="menuitem" tabindex="-1" :disabled="state.busy" @click.stop="editOrUnlock">编辑文案</button>
         <button type="button" role="menuitem" tabindex="-1" :disabled="state.busy" @click.stop="select('comments')">备注/评论</button>
+        <button v-if="state.session&&state.session.authType==='password'" type="button" role="menuitem" tabindex="-1" @click="logout">退出编辑</button>
       </div>
     </template>
+    <div v-if="passwordOpen" class="copy-password-backdrop" @mousedown.self="cancelPassword"><form class="copy-password" role="dialog" aria-modal="true" aria-labelledby="copy-password-title" @submit.prevent="unlock"><h2 id="copy-password-title">解锁文案编辑</h2><label for="copy-password-input">编辑密码</label><input id="copy-password-input" ref="passwordInput" v-model="password" type="password" autocomplete="current-password" maxlength="128" :disabled="passwordBusy"/><p>验证后记住当前浏览器，下次无需输入。</p><p v-if="passwordError" class="copy-password__error" role="alert">{{ passwordError }}</p><footer><button type="button" :disabled="passwordBusy" @click="cancelPassword">取消</button><button class="copy-password__primary" type="submit" :disabled="passwordBusy||!password">{{ passwordBusy?'验证中…':'验证并编辑' }}</button></footer></form></div>
     <button v-if="state.connected||state.authStatus!=='none'" class="copy-context-picker" type="button" @click="nextBlock">选择区块 <span>↗</span></button>
   </div>
 </template>
 <script>
-import {copyState,registry,canEdit,selectCopyBlock,recoverCopyConnection} from '@/copy/operations-copy'
+import {copyState,registry,canEdit,selectCopyBlock,unlockCopyWithPassword,lockCopyEditing} from '@/copy/operations-copy'
 
 export default {
   props:{context:{type:Object,required:true}},
-  data:()=>({state:copyState,target:null,rect:null,menuX:8,menuY:8}),
+  data:()=>({state:copyState,target:null,rect:null,menuX:8,menuY:8,passwordOpen:false,password:'',passwordError:'',passwordBusy:false,pendingEdit:null}),
   computed:{
     id(){return this.target&&this.target.getAttribute('data-copy-block')},
     label(){return registry.blocks[this.id]?.label||'当前区块'},
     editable(){return canEdit(this.id)&&registry.blocks[this.id]?.fields.length>0},
+    hasCopy(){return registry.blocks[this.id]?.fields.length>0},
     needsVerification(){return registry.blocks[this.id]?.fields.length>0&&['checking','unavailable','invalid'].includes(this.state.authStatus)},
     outlineStyle(){return {left:this.rect.left+'px',top:this.rect.top+'px',width:this.rect.width+'px',height:this.rect.height+'px'}},
     menuStyle(){return {left:this.menuX+'px',top:this.menuY+'px'}}
@@ -39,6 +41,7 @@ export default {
     }
     this.onOutsidePointer=event=>{if(this.target&&!this.$el.contains(event.target))this.dismiss()}
     this.onKey=event=>{
+      if(this.passwordOpen&&event.key==='Escape'){event.preventDefault();this.cancelPassword();return}
       if(!this.target)return
       if(event.key==='Escape'){event.preventDefault();event.stopPropagation();this.dismiss(true)}
       else if(event.key==='Tab')this.dismiss(true)
@@ -64,7 +67,10 @@ export default {
     this.$el.remove()
   },
   methods:{
-    async retryAuth(){await recoverCopyConnection(true);this.$nextTick(()=>this.$refs.menu?.querySelector('button:not(:disabled)')?.focus({preventScroll:true}))},
+    editOrUnlock(){if(this.editable)return this.select('edit');this.pendingEdit={id:this.id,context:{...this.context},fields:this.target.hasAttribute('data-copy-fields')?JSON.parse(this.target.getAttribute('data-copy-fields')):undefined};this.dismiss();this.password='';this.passwordError='';this.passwordOpen=true;this.$nextTick(()=>this.$refs.passwordInput.focus())},
+    cancelPassword(){if(this.passwordBusy)return;this.passwordOpen=false;this.password='';this.passwordError='';this.pendingEdit=null},
+    async unlock(){this.passwordBusy=true;this.passwordError='';try{await unlockCopyWithPassword(this.password);const edit=this.pendingEdit;this.passwordOpen=false;this.password='';this.pendingEdit=null;selectCopyBlock(edit.id,'edit',edit.context,edit.fields)}catch(error){this.passwordError=error.message}finally{this.passwordBusy=false}},
+    logout(){if(lockCopyEditing())this.dismiss()},
     dismiss(restoreFocus=false){
       if(restoreFocus&&this.$refs.menu?.contains(document.activeElement)&&this.previousFocus?.isConnected)this.previousFocus.focus({preventScroll:true})
       this.target=null;this.rect=null
@@ -116,6 +122,7 @@ export default {
 }
 </script>
 <style>
+.copy-password-backdrop{position:fixed;inset:0;z-index:20010;background:#20293666;display:grid;place-items:center;padding:20px}.copy-password{width:360px;max-width:100%;box-sizing:border-box;background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:24px;box-shadow:0 20px 80px #18243533;color:#475160}.copy-password h2{margin:0 0 22px;font:600 18px/26px inherit}.copy-password label{display:block;font-size:12px;margin-bottom:7px}.copy-password input{width:100%;box-sizing:border-box;min-height:42px;border:1px solid #dce1e8;border-radius:7px;padding:10px 12px;font:14px/20px inherit;outline-color:#d55f50}.copy-password p{font-size:11px;color:#8b94a1;line-height:18px}.copy-password p.copy-password__error{color:#bd483e}.copy-password footer{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}.copy-password button{border:1px solid #e2e5e9;border-radius:7px;padding:9px 15px;background:#fff;color:#697586;font-size:12px;cursor:pointer}.copy-password button.copy-password__primary{background:#d65146;color:#fff;border-color:#d65146}.copy-password button:disabled{opacity:.5;cursor:default}
 .copy-context-layer{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft Yahei",sans-serif}
 .copy-context-outline{position:fixed;pointer-events:none;box-sizing:border-box;border:1.5px solid #d56b60;border-radius:5px;z-index:20000;background:#de685009}
 .copy-context-menu{position:fixed;z-index:20001;box-sizing:border-box;width:224px;max-width:calc(100vw - 16px);padding:5px;background:#fff;border:1px solid #e6e2e1;border-radius:9px;box-shadow:0 6px 24px #28314422}

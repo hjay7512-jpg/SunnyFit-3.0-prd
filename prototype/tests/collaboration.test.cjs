@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {createLocalCollaboration}=require('../server/collaboration.cjs'),registry=require('../config/collaboration-registry.json')
 const {validSession,capabilityRejected}=require('../src/copy/copy-auth.cjs')
 async function fixture(t){
- const filename=path.resolve('runtime','collaboration-test-'+randomUUID()+'.sqlite'),adminKey=randomUUID(),service=await createLocalCollaboration({filename,adminKey,allowedOrigins:['http://localhost:9876']})
+ const filename=path.resolve('runtime','collaboration-test-'+randomUUID()+'.sqlite'),adminKey=randomUUID(),service=await createLocalCollaboration({filename,adminKey,editPassword:'Test-team-password',allowedOrigins:['http://localhost:9876']})
  t.after(()=>{service.close();for(const name of [filename,filename+'-wal',filename+'-shm'])if(fs.existsSync(name))fs.unlinkSync(name)})
  const call=async(url,body,token,extra={})=>{const response=await service.handler(new Request('http://local/api/collaboration'+url,{method:body===undefined?'GET':'POST',headers:{...(body===undefined?{}:{'Content-Type':'application/json'}),...(token?{Authorization:'Bearer '+token}:{}),...extra.headers},body:body===undefined?undefined:JSON.stringify(body)}));return {status:response.status,headers:response.headers,data:response.status===204?null:await response.json()}}
  const mint=async(role='editor',scopes=['*'])=>(await call('/admin/links',{role,scopes,label:'Test team',days:30},adminKey)).data
@@ -73,5 +73,20 @@ test('A new frontend/backend build preserves database overrides and comments ins
  const f=await fixture(t),key=(await f.mint()).token;await f.call('/blocks/profile.membership',edit('Persist across deploy'),key)
  const {createCollaborationService}=await import('../collaboration-service/core/service.mjs'),{sqliteAdapter}=require('../server/collaboration.cjs'),updated=structuredClone(registry);updated.defaults['profile.card.title']='Changed bundled default'
  const handler=createCollaborationService({db:sqliteAdapter(f.database),registry:updated}),response=await handler(new Request('http://local/api/collaboration/copy'));assert.equal((await response.json()).values['profile.card.title'],'Persist across deploy')
- const prepare=fs.readFileSync(path.resolve('scripts/prepare-copy-config.cjs'),'utf8');assert.ok(!prepare.includes('createCopyFiles'));assert.ok(!fs.readFileSync(path.resolve('src/copy/operations-copy.js'),'utf8').includes('localStorage'))
+ const prepare=fs.readFileSync(path.resolve('scripts/prepare-copy-config.cjs'),'utf8');assert.ok(!prepare.includes('createCopyFiles'));assert.ok(fs.readFileSync(path.resolve('src/copy/operations-copy.js'),'utf8').includes('sunnyfit-editor-session:'))
+})
+test('Password login issues a persistent signed editor session; RPC preserves CAS and never grants administrator access',async t=>{
+ const f=await fixture(t);assert.equal((await f.call('/password-session',{password:'wrong'})).status,401)
+ const login=await f.call('/password-session',{password:'Test-team-password'});assert.equal(login.status,200);assert.equal(login.data.session.persistent,true);assert.equal(login.data.session.authType,'password');assert.equal(validSession(login.data.session),true)
+ const token=login.data.token,rpc=(path,method='GET',body)=>f.call('/rpc',{path,method,body,credential:token})
+ assert.equal((await rpc('/blocks/profile.membership','POST',edit('Password saved'))).status,200);assert.equal((await rpc('/blocks/profile.membership')).data.values['profile.card.title'],'Password saved')
+ assert.equal((await rpc('/blocks/profile.membership','POST',edit('Stale password save'))).status,409);assert.equal((await f.call('/admin/links',undefined,token)).status,401);assert.equal((await rpc('/admin/links')).status,400)
+ assert.equal((await f.call('/session',{},token.slice(0,-1)+(token.endsWith('a')?'b':'a'))).status,401)
+ const {createCollaborationService}=await import('../collaboration-service/core/service.mjs'),{sqliteAdapter}=require('../server/collaboration.cjs'),rotated=createCollaborationService({db:sqliteAdapter(f.database),registry,adminKey:f.adminKey,editPassword:'Changed-password'})
+ assert.equal((await rotated(new Request('http://local/api/collaboration/session',{method:'POST',headers:{Authorization:'Bearer '+token}}))).status,401)
+})
+test('Password login accepts a CORS simple text request, rejects untrusted origins and limits repeated guesses',async t=>{
+ const f=await fixture(t),request=()=>new Request('http://local/api/collaboration/password-session',{method:'POST',headers:{Origin:'http://localhost:9876','Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({password:'Test-team-password'})});assert.equal((await f.handler(request())).status,200)
+ assert.equal((await f.call('/password-session',{password:'Test-team-password'},undefined,{headers:{Origin:'https://evil.example'}})).status,403)
+ let last;for(let i=0;i<21;i++)last=await f.call('/password-session',{password:'incorrect'});assert.equal(last.status,429)
 })
