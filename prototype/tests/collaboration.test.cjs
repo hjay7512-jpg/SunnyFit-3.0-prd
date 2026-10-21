@@ -12,9 +12,15 @@ test('Every editable field has one stable block owner and hosted/local contracts
  const catalog=require('../config/operations-copy.fields.json'),counts=new Map();for(const block of Object.values(registry.blocks))for(const key of block.fields)counts.set(key,(counts.get(key)||0)+1)
  assert.equal(counts.size,catalog.fields.length);assert.ok([...counts.values()].every(n=>n===1));assert.deepEqual(require('../collaboration-service/core/registry.json'),registry);assert.ok(registry.blocks['page.coach'].fields.length===0)
 })
-test('Anonymous viewing is read-only; flags, invalid keys and the old API cannot authorize writes',async t=>{
+test('Anonymous copy viewing is read-only; flags, invalid keys and the old API cannot authorize copy writes',async t=>{
  const {call}=await fixture(t);assert.equal((await call('/copy')).status,200);assert.equal((await call('/blocks/profile.membership',edit())).status,401);assert.equal((await call('/blocks/profile.membership',edit(),'edit=1')).status,401);assert.equal((await call('/session',{},'x'.repeat(64))).status,401)
  const source=fs.readFileSync(path.resolve('server/index.cjs'),'utf8');assert.match(source,/route==='\/api\/prototype-copy'.*410/);assert.ok(!source.includes('copyFiles.save'))
+})
+test('Comments are open to all visitors; versions, resolution and copy edits remain protected',async t=>{
+ const {call}=await fixture(t),input={body:'Open review',actor:'Visitor',operationId:randomUUID(),context:{page:'首页',state:'默认'}}
+ assert.equal((await call('/blocks/page.home/comments',input)).status,201);assert.equal((await call('/blocks/page.home/comments')).data.comments[0].body,'Open review');assert.equal((await call('/blocks/page.home')).status,401);assert.equal((await call('/comments/'+input.operationId+'/resolve',{})).status,401)
+ for(let i=0;i<29;i++)assert.equal((await call('/blocks/page.home/comments',{...input,operationId:randomUUID()})).status,201)
+ assert.equal((await call('/blocks/page.home/comments',{...input,operationId:randomUUID()})).status,429)
 })
 test('Capabilities have scoped editor/reviewer roles, expiry and immediate revocation',async t=>{
  const {call,mint,adminKey,database}=await fixture(t),editor=await mint('editor',['profile.membership']),reviewer=await mint('reviewer')

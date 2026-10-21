@@ -19,3 +19,6 @@ export const comments=sqliteTable('comments',{
   capabilityId:text('capability_id').notNull(),context:text('context_json').notNull(),createdAt:text('created_at').notNull(),
   resolvedAt:text('resolved_at'),resolvedBy:text('resolved_by')
 },table=>[index('comments_block_time').on(table.blockId,table.createdAt)]);
+export const commentLimits=sqliteTable('comment_limits',{
+  window:text('window').primaryKey(),count:integer('count').notNull()
+});

@@ -11,7 +11,7 @@ export const currentWallCopy=()=>wallCopyConfiguration(copyState.values)
 export const copyDirty=()=>!!copyState.selected&&copyState.fields.some(field=>copyState.draft[field.key]!==copyState.saved[field.key])
 export const hasPendingChanges=()=>copyDirty()||!!copyState.commentDraft.trim()
 export const canEdit=id=>!!copyState.session&&copyState.session.role==='editor'&&copyState.session.scopes.some(scope=>scope==='*'||scope===id)
-export const canReview=id=>!!copyState.session&&copyState.session.scopes.some(scope=>scope==='*'||scope===id)
+export const canReview=id=>Object.prototype.hasOwnProperty.call(registry.blocks,id)
 export {registry}
 function captureCredential(){
   const url=new URL(location.href),hash=url.hash.split('?'),query=new URLSearchParams(hash[1]||'');token=query.get('reviewKey')||url.searchParams.get('reviewKey')||''
@@ -22,7 +22,7 @@ async function request(path,body,authorized=true){
   if(!endpoint)throw Error('共享协作服务尚未启用。')
   const response=await fetch(endpoint+path,{method:body===undefined?'GET':'POST',headers:{...(body!==undefined?{'Content-Type':'application/json'}:{}),...(authorized&&token?{Authorization:'Bearer '+token}:{})},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(8000)})
   const result=await response.json().catch(()=>({message:'协作服务暂不可用。'}))
-  if(!response.ok){const error=Error(result.message||'协作请求未完成。');error.status=response.status;if(response.status===401){copyState.session=null;try{sessionStorage.removeItem(credentialKey)}catch(_){}}throw error}return result
+  if(!response.ok){const error=Error(result.message||'协作请求未完成。');error.status=response.status;if(response.status===401){copyState.session=null;token='';try{sessionStorage.removeItem(credentialKey)}catch(_){}}throw error}return result
 }
 async function refresh(){
   const result=await request('/copy',undefined,false)
@@ -39,7 +39,7 @@ export function initializeCopy(){
     try{copyState.actor=sessionStorage.getItem(actorKey)||''}catch(_){}
     try{const config=await(await fetch(process.env.BASE_URL+'config/collaboration.json',{cache:'no-store',signal:AbortSignal.timeout(5000)})).json();endpoint=config.apiBase||''}catch(_){}
     if(process.env.VUE_APP_DEMO_RUNTIME!=='browser')endpoint='/api/collaboration'
-    try{await refresh();if(token)copyState.session=await request('/session',{})}catch(error){copyState.unavailable=true;if(token)copyState.status=error.message}finally{copyState.ready=true}
+    try{await refresh();if(token)copyState.session=await request('/session',{})}catch(error){copyState.unavailable=!copyState.connected;copyState.status=error.message}finally{copyState.ready=true}
     window.addEventListener('hashchange',async()=>{if(!new URLSearchParams(location.hash.split('?')[1]||'').has('reviewKey'))return;captureCredential();copyState.session=null;discardCopy();try{copyState.session=await request('/session',{});copyState.unavailable=false;if(copyState.selected)await loadBlock()}catch(error){copyState.status=error.message}})
     window.addEventListener('beforeunload',event=>{if(hasPendingChanges()){event.preventDefault();event.returnValue=''}})
     // A small poll keeps independent reviewers current. Dirty drafts retain their base revision.
@@ -60,9 +60,9 @@ function validateDraft(){const errors={};for(const field of copyState.fields){co
 export function discardCopy(){copyState.values={...copyState.saved};resetDraft();copyState.status=''}
 export async function loadBlock(reset=true){
   const selected=copyState.selected;if(!selected||!canReview(selected.id))return
-  const result=await request('/blocks/'+selected.id);if(copyState.selected!==selected)return
-  copyState.comments=result.comments;copyState.versions=result.versions
-  if(reset&&!copyDirty()){copyState.saved={...copyState.saved,...result.values};copyState.values={...copyState.saved};Vue.set(copyState.revisions,selected.id,result.revision);resetDraft()}
+  const editable=canEdit(selected.id),result=await request('/blocks/'+selected.id+(editable?'':'/comments'),undefined,editable);if(copyState.selected!==selected)return
+  copyState.comments=result.comments;copyState.versions=result.versions||[]
+  if(editable&&reset&&!copyDirty()){copyState.saved={...copyState.saved,...result.values};copyState.values={...copyState.saved};Vue.set(copyState.revisions,selected.id,result.revision);resetDraft()}
 }
 export async function reloadCopy(){if(copyDirty()&&!window.confirm('载入最新版本会放弃当前草稿，是否继续？'))return;discardCopy();await refresh();await loadBlock();copyState.status='已载入最新版本。'}
 export async function saveCopy(){

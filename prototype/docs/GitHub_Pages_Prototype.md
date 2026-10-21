@@ -21,7 +21,7 @@
 
 本地 Node/SQLite 服务继续使用原 HTTP API，运行方式不变。
 
-运营文案协作独立于上述浏览器演示数据库。代码、默认文案和稳定区块定义提交 GitHub；团队生效文案、评论、历史与授权链接记录保存在协作服务的数据库，不自动回流到 GitHub。前端通过 `public/config/collaboration.json` 指定的 API 读取内容；未配置服务时使用内置文案并保持只读。具体维护和发布顺序见 [原型协作 SOP](Prototype_Collaboration_SOP.md)。
+运营文案协作独立于上述浏览器演示数据库。代码、默认文案和稳定区块定义提交 GitHub；团队生效文案、开放评论、修改历史与授权链接记录保存在协作服务的数据库，不自动回流到 GitHub。前端通过 `public/config/collaboration.json` 指定的 API 读取内容；未配置服务时使用内置文案并保持只读。具体维护和发布顺序见 [原型协作 SOP](Prototype_Collaboration_SOP.md)。
 
 ## 持续迭代
 

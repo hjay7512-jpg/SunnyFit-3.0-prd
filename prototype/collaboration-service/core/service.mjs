@@ -77,10 +77,18 @@ export function createCollaborationService({db,registry,adminKey='',allowedOrigi
         }
       }
       const commentMatch=path.match(/^\/blocks\/([\w.-]+)\/comments$/);
+      if(commentMatch&&request.method==='GET'){
+        const id=commentMatch[1];blockFor(id);return reply({comments:await db.all('SELECT id,body,actor,context_json,created_at,resolved_at FROM comments WHERE block_id=? ORDER BY created_at DESC LIMIT 100',[id])});
+      }
       if(commentMatch&&request.method==='POST'){
-        const id=commentMatch[1];blockFor(id);const cap=await authorize(request,id),input=await bodyOf(request),op=operation(input.operationId),actor=string(input.actor,40,'显示名称'),body=string(input.body,2000,'评论'),date=now();
-        const prior=await db.first('SELECT * FROM comments WHERE id=?',[op]);if(prior){if(prior.capability_id===cap.id&&prior.body===body&&prior.block_id===id)return reply({id:op,replayed:true});fail(409,'评论标识已使用。');}
-        await db.batch([{sql:'INSERT INTO comments (id,block_id,body,actor,capability_id,context_json,created_at) VALUES (?,?,?,?,?,?,?)',params:[op,id,body,actor,cap.id,JSON.stringify(contextOf(input.context)),date]}]);return reply({id:op,createdAt:date},201);
+        const id=commentMatch[1];blockFor(id);let capabilityId='public';if(request.headers.has('Authorization')){try{capabilityId=(await authorize(request)).id}catch(error){if(error.status!==401)throw error}}
+        const input=await bodyOf(request),op=operation(input.operationId),actor=string(input.actor,40,'显示名称'),body=string(input.body,2000,'评论'),date=now();
+        const prior=await db.first('SELECT * FROM comments WHERE id=?',[op]);if(prior){if(prior.capability_id===capabilityId&&prior.body===body&&prior.block_id===id)return reply({id:op,replayed:true});fail(409,'评论标识已使用。');}
+        const window=date.slice(0,16),cutoff=new Date(Date.now()-120000).toISOString().slice(0,16),results=await db.batch([
+          {sql:'INSERT INTO comment_limits (window,count) VALUES (?,1) ON CONFLICT(window) DO UPDATE SET count=count+1',params:[window]},
+          {sql:'INSERT INTO comments (id,block_id,body,actor,capability_id,context_json,created_at) SELECT ?,?,?,?,?,?,? WHERE (SELECT count FROM comment_limits WHERE window=?)<=30',params:[op,id,body,actor,capabilityId,JSON.stringify(contextOf(input.context)),date,window]},
+          {sql:'DELETE FROM comment_limits WHERE window<?',params:[cutoff]}
+        ]);if(!results[1].changes)fail(429,'评论提交较频繁，请稍后重试。');return reply({id:op,createdAt:date},201);
       }
       const resolve=path.match(/^\/comments\/([\w-]+)\/resolve$/);
       if(resolve&&request.method==='POST'){
