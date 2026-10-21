@@ -4,21 +4,21 @@
       <button v-if="isGuide" type="button" class="sf-premium-paywall__back" :aria-label="generalOverview?'Back to Membership & Usage':'Back to quick subscription'" :disabled="processing" @click="generalOverview?$emit('close'):$emit('view','quick')"><sf-icon name="back" :size="18"/></button>
       <sf-icon v-else name="membership" :size="17"/><span>SunnyFit <b>Premium</b></span>
     </div>
-    <div v-show="!isGuide" v-copy-block="{id:entryBlock,fields:['title','description','unlock','category'].map(key=>'wall.entryStories.'+entryKind+'.'+key)}" class="sf-premium-paywall__quick" data-purchase-view="quick">
+    <div v-show="!isGuide" v-copy-block="{id:entryBlock,fields:(isConversation?['title','description']:['title','description','unlock','category']).map(key=>'wall.entryStories.'+entryKind+'.'+key)}" class="sf-premium-paywall__quick" data-purchase-view="quick">
       <div v-if="isConversation" class="conversation-offer">
         <sf-ai-ball :size="56" decorative motion-policy="reduce"/>
-        <h1>{{ wall.entry.title }}</h1><p class="sf-premium-paywall__subtitle">{{ wall.entry.description }}</p>
+        <h1 :data-copy-key="'wall.entryStories.'+entryKind+'.title'">{{ wall.entry.title }}</h1><p :data-copy-key="'wall.entryStories.'+entryKind+'.description'" class="sf-premium-paywall__subtitle">{{ wall.entry.description }}</p>
         <div v-if="draft" class="conversation-offer__draft"><span>Message saved</span><p>{{ draft }}</p></div>
-        <div v-copy-block="'paywall'" class="conversation-offer__benefits"><span><sf-icon name="coach" :size="18"/>{{ $copy('paywall.coachBenefit') }}</span><span><sf-icon name="play" :size="18"/>{{ $copy('paywall.trainingBenefit') }}</span></div>
+        <div v-copy-block="{id:'paywall',fields:['paywall.coachBenefit','paywall.trainingBenefit']}" class="conversation-offer__benefits"><span><sf-icon name="coach" :size="18"/>{{ $copy('paywall.coachBenefit') }}</span><span><sf-icon name="play" :size="18"/>{{ $copy('paywall.trainingBenefit') }}</span></div>
       </div>
       <template v-else><div class="sf-premium-paywall__resource">
         <img v-if="resourceImage" :src="resourceImage" alt=""/>
         <span v-else class="sf-premium-paywall__resource-icon"><sf-icon :name="wall.benefits[0].icon" :size="25"/></span>
-        <div><small>{{ wall.entry.category }}</small><strong>{{ wall.resource.name }}</strong><span>{{ wall.resource.savedDraft?'Message saved':wall.resource.detail }}</span></div>
+        <div><small :data-copy-key="'wall.entryStories.'+entryKind+'.category'">{{ wall.entry.category }}</small><strong>{{ wall.resource.name }}</strong><span>{{ wall.resource.savedDraft?'Message saved':wall.resource.detail }}</span></div>
       </div>
-      <h1>{{ wall.entry.title }}</h1><p class="sf-premium-paywall__subtitle">{{ wall.entry.description }}</p>
-      <p class="sf-premium-paywall__unlock"><sf-icon name="check" :size="15"/>{{ wall.entry.unlock }}</p>
-      <div v-copy-block="'paywall'" class="sf-premium-paywall__beyond"><span>{{ $copy('paywall.alsoLabel') }}</span><p>{{ $copy('paywall.alsoDescription') }}</p></div></template>
+      <h1 :data-copy-key="'wall.entryStories.'+entryKind+'.title'">{{ wall.entry.title }}</h1><p :data-copy-key="'wall.entryStories.'+entryKind+'.description'" class="sf-premium-paywall__subtitle">{{ wall.entry.description }}</p>
+      <p :data-copy-key="'wall.entryStories.'+entryKind+'.unlock'" class="sf-premium-paywall__unlock"><sf-icon name="check" :size="15"/>{{ wall.entry.unlock }}</p>
+      <div v-copy-block="{id:'paywall',fields:['paywall.alsoLabel','paywall.alsoDescription']}" class="sf-premium-paywall__beyond"><span>{{ $copy('paywall.alsoLabel') }}</span><p>{{ $copy('paywall.alsoDescription') }}</p></div></template>
       <sf-paywall-plans :offers="wall.offers" :selected-id="selectedId" :disabled="processing" @select="$emit('select',$event)" @reload="$emit('reload')"/>
     </div>
     <div v-show="isGuide" data-purchase-view="benefits">
@@ -28,9 +28,9 @@
     </div>
     <p v-if="feedback" class="sf-premium-paywall__feedback" role="status">{{ feedback }}</p>
     <template #footer>
-      <sf-button v-copy-block="{id:entryBlock,fields:['wall.placements.'+entryKind+'.'+(selectedOffer&&selectedOffer.trialDays?'trialCta':'cta')]}" class="sf-premium-paywall__continue" :disabled="!selectedOffer||processing" @click="$emit('purchase',selectedOffer)">{{ processing?processingLabel:selectedOffer?selectedOffer.cta:'Plans unavailable' }}</sf-button>
+      <sf-button v-copy-block="{id:entryBlock,fields:['wall.placements.'+entryKind+'.'+(selectedOffer&&selectedOffer.trialDays?'trialCta':'cta')]}" :data-copy-key="'wall.placements.'+entryKind+'.'+(selectedOffer&&selectedOffer.trialDays?'trialCta':'cta')" class="sf-premium-paywall__continue" :disabled="!selectedOffer||processing" @click="$emit('purchase',selectedOffer)">{{ processing?processingLabel:selectedOffer?selectedOffer.cta:'Plans unavailable' }}</sf-button>
       <p class="sf-premium-paywall__disclosure">{{ disclosure }}</p>
-      <button v-if="!isGuide" type="button" v-copy-block="'paywall'" class="sf-premium-paywall__learn" :disabled="processing" @click="$emit('view','benefits')">{{ $copy('paywall.learn') }}<sf-icon name="arrow" :size="13"/></button>
+      <button v-if="!isGuide" type="button" v-copy-block="{id:'paywall',fields:['paywall.learn']}" class="sf-premium-paywall__learn" :disabled="processing" @click="$emit('view','benefits')">{{ $copy('paywall.learn') }}<sf-icon name="arrow" :size="13"/></button>
       <div class="sf-premium-paywall__links"><button type="button" :disabled="processing" @click="$emit('restore')">Restore purchases</button><a :href="termsUrl" target="_blank" rel="noopener noreferrer">Terms</a><a :href="privacyUrl" target="_blank" rel="noopener noreferrer">Privacy</a></div>
     </template>
   </sf-sheet>

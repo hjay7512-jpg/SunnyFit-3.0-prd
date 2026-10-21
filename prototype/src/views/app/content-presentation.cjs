@@ -10,7 +10,8 @@ function contentAction(content,input){
   const ordinary=content&&content.contentType==='training_program'?'Select Program':'Start'
   if(!content||content.tier!=='premium'||content.access&&content.access.allowed)return {label:ordinary,locked:false,offerId:null}
   const wall=resolveSubscriptionWall({...input,kind:content.contentType,resource:content}),selected=wall.offers.find(offer=>offer.offerId===wall.defaultOfferId)
-  return {label:selected?selected.contentCta:(input&&input.configuration||config).base.contentCta,locked:true,offerId:selected&&selected.offerId||null}
+  const trial=selected&&selected.trialDays>0,campaignOverrides=trial&&input&&input.campaign&&input.campaign.contentCta
+  return {label:selected?selected.contentCta:(input&&input.configuration||config).base.contentCta,locked:true,offerId:selected&&selected.offerId||null,copyField:campaignOverrides?null:'wall.placements.'+content.contentType+'.'+(trial?'contentTrialCta':'contentCta'),copySource:campaignOverrides?'campaign':null}
 }
 function presentContent(content){
   const c={...content},fixture=/Editable local review fixture|demo parameters/i.test(c.description||'')||String(c.id).startsWith('preview-free-')

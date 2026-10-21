@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import registry from '../../config/collaboration-registry.json'
 import {defaults,renderCopy,wallCopyConfiguration} from './copy-model.cjs'
+import {locationsForBlock,locationForFields} from './copy-locations.cjs'
 
 let initialization,endpoint='',token='',timer,pendingOperation,pendingComment
 const credentialKey='sunnyfit-review-credential:'+process.env.BASE_URL
 const actorKey='sunnyfit-review-name:'+process.env.BASE_URL
-export const copyState=Vue.observable({values:{...defaults.values},saved:{...defaults.values},revisions:{},ready:false,connected:false,busy:false,session:null,status:'',selected:null,tab:'edit',fields:[],draft:{},errors:{},comments:[],versions:[],conflict:false,actor:'',commentDraft:'',unavailable:false})
+export const copyState=Vue.observable({values:{...defaults.values},saved:{...defaults.values},revisions:{},ready:false,connected:false,busy:false,session:null,status:'',selected:null,tab:'edit',fields:[],visibleFields:[],location:'',preview:null,draft:{},errors:{},comments:[],versions:[],conflict:false,actor:'',commentDraft:'',unavailable:false})
 export const copyText=(id,parameters)=>renderCopy(copyState.values,id,parameters)
 export const currentWallCopy=()=>wallCopyConfiguration(copyState.values)
 export const copyDirty=()=>!!copyState.selected&&copyState.fields.some(field=>copyState.draft[field.key]!==copyState.saved[field.key])
@@ -51,10 +52,19 @@ export function selectCopyBlock(id,tab,context,visibleFields){
   if(copyState.busy)return false
   const block=registry.blocks[id];if(!block)return false
   if(hasPendingChanges()&&!window.confirm('当前区块有未保存的内容，是否放弃修改？'))return false
-  discardCopy();copyState.commentDraft='';pendingComment=null;copyState.selected={id,label:block.label,context,revision:copyState.revisions[id]||0};copyState.fields=block.fields.filter(key=>!visibleFields||visibleFields.includes(key)).map(key=>registry.fields.find(field=>field.key===key));resetDraft();copyState.comments=[];copyState.versions=[];copyState.tab=tab;copyState.status=''
+  const preview=copyState.preview
+  discardCopy();copyState.commentDraft='';pendingComment=null;copyState.selected={id,label:block.label,context,revision:copyState.revisions[id]||0};copyState.fields=block.fields.map(key=>registry.fields.find(field=>field.key===key));copyState.visibleFields=block.fields.filter(key=>!visibleFields||visibleFields.includes(key));copyState.location=preview&&id==='entry-'+preview.kind&&copyState.visibleFields.every(key=>preview.fields.includes(key))?preview.id:locationForFields(id,copyState.visibleFields)?.id||'';resetDraft();copyState.comments=[];copyState.versions=[];copyState.tab=tab;copyState.status=''
   if(canReview(id))loadBlock().catch(error=>{copyState.status=error.message});return true
 }
-export function closeCopyBlock(){if(copyState.busy)return false;if(hasPendingChanges()&&!window.confirm('当前区块有未保存的内容，是否放弃修改？'))return false;discardCopy();copyState.selected=null;copyState.fields=[];copyState.draft={};copyState.commentDraft='';pendingComment=null;copyState.status='';return true}
+export function closeCopyBlock(){if(copyState.busy)return false;if(hasPendingChanges()&&!window.confirm('当前区块有未保存的内容，是否放弃修改？'))return false;discardCopy();copyState.selected=null;copyState.fields=[];copyState.visibleFields=[];copyState.location='';copyState.preview=null;copyState.draft={};copyState.commentDraft='';pendingComment=null;copyState.status='';return true}
+export function previewCopyLocation(id,kind){
+  if(copyState.busy||!copyState.selected)return
+  const blockId=kind?'entry-'+kind:copyState.selected.id;if(!canEdit(blockId))return
+  const location=locationsForBlock(blockId).find(item=>item.id===id);if(!location)return
+  if(copyState.selected.id===blockId){copyState.location=id;copyState.visibleFields=location.fields.filter(key=>registry.blocks[blockId].fields.includes(key))}
+  copyState.preview={...location,kind:blockId.slice(6)}
+}
+export function exitCopyPreview(){copyState.preview=null}
 export function editCopy(id,value){if(!copyState.selected||!canEdit(copyState.selected.id)||!copyState.fields.some(field=>field.key===id))return;Vue.set(copyState.draft,id,value);Vue.set(copyState.values,id,value);copyState.status='';pendingOperation=null;validateDraft()}
 function validateDraft(){const errors={};for(const field of copyState.fields){const value=copyState.draft[field.key];if(!value.trim()&&field.inherit)continue;if(!value.trim())errors[field.key]='请填写文案。';else if([...value].length>field.max)errors[field.key]='最多 '+field.max+' 个字符。';else{const tokens=[...new Set(value.match(/\{[a-zA-Z]+\}/g)||[])];if(tokens.some(t=>!field.tokens.includes(t))||field.tokens.some(t=>!tokens.includes(t)))errors[field.key]='请保留变量 '+field.tokens.join('、')+'。'}}copyState.errors=errors;return !Object.keys(errors).length}
 export function discardCopy(){copyState.values={...copyState.saved};resetDraft();copyState.status=''}
@@ -83,7 +93,7 @@ export async function submitComment(){
   copyState.busy=true;try{await request('/blocks/'+copyState.selected.id+'/comments',{body:copyState.commentDraft,actor:copyState.actor,context:copyState.selected.context,operationId:pendingComment.id});copyState.commentDraft='';pendingComment=null;await loadBlock(false);copyState.status='评论已提交。'}catch(error){copyState.status=error.message}finally{copyState.busy=false}
 }
 export async function resolveComment(id){if(copyState.busy)return;copyState.busy=true;try{await request('/comments/'+id+'/resolve',{});await loadBlock(false);copyState.status='评论已标记解决。'}catch(error){copyState.status=error.message}finally{copyState.busy=false}}
-export function previewVersion(version){if(!canEdit(copyState.selected.id))return;const values=JSON.parse(version.after_json);for(const field of copyState.fields)editCopy(field.key,values[field.key]===undefined?defaults.values[field.key]:values[field.key]);copyState.tab='edit';copyState.status='正在预览 v'+version.revision+'；保存后生成新版本。'}
+export function previewVersion(version){if(!canEdit(copyState.selected.id))return;const values=JSON.parse(version.after_json);for(const field of copyState.fields.filter(field=>copyState.visibleFields.includes(field.key)))editCopy(field.key,values[field.key]===undefined?defaults.values[field.key]:values[field.key]);copyState.tab='edit';copyState.status='正在预览当前展示位置的 v'+version.revision+'；保存后生成新版本。'}
 export function installCopy(VueConstructor){
   VueConstructor.prototype.$copy=copyText
   VueConstructor.directive('copy-block',{bind:mark,update:mark})

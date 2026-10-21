@@ -22,7 +22,7 @@
         <sf-menu-row v-for="(course,index) in members" :key="course.id" :data-action="'open-course:'+course.id" :label="course.name" :description="'Workout '+(index+1)+' · '+course.durationMinutes+' min'" :class="{'is-current':workout&&workout.id===course.id}" @click="$emit('action','open-course:'+course.id)"/>
         <sf-feedback v-if="!members.length" tone="empty" title="No workouts available"/>
       </section>
-      <template #footer><sf-button v-copy-block="startLabel&&startLabel!=='Select Program'?'entry-training_program':null" data-action="start-program" :data-content-id="content.id" @click.stop="$emit('action','start-program')">{{ startLabel||'Select Program' }}</sf-button></template>
+      <template #footer><sf-button v-copy-block="startCopyField?{id:'entry-training_program',fields:[startCopyField]}:null" :data-copy-key="startCopyField" data-action="start-program" :data-content-id="content.id" @click.stop="$emit('action','start-program')">{{ startLabel||'Select Program' }}</sf-button></template>
     </sf-page-layout>
   </div>
 </template>
@@ -30,7 +30,7 @@
 import {SfPageLayout,SfButton,SfFeedback,SfSegmentedControl,SfCard,SfSectionTitle,SfMenuRow,SfAvatar} from '@/design-system'
 export default {
   name:'V3Program',components:{SfPageLayout,SfButton,SfFeedback,SfSegmentedControl,SfCard,SfSectionTitle,SfMenuRow,SfAvatar},
-  props:{content:{type:Object,required:true},workout:Object,nextWorkout:Object,courses:{type:Array,default:()=>[]},accessLabel:String,startLabel:String,panelState:String},
+  props:{content:{type:Object,required:true},workout:Object,nextWorkout:Object,courses:{type:Array,default:()=>[]},accessLabel:String,startLabel:String,startCopyField:String,panelState:String},
   data(){return {panel:this.panelState==='schedule'?'Schedule':'Details',panels:[{value:'Details',label:'Details'},{value:'Schedule',label:'Schedule'}]}},
   watch:{panelState(value){this.panel=value==='schedule'?'Schedule':'Details'}},
   computed:{
