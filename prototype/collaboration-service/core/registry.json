@@ -1,0 +1,2256 @@
+{
+  "schemaVersion": 1,
+  "registryVersion": 1,
+  "blocks": {
+    "wall-common": {
+      "id": "wall-common",
+      "label": "通用订阅与内容 CTA",
+      "fields": [
+        "wall.base.cta",
+        "wall.base.trialCta",
+        "wall.base.contentCta",
+        "wall.base.contentTrialCta"
+      ]
+    },
+    "entry-course": {
+      "id": "entry-course",
+      "label": "课程 · 付费引导",
+      "fields": [
+        "wall.placements.course.contentCta",
+        "wall.placements.course.label",
+        "wall.placements.course.continueLabel",
+        "wall.placements.course.success",
+        "wall.placements.course.cancelLabel",
+        "wall.entryStories.course.title",
+        "wall.entryStories.course.description",
+        "wall.entryStories.course.unlock",
+        "wall.entryStories.course.category",
+        "wall.entryStories.course.next",
+        "wall.placements.course.contentTrialCta",
+        "wall.placements.course.cta",
+        "wall.placements.course.trialCta"
+      ]
+    },
+    "entry-world_tour": {
+      "id": "entry-world_tour",
+      "label": "World Tour · 付费引导",
+      "fields": [
+        "wall.placements.world_tour.label",
+        "wall.placements.world_tour.continueLabel",
+        "wall.placements.world_tour.success",
+        "wall.placements.world_tour.cancelLabel",
+        "wall.entryStories.world_tour.title",
+        "wall.entryStories.world_tour.description",
+        "wall.entryStories.world_tour.unlock",
+        "wall.entryStories.world_tour.category",
+        "wall.entryStories.world_tour.next",
+        "wall.placements.world_tour.contentCta",
+        "wall.placements.world_tour.contentTrialCta",
+        "wall.placements.world_tour.cta",
+        "wall.placements.world_tour.trialCta"
+      ]
+    },
+    "entry-training_program": {
+      "id": "entry-training_program",
+      "label": "Training Program · 付费引导",
+      "fields": [
+        "wall.placements.training_program.label",
+        "wall.placements.training_program.continueLabel",
+        "wall.placements.training_program.success",
+        "wall.placements.training_program.cancelLabel",
+        "wall.entryStories.training_program.title",
+        "wall.entryStories.training_program.description",
+        "wall.entryStories.training_program.unlock",
+        "wall.entryStories.training_program.category",
+        "wall.entryStories.training_program.next",
+        "wall.placements.training_program.contentCta",
+        "wall.placements.training_program.contentTrialCta",
+        "wall.placements.training_program.cta",
+        "wall.placements.training_program.trialCta"
+      ]
+    },
+    "entry-movement": {
+      "id": "entry-movement",
+      "label": "动作训练 · 付费引导",
+      "fields": [
+        "wall.placements.movement.label",
+        "wall.placements.movement.continueLabel",
+        "wall.placements.movement.success",
+        "wall.placements.movement.cancelLabel",
+        "wall.entryStories.movement.title",
+        "wall.entryStories.movement.description",
+        "wall.entryStories.movement.unlock",
+        "wall.entryStories.movement.category",
+        "wall.entryStories.movement.next",
+        "wall.placements.movement.cta",
+        "wall.placements.movement.trialCta"
+      ]
+    },
+    "entry-dynamic_plan": {
+      "id": "entry-dynamic_plan",
+      "label": "动态计划 · 付费引导",
+      "fields": [
+        "wall.placements.dynamic_plan.label",
+        "wall.placements.dynamic_plan.continueLabel",
+        "wall.placements.dynamic_plan.success",
+        "wall.placements.dynamic_plan.cancelLabel",
+        "wall.entryStories.dynamic_plan.title",
+        "wall.entryStories.dynamic_plan.description",
+        "wall.entryStories.dynamic_plan.unlock",
+        "wall.entryStories.dynamic_plan.category",
+        "wall.entryStories.dynamic_plan.next",
+        "wall.placements.dynamic_plan.cta",
+        "wall.placements.dynamic_plan.trialCta"
+      ]
+    },
+    "entry-workout_insight": {
+      "id": "entry-workout_insight",
+      "label": "运动结果分析 · 付费引导",
+      "fields": [
+        "wall.placements.workout_insight.label",
+        "wall.placements.workout_insight.continueLabel",
+        "wall.placements.workout_insight.success",
+        "wall.placements.workout_insight.cancelLabel",
+        "wall.entryStories.workout_insight.title",
+        "wall.entryStories.workout_insight.description",
+        "wall.entryStories.workout_insight.unlock",
+        "wall.entryStories.workout_insight.category",
+        "wall.entryStories.workout_insight.next",
+        "wall.placements.workout_insight.cta",
+        "wall.placements.workout_insight.trialCta"
+      ]
+    },
+    "entry-weekly_insight": {
+      "id": "entry-weekly_insight",
+      "label": "每周分析 · 付费引导",
+      "fields": [
+        "wall.placements.weekly_insight.label",
+        "wall.placements.weekly_insight.continueLabel",
+        "wall.placements.weekly_insight.success",
+        "wall.placements.weekly_insight.cancelLabel",
+        "wall.entryStories.weekly_insight.title",
+        "wall.entryStories.weekly_insight.description",
+        "wall.entryStories.weekly_insight.unlock",
+        "wall.entryStories.weekly_insight.category",
+        "wall.entryStories.weekly_insight.next",
+        "wall.placements.weekly_insight.cta",
+        "wall.placements.weekly_insight.trialCta"
+      ]
+    },
+    "entry-ai_allowance": {
+      "id": "entry-ai_allowance",
+      "label": "AI Coach 对话 · 付费引导",
+      "fields": [
+        "wall.placements.ai_allowance.label",
+        "wall.placements.ai_allowance.continueLabel",
+        "wall.placements.ai_allowance.success",
+        "wall.placements.ai_allowance.cancelLabel",
+        "wall.entryStories.ai_allowance.title",
+        "wall.entryStories.ai_allowance.description",
+        "wall.entryStories.ai_allowance.unlock",
+        "wall.entryStories.ai_allowance.category",
+        "wall.entryStories.ai_allowance.next",
+        "wall.placements.ai_allowance.cta",
+        "wall.placements.ai_allowance.trialCta"
+      ]
+    },
+    "entry-limited_challenge": {
+      "id": "entry-limited_challenge",
+      "label": "限时挑战 · 付费引导",
+      "fields": [
+        "wall.placements.limited_challenge.label",
+        "wall.placements.limited_challenge.continueLabel",
+        "wall.placements.limited_challenge.success",
+        "wall.placements.limited_challenge.cancelLabel",
+        "wall.entryStories.limited_challenge.title",
+        "wall.entryStories.limited_challenge.description",
+        "wall.entryStories.limited_challenge.unlock",
+        "wall.entryStories.limited_challenge.category",
+        "wall.entryStories.limited_challenge.next",
+        "wall.placements.limited_challenge.cta",
+        "wall.placements.limited_challenge.trialCta"
+      ]
+    },
+    "entry-membership": {
+      "id": "entry-membership",
+      "label": "会员中心 · 付费引导",
+      "fields": [
+        "wall.placements.membership.label",
+        "wall.placements.membership.continueLabel",
+        "wall.placements.membership.success",
+        "wall.placements.membership.cancelLabel",
+        "wall.entryStories.membership.title",
+        "wall.entryStories.membership.description",
+        "wall.entryStories.membership.unlock",
+        "wall.entryStories.membership.category",
+        "wall.entryStories.membership.next",
+        "wall.placements.membership.cta",
+        "wall.placements.membership.trialCta"
+      ]
+    },
+    "premium-intro": {
+      "id": "premium-intro",
+      "label": "完整会员介绍 · 开场",
+      "fields": [
+        "wall.education.title",
+        "wall.education.description"
+      ]
+    },
+    "premium-workouts": {
+      "id": "premium-workouts",
+      "label": "完整会员介绍 · 训练",
+      "fields": [
+        "wall.education.stories.0.label",
+        "wall.education.stories.0.title",
+        "wall.education.stories.0.description",
+        "wall.education.stories.0.examples.0",
+        "wall.education.stories.0.examples.1",
+        "wall.education.stories.0.examples.2",
+        "wall.education.stories.0.examples.3"
+      ]
+    },
+    "premium-plans": {
+      "id": "premium-plans",
+      "label": "完整会员介绍 · 动态计划",
+      "fields": [
+        "wall.education.stories.1.label",
+        "wall.education.stories.1.title",
+        "wall.education.stories.1.description",
+        "wall.education.stories.1.examples.0",
+        "wall.education.stories.1.examples.1",
+        "wall.education.stories.1.examples.2"
+      ]
+    },
+    "premium-insights": {
+      "id": "premium-insights",
+      "label": "完整会员介绍 · 复盘分析",
+      "fields": [
+        "wall.education.stories.2.label",
+        "wall.education.stories.2.title",
+        "wall.education.stories.2.description",
+        "wall.education.stories.2.examples.0",
+        "wall.education.stories.2.examples.1"
+      ]
+    },
+    "premium-coach": {
+      "id": "premium-coach",
+      "label": "完整会员介绍 · AI Coach",
+      "fields": [
+        "wall.education.stories.3.label",
+        "wall.education.stories.3.title",
+        "wall.education.stories.3.description",
+        "wall.education.stories.3.examples.0",
+        "wall.education.stories.3.examples.1"
+      ]
+    },
+    "premium-faq": {
+      "id": "premium-faq",
+      "label": "完整会员介绍 · 常见疑问",
+      "fields": [
+        "wall.education.questions.0.title",
+        "wall.education.questions.0.answer",
+        "wall.education.questions.1.title",
+        "wall.education.questions.1.answer",
+        "wall.education.questions.2.title",
+        "wall.education.questions.2.answer"
+      ]
+    },
+    "profile.membership": {
+      "id": "profile.membership",
+      "label": "个人中心 · 权益卡",
+      "fields": [
+        "profile.card.title",
+        "profile.status.free",
+        "profile.status.active",
+        "profile.status.canceled",
+        "profile.status.expired",
+        "profile.card.freePrompt",
+        "profile.card.expiredPrompt",
+        "profile.allowance.low",
+        "profile.allowance.label",
+        "profile.allowance.emptyFree",
+        "profile.allowance.emptyMember",
+        "profile.allowance.emptyExpired",
+        "profile.allowance.unknown"
+      ]
+    },
+    "membership.discovery": {
+      "id": "membership.discovery",
+      "label": "会员中心 · 价值介绍",
+      "fields": [
+        "membership.preview.eyebrow",
+        "membership.preview.title",
+        "membership.preview.expiredTitle",
+        "membership.preview.description",
+        "membership.preview.point1",
+        "membership.preview.point2",
+        "membership.preview.point3",
+        "membership.preview.explore",
+        "membership.preview.plans",
+        "membership.preview.retention"
+      ]
+    },
+    "membership.active": {
+      "id": "membership.active",
+      "label": "会员中心 · 已订阅权益",
+      "fields": [
+        "membership.active.title",
+        "membership.active.description",
+        "membership.manage.button"
+      ]
+    },
+    "membership.utilities": {
+      "id": "membership.utilities",
+      "label": "会员中心 · 购买与账单入口",
+      "fields": [
+        "membership.utility.restore",
+        "membership.utility.history"
+      ]
+    },
+    "paywall": {
+      "id": "paywall",
+      "label": "付费墙 · 通用引导",
+      "fields": [
+        "paywall.learn",
+        "paywall.alsoLabel",
+        "paywall.alsoDescription",
+        "paywall.guideTitle",
+        "paywall.guideEyebrow",
+        "paywall.comparisonTitle",
+        "paywall.faqTitle",
+        "paywall.plansTitle",
+        "paywall.coachBenefit",
+        "paywall.trainingBenefit",
+        "paywall.exampleQuestion",
+        "paywall.exampleAnswer"
+      ]
+    },
+    "actions.chat": {
+      "id": "actions.chat",
+      "label": "对话 · 额度提醒",
+      "fields": [
+        "actions.chat.upgrade",
+        "actions.chat.upgradeSend",
+        "actions.chat.add",
+        "actions.chat.resend",
+        "actions.chat.check",
+        "actions.chat.low",
+        "actions.chat.empty",
+        "actions.chat.resendMessage"
+      ]
+    },
+    "actions.allowance": {
+      "id": "actions.allowance",
+      "label": "用量 · 升级入口",
+      "fields": [
+        "actions.allowance.upgrade"
+      ]
+    },
+    "actions.credits": {
+      "id": "actions.credits",
+      "label": "额度 · 加购引导",
+      "fields": [
+        "actions.credits.title",
+        "actions.credits.description",
+        "actions.credits.buy"
+      ]
+    },
+    "actions.result": {
+      "id": "actions.result",
+      "label": "结果 · 分析引导",
+      "fields": [
+        "actions.result.title",
+        "actions.result.description",
+        "actions.result.cta"
+      ]
+    },
+    "actions.weekly": {
+      "id": "actions.weekly",
+      "label": "周报 · 分析引导",
+      "fields": [
+        "actions.weekly.cta",
+        "actions.weekly.title",
+        "actions.weekly.description"
+      ]
+    },
+    "actions.plan": {
+      "id": "actions.plan",
+      "label": "计划 · 激活入口",
+      "fields": [
+        "actions.plan.activate",
+        "actions.plan.access"
+      ]
+    },
+    "actions.challenge": {
+      "id": "actions.challenge",
+      "label": "挑战 · 加入引导",
+      "fields": [
+        "actions.challenge.description",
+        "actions.challenge.cta"
+      ]
+    },
+    "page.home": {
+      "id": "page.home",
+      "label": "首页 · 页面备注",
+      "fields": []
+    },
+    "page.workout": {
+      "id": "page.workout",
+      "label": "课程列表 · 页面备注",
+      "fields": []
+    },
+    "page.course": {
+      "id": "page.course",
+      "label": "课程详情 · 页面备注",
+      "fields": []
+    },
+    "page.program": {
+      "id": "page.program",
+      "label": "Training Program · 页面备注",
+      "fields": []
+    },
+    "page.world-tour": {
+      "id": "page.world-tour",
+      "label": "World Tour · 页面备注",
+      "fields": []
+    },
+    "page.world-tour-detail": {
+      "id": "page.world-tour-detail",
+      "label": "实景详情 · 页面备注",
+      "fields": []
+    },
+    "page.challenge": {
+      "id": "page.challenge",
+      "label": "限时挑战 · 页面备注",
+      "fields": []
+    },
+    "page.movement": {
+      "id": "page.movement",
+      "label": "动作训练 · 页面备注",
+      "fields": []
+    },
+    "page.movement-detail": {
+      "id": "page.movement-detail",
+      "label": "动作详情 · 页面备注",
+      "fields": []
+    },
+    "page.movement-training": {
+      "id": "page.movement-training",
+      "label": "运动准备与训练 · 页面备注",
+      "fields": []
+    },
+    "page.coach": {
+      "id": "page.coach",
+      "label": "AI Coach · 页面备注",
+      "fields": []
+    },
+    "page.plan": {
+      "id": "page.plan",
+      "label": "Dynamic Plan · 页面备注",
+      "fields": []
+    },
+    "page.weekly": {
+      "id": "page.weekly",
+      "label": "每周报告 · 页面备注",
+      "fields": []
+    },
+    "page.result": {
+      "id": "page.result",
+      "label": "运动结果 · 页面备注",
+      "fields": []
+    },
+    "page.profile": {
+      "id": "page.profile",
+      "label": "个人中心 · 页面备注",
+      "fields": []
+    },
+    "page.membership": {
+      "id": "page.membership",
+      "label": "会员与用量 · 页面备注",
+      "fields": []
+    },
+    "page.plans": {
+      "id": "page.plans",
+      "label": "方案与权益 · 页面备注",
+      "fields": []
+    },
+    "page.billing": {
+      "id": "page.billing",
+      "label": "账单记录 · 页面备注",
+      "fields": []
+    },
+    "page.wallet": {
+      "id": "page.wallet",
+      "label": "Credits · 页面备注",
+      "fields": []
+    }
+  },
+  "fields": [
+    {
+      "key": "wall.base.cta",
+      "group": "wall-common",
+      "label": "订阅按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.base.trialCta",
+      "group": "wall-common",
+      "label": "试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ]
+    },
+    {
+      "key": "wall.base.contentCta",
+      "group": "wall-common",
+      "label": "内容付费入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.base.contentTrialCta",
+      "group": "wall-common",
+      "label": "内容试用入口",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ]
+    },
+    {
+      "key": "wall.placements.course.contentCta",
+      "group": "entry-course",
+      "label": "页面 · 付费入口按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.contentCta"
+    },
+    {
+      "key": "wall.placements.course.label",
+      "group": "entry-course",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.course.continueLabel",
+      "group": "entry-course",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.course.success",
+      "group": "entry-course",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.course.cancelLabel",
+      "group": "entry-course",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.world_tour.label",
+      "group": "entry-world_tour",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.world_tour.continueLabel",
+      "group": "entry-world_tour",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.world_tour.success",
+      "group": "entry-world_tour",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.world_tour.cancelLabel",
+      "group": "entry-world_tour",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.training_program.label",
+      "group": "entry-training_program",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.training_program.continueLabel",
+      "group": "entry-training_program",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.training_program.success",
+      "group": "entry-training_program",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.training_program.cancelLabel",
+      "group": "entry-training_program",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.movement.label",
+      "group": "entry-movement",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.movement.continueLabel",
+      "group": "entry-movement",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.movement.success",
+      "group": "entry-movement",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.movement.cancelLabel",
+      "group": "entry-movement",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.dynamic_plan.label",
+      "group": "entry-dynamic_plan",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.dynamic_plan.continueLabel",
+      "group": "entry-dynamic_plan",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.dynamic_plan.success",
+      "group": "entry-dynamic_plan",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.dynamic_plan.cancelLabel",
+      "group": "entry-dynamic_plan",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.workout_insight.label",
+      "group": "entry-workout_insight",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.workout_insight.continueLabel",
+      "group": "entry-workout_insight",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.workout_insight.success",
+      "group": "entry-workout_insight",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.workout_insight.cancelLabel",
+      "group": "entry-workout_insight",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.weekly_insight.label",
+      "group": "entry-weekly_insight",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.weekly_insight.continueLabel",
+      "group": "entry-weekly_insight",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.weekly_insight.success",
+      "group": "entry-weekly_insight",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.weekly_insight.cancelLabel",
+      "group": "entry-weekly_insight",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.ai_allowance.label",
+      "group": "entry-ai_allowance",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.ai_allowance.continueLabel",
+      "group": "entry-ai_allowance",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.ai_allowance.success",
+      "group": "entry-ai_allowance",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.ai_allowance.cancelLabel",
+      "group": "entry-ai_allowance",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.limited_challenge.label",
+      "group": "entry-limited_challenge",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.limited_challenge.continueLabel",
+      "group": "entry-limited_challenge",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.limited_challenge.success",
+      "group": "entry-limited_challenge",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.limited_challenge.cancelLabel",
+      "group": "entry-limited_challenge",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.membership.label",
+      "group": "entry-membership",
+      "label": "流程 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.membership.continueLabel",
+      "group": "entry-membership",
+      "label": "流程 · 成功后继续按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.membership.success",
+      "group": "entry-membership",
+      "label": "流程 · 成功说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.membership.cancelLabel",
+      "group": "entry-membership",
+      "label": "流程 · 返回按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.course.title",
+      "group": "entry-course",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.course.description",
+      "group": "entry-course",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.course.unlock",
+      "group": "entry-course",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.course.category",
+      "group": "entry-course",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.course.next",
+      "group": "entry-course",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.world_tour.title",
+      "group": "entry-world_tour",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.world_tour.description",
+      "group": "entry-world_tour",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.world_tour.unlock",
+      "group": "entry-world_tour",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.world_tour.category",
+      "group": "entry-world_tour",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.world_tour.next",
+      "group": "entry-world_tour",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.training_program.title",
+      "group": "entry-training_program",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.training_program.description",
+      "group": "entry-training_program",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.training_program.unlock",
+      "group": "entry-training_program",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.training_program.category",
+      "group": "entry-training_program",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.training_program.next",
+      "group": "entry-training_program",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.movement.title",
+      "group": "entry-movement",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.movement.description",
+      "group": "entry-movement",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.movement.unlock",
+      "group": "entry-movement",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.movement.category",
+      "group": "entry-movement",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.movement.next",
+      "group": "entry-movement",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.dynamic_plan.title",
+      "group": "entry-dynamic_plan",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.dynamic_plan.description",
+      "group": "entry-dynamic_plan",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.dynamic_plan.unlock",
+      "group": "entry-dynamic_plan",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.dynamic_plan.category",
+      "group": "entry-dynamic_plan",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.dynamic_plan.next",
+      "group": "entry-dynamic_plan",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.workout_insight.title",
+      "group": "entry-workout_insight",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.workout_insight.description",
+      "group": "entry-workout_insight",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.workout_insight.unlock",
+      "group": "entry-workout_insight",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.workout_insight.category",
+      "group": "entry-workout_insight",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.workout_insight.next",
+      "group": "entry-workout_insight",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.weekly_insight.title",
+      "group": "entry-weekly_insight",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.weekly_insight.description",
+      "group": "entry-weekly_insight",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.weekly_insight.unlock",
+      "group": "entry-weekly_insight",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.weekly_insight.category",
+      "group": "entry-weekly_insight",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.weekly_insight.next",
+      "group": "entry-weekly_insight",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.ai_allowance.title",
+      "group": "entry-ai_allowance",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.ai_allowance.description",
+      "group": "entry-ai_allowance",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.ai_allowance.unlock",
+      "group": "entry-ai_allowance",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.ai_allowance.category",
+      "group": "entry-ai_allowance",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.ai_allowance.next",
+      "group": "entry-ai_allowance",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.limited_challenge.title",
+      "group": "entry-limited_challenge",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.limited_challenge.description",
+      "group": "entry-limited_challenge",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.limited_challenge.unlock",
+      "group": "entry-limited_challenge",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.limited_challenge.category",
+      "group": "entry-limited_challenge",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.limited_challenge.next",
+      "group": "entry-limited_challenge",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.membership.title",
+      "group": "entry-membership",
+      "label": "首屏 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.membership.description",
+      "group": "entry-membership",
+      "label": "首屏 · 说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.membership.unlock",
+      "group": "entry-membership",
+      "label": "首屏 · 解锁说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.membership.category",
+      "group": "entry-membership",
+      "label": "首屏 · 场景标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.entryStories.membership.next",
+      "group": "entry-membership",
+      "label": "首屏 · 后续步骤说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.title",
+      "group": "premium-intro",
+      "label": "标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.description",
+      "group": "premium-intro",
+      "label": "说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.label",
+      "group": "premium-workouts",
+      "label": "标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.title",
+      "group": "premium-workouts",
+      "label": "标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.description",
+      "group": "premium-workouts",
+      "label": "说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.examples.0",
+      "group": "premium-workouts",
+      "label": "场景举例 1",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.examples.1",
+      "group": "premium-workouts",
+      "label": "场景举例 2",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.examples.2",
+      "group": "premium-workouts",
+      "label": "场景举例 3",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.0.examples.3",
+      "group": "premium-workouts",
+      "label": "场景举例 4",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.1.label",
+      "group": "premium-plans",
+      "label": "标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.1.title",
+      "group": "premium-plans",
+      "label": "标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.1.description",
+      "group": "premium-plans",
+      "label": "说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.1.examples.0",
+      "group": "premium-plans",
+      "label": "场景举例 1",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.1.examples.1",
+      "group": "premium-plans",
+      "label": "场景举例 2",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.1.examples.2",
+      "group": "premium-plans",
+      "label": "场景举例 3",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.2.label",
+      "group": "premium-insights",
+      "label": "标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.2.title",
+      "group": "premium-insights",
+      "label": "标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.2.description",
+      "group": "premium-insights",
+      "label": "说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.2.examples.0",
+      "group": "premium-insights",
+      "label": "场景举例 1",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.2.examples.1",
+      "group": "premium-insights",
+      "label": "场景举例 2",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.3.label",
+      "group": "premium-coach",
+      "label": "标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.3.title",
+      "group": "premium-coach",
+      "label": "标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.3.description",
+      "group": "premium-coach",
+      "label": "说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.3.examples.0",
+      "group": "premium-coach",
+      "label": "场景举例 1",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.stories.3.examples.1",
+      "group": "premium-coach",
+      "label": "场景举例 2",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.questions.0.title",
+      "group": "premium-faq",
+      "label": "FAQ 1 · 问题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.questions.0.answer",
+      "group": "premium-faq",
+      "label": "FAQ 1 · 回答",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.questions.1.title",
+      "group": "premium-faq",
+      "label": "FAQ 2 · 问题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.questions.1.answer",
+      "group": "premium-faq",
+      "label": "FAQ 2 · 回答",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.questions.2.title",
+      "group": "premium-faq",
+      "label": "FAQ 3 · 问题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "wall.education.questions.2.answer",
+      "group": "premium-faq",
+      "label": "FAQ 3 · 回答",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "profile.card.title",
+      "group": "profile",
+      "label": "权益卡标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.status.free",
+      "group": "profile",
+      "label": "未订阅 · 身份标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.status.active",
+      "group": "profile",
+      "label": "会员有效 · 身份标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.status.canceled",
+      "group": "profile",
+      "label": "关闭续订 · 身份标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.status.expired",
+      "group": "profile",
+      "label": "会员到期 · 身份标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.card.freePrompt",
+      "group": "profile",
+      "label": "未订阅 · 了解入口",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.card.expiredPrompt",
+      "group": "profile",
+      "label": "已到期 · 状态说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.allowance.low",
+      "group": "profile",
+      "label": "低额度 · 用量标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.allowance.label",
+      "group": "profile",
+      "label": "用量标题",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "profile.allowance.emptyFree",
+      "group": "profile",
+      "label": "未订阅且额度用尽 · 引导",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.allowance.emptyMember",
+      "group": "profile",
+      "label": "会员额度用尽 · 提示",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.allowance.emptyExpired",
+      "group": "profile",
+      "label": "会员到期且额度用尽 · 提示",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "profile.allowance.unknown",
+      "group": "profile",
+      "label": "额度未知 · 提示",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.eyebrow",
+      "group": "membership",
+      "label": "价值卡 · 品牌标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.title",
+      "group": "membership",
+      "label": "未订阅 · 价值卡标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.expiredTitle",
+      "group": "membership",
+      "label": "已到期 · 价值卡标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.description",
+      "group": "membership",
+      "label": "价值卡 · 简短说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.point1",
+      "group": "membership",
+      "label": "价值点 1 · 计划",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.point2",
+      "group": "membership",
+      "label": "价值点 2 · 训练",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.point3",
+      "group": "membership",
+      "label": "价值点 3 · 分析",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.explore",
+      "group": "membership",
+      "label": "了解完整权益 · 主按钮",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.plans",
+      "group": "membership",
+      "label": "直接查看方案 · 次入口",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.preview.retention",
+      "group": "membership",
+      "label": "已到期 · 历史内容保留说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "membership.active.title",
+      "group": "membership",
+      "label": "会员有效 · 功能区标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.active.description",
+      "group": "membership",
+      "label": "会员有效 · 功能区说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "membership.utility.restore",
+      "group": "membership",
+      "label": "恢复购买入口",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.utility.history",
+      "group": "membership",
+      "label": "账单记录入口",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "membership.manage.button",
+      "group": "membership",
+      "label": "管理订阅按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "paywall.learn",
+      "group": "paywall",
+      "label": "了解完整权益 · 次入口",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.alsoLabel",
+      "group": "paywall",
+      "label": "其他会员权益 · 标签",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "paywall.alsoDescription",
+      "group": "paywall",
+      "label": "其他会员权益 · 简述",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "paywall.guideTitle",
+      "group": "paywall",
+      "label": "完整介绍页 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.guideEyebrow",
+      "group": "paywall",
+      "label": "完整介绍页 · 品牌标签",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.comparisonTitle",
+      "group": "paywall",
+      "label": "权益对比 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.faqTitle",
+      "group": "paywall",
+      "label": "常见问题 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.plansTitle",
+      "group": "paywall",
+      "label": "方案区 · 标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.coachBenefit",
+      "group": "paywall",
+      "label": "对话场景 · 额度价值说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.trainingBenefit",
+      "group": "paywall",
+      "label": "对话场景 · 其他权益说明",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.exampleQuestion",
+      "group": "paywall",
+      "label": "AI Coach · 示例提问",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "paywall.exampleAnswer",
+      "group": "paywall",
+      "label": "AI Coach · 示例回复",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "actions.chat.upgrade",
+      "group": "actions",
+      "label": "对话 · 升级入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.chat.upgradeSend",
+      "group": "actions",
+      "label": "对话 · 额度用尽升级按钮名称",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.chat.add",
+      "group": "actions",
+      "label": "对话 · 加购入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.chat.resend",
+      "group": "actions",
+      "label": "对话 · 重发入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.chat.check",
+      "group": "actions",
+      "label": "对话 · 查询额度入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.chat.low",
+      "group": "actions",
+      "label": "对话 · 低额度轻提示",
+      "max": 60,
+      "tokens": [
+        "{percent}"
+      ]
+    },
+    {
+      "key": "actions.chat.empty",
+      "group": "actions",
+      "label": "对话 · 额度用尽提示",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.allowance.upgrade",
+      "group": "actions",
+      "label": "用量中心 · 升级入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.credits.title",
+      "group": "actions",
+      "label": "额度加购 · 主标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "actions.credits.description",
+      "group": "actions",
+      "label": "额度加购 · 简短说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "actions.credits.buy",
+      "group": "actions",
+      "label": "额度加购 · 购买按钮",
+      "max": 60,
+      "tokens": [
+        "{price}"
+      ]
+    },
+    {
+      "key": "actions.result.title",
+      "group": "actions",
+      "label": "运动结果 · 分析卡标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "actions.result.description",
+      "group": "actions",
+      "label": "运动结果 · 分析引导说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "actions.result.cta",
+      "group": "actions",
+      "label": "运动结果 · 分析入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.weekly.cta",
+      "group": "actions",
+      "label": "每周报告 · 分析入口",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.plan.activate",
+      "group": "actions",
+      "label": "计划 · 激活按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.plan.access",
+      "group": "actions",
+      "label": "计划 · 会员要求提示",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "actions.challenge.description",
+      "group": "actions",
+      "label": "挑战 · 会员引导说明",
+      "max": 600,
+      "tokens": []
+    },
+    {
+      "key": "actions.challenge.cta",
+      "group": "actions",
+      "label": "挑战 · 加入按钮",
+      "max": 60,
+      "tokens": []
+    },
+    {
+      "key": "wall.placements.course.contentTrialCta",
+      "group": "entry-course",
+      "label": "页面 · 试用入口按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.contentTrialCta"
+    },
+    {
+      "key": "wall.placements.course.cta",
+      "group": "entry-course",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.course.trialCta",
+      "group": "entry-course",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.world_tour.contentCta",
+      "group": "entry-world_tour",
+      "label": "页面 · 付费入口按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.contentCta"
+    },
+    {
+      "key": "wall.placements.world_tour.contentTrialCta",
+      "group": "entry-world_tour",
+      "label": "页面 · 试用入口按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.contentTrialCta"
+    },
+    {
+      "key": "wall.placements.world_tour.cta",
+      "group": "entry-world_tour",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.world_tour.trialCta",
+      "group": "entry-world_tour",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.training_program.contentCta",
+      "group": "entry-training_program",
+      "label": "页面 · 付费入口按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.contentCta"
+    },
+    {
+      "key": "wall.placements.training_program.contentTrialCta",
+      "group": "entry-training_program",
+      "label": "页面 · 试用入口按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.contentTrialCta"
+    },
+    {
+      "key": "wall.placements.training_program.cta",
+      "group": "entry-training_program",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.training_program.trialCta",
+      "group": "entry-training_program",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.movement.cta",
+      "group": "entry-movement",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.movement.trialCta",
+      "group": "entry-movement",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.dynamic_plan.cta",
+      "group": "entry-dynamic_plan",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.dynamic_plan.trialCta",
+      "group": "entry-dynamic_plan",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.workout_insight.cta",
+      "group": "entry-workout_insight",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.workout_insight.trialCta",
+      "group": "entry-workout_insight",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.weekly_insight.cta",
+      "group": "entry-weekly_insight",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.weekly_insight.trialCta",
+      "group": "entry-weekly_insight",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.ai_allowance.cta",
+      "group": "entry-ai_allowance",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.ai_allowance.trialCta",
+      "group": "entry-ai_allowance",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.limited_challenge.cta",
+      "group": "entry-limited_challenge",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.limited_challenge.trialCta",
+      "group": "entry-limited_challenge",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "wall.placements.membership.cta",
+      "group": "entry-membership",
+      "label": "付费墙 · 订阅按钮",
+      "max": 60,
+      "tokens": [],
+      "inherit": "wall.base.cta"
+    },
+    {
+      "key": "wall.placements.membership.trialCta",
+      "group": "entry-membership",
+      "label": "付费墙 · 试用按钮",
+      "max": 60,
+      "tokens": [
+        "{days}"
+      ],
+      "inherit": "wall.base.trialCta"
+    },
+    {
+      "key": "actions.chat.resendMessage",
+      "group": "actions",
+      "label": "重发按钮",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "actions.weekly.title",
+      "group": "actions",
+      "label": "周报 · 引导标题",
+      "max": 160,
+      "tokens": []
+    },
+    {
+      "key": "actions.weekly.description",
+      "group": "actions",
+      "label": "周报 · 引导说明",
+      "max": 600,
+      "tokens": []
+    }
+  ],
+  "defaults": {
+    "wall.base.cta": "Continue with Premium",
+    "wall.base.trialCta": "Start {days}-day free trial",
+    "wall.base.contentCta": "Unlock with Premium",
+    "wall.base.contentTrialCta": "Start {days}-day free trial",
+    "wall.placements.course.label": "YOUR SELECTED WORKOUT",
+    "wall.placements.course.continueLabel": "Start this workout",
+    "wall.placements.course.cancelLabel": "Back to workout",
+    "wall.placements.course.success": "Your selected workout is ready.",
+    "wall.placements.world_tour.label": "YOUR SELECTED ROUTE",
+    "wall.placements.world_tour.continueLabel": "Start this route",
+    "wall.placements.world_tour.cancelLabel": "Back to routes",
+    "wall.placements.world_tour.success": "Your selected route is ready.",
+    "wall.placements.training_program.label": "YOUR SELECTED PROGRAM",
+    "wall.placements.training_program.continueLabel": "Continue this Program",
+    "wall.placements.training_program.cancelLabel": "Back to Program",
+    "wall.placements.training_program.success": "Your Program and selected session are ready.",
+    "wall.placements.movement.label": "YOUR SELECTED MOVEMENT GROUP",
+    "wall.placements.movement.continueLabel": "Start this workout",
+    "wall.placements.movement.cancelLabel": "Back to preparation",
+    "wall.placements.movement.success": "Your movement group is ready.",
+    "wall.placements.dynamic_plan.label": "YOUR SAVED PLAN",
+    "wall.placements.dynamic_plan.continueLabel": "Activate this plan",
+    "wall.placements.dynamic_plan.cancelLabel": "Back to plan preview",
+    "wall.placements.dynamic_plan.success": "Your saved plan is ready to activate.",
+    "wall.placements.workout_insight.label": "YOUR COMPLETED WORKOUT",
+    "wall.placements.workout_insight.continueLabel": "Generate this insight",
+    "wall.placements.workout_insight.cancelLabel": "Back to workout results",
+    "wall.placements.workout_insight.success": "Your workout insight is ready to generate.",
+    "wall.placements.weekly_insight.label": "YOUR WEEKLY REPORT",
+    "wall.placements.weekly_insight.continueLabel": "View this week’s insight",
+    "wall.placements.weekly_insight.cancelLabel": "Back to weekly report",
+    "wall.placements.weekly_insight.success": "Your report’s AI insight is ready.",
+    "wall.placements.ai_allowance.label": "YOUR CONVERSATION",
+    "wall.placements.ai_allowance.continueLabel": "Send saved message",
+    "wall.placements.ai_allowance.cancelLabel": "Back to conversation",
+    "wall.placements.ai_allowance.success": "Your new conversation allowance is ready. Your message is saved.",
+    "wall.placements.limited_challenge.label": "YOUR SELECTED CHALLENGE",
+    "wall.placements.limited_challenge.continueLabel": "Join this challenge",
+    "wall.placements.limited_challenge.cancelLabel": "Back to challenge",
+    "wall.placements.limited_challenge.success": "You can now confirm your challenge entry.",
+    "wall.placements.membership.label": "YOUR MEMBERSHIP",
+    "wall.placements.membership.continueLabel": "View membership & usage",
+    "wall.placements.membership.cancelLabel": "Back to benefits",
+    "wall.placements.membership.success": "Your Premium membership and finite AI Coach allowance are ready.",
+    "wall.entryStories.course.title": "Start this workout\nwith Premium.",
+    "wall.entryStories.course.description": "Follow the session you chose, with more workouts to come back to.",
+    "wall.entryStories.course.unlock": "This workout + the Premium training library",
+    "wall.entryStories.course.category": "YOUR SELECTED WORKOUT",
+    "wall.entryStories.course.next": "Your selected workout is ready to start after subscribing.",
+    "wall.entryStories.world_tour.title": "Take this route\nwith Premium.",
+    "wall.entryStories.world_tour.description": "Make this session a change of scenery. Keep exploring on your next one.",
+    "wall.entryStories.world_tour.unlock": "This route + more Premium destinations",
+    "wall.entryStories.world_tour.category": "YOUR SELECTED ROUTE",
+    "wall.entryStories.world_tour.next": "Return to this route after subscribing.",
+    "wall.entryStories.training_program.title": "Follow the whole\nProgram.",
+    "wall.entryStories.training_program.description": "Go from one workout to a routine, with the full sequence ready to follow.",
+    "wall.entryStories.training_program.unlock": "Every workout in this Program",
+    "wall.entryStories.training_program.category": "YOUR SELECTED PROGRAM",
+    "wall.entryStories.training_program.next": "Your Program and selected session stay ready for you.",
+    "wall.entryStories.movement.title": "Make time\nfor this workout.",
+    "wall.entryStories.movement.description": "Follow your selected movements, then find more ways to build your routine.",
+    "wall.entryStories.movement.unlock": "This movement group + Premium workouts",
+    "wall.entryStories.movement.category": "YOUR SELECTED WORKOUT",
+    "wall.entryStories.movement.next": "Return to preparation and choose how to train.",
+    "wall.entryStories.dynamic_plan.title": "Put your plan\ninto action.",
+    "wall.entryStories.dynamic_plan.description": "You have a routine in mind. Premium lets you activate it and follow through.",
+    "wall.entryStories.dynamic_plan.unlock": "Activate the plan you already previewed",
+    "wall.entryStories.dynamic_plan.category": "YOUR SAVED PLAN",
+    "wall.entryStories.dynamic_plan.next": "Your saved plan stays here, ready to activate.",
+    "wall.entryStories.workout_insight.title": "Make sense of\nthis session.",
+    "wall.entryStories.workout_insight.description": "Go beyond the numbers with an AI perspective on your workout and effort.",
+    "wall.entryStories.workout_insight.unlock": "An insight for this completed workout",
+    "wall.entryStories.workout_insight.category": "YOUR WORKOUT",
+    "wall.entryStories.workout_insight.next": "Return to this workout to generate its insight.",
+    "wall.entryStories.weekly_insight.title": "See what your\nweek adds up to.",
+    "wall.entryStories.weekly_insight.description": "Understand your workout mix and consistency as you plan what comes next.",
+    "wall.entryStories.weekly_insight.unlock": "Your weekly AI insight",
+    "wall.entryStories.weekly_insight.category": "YOUR WEEKLY REPORT",
+    "wall.entryStories.weekly_insight.next": "This report and its basic stats stay available.",
+    "wall.entryStories.ai_allowance.title": "Keep this\nconversation going.",
+    "wall.entryStories.ai_allowance.description": "More support for your goals, from your next question to your next workout.",
+    "wall.entryStories.ai_allowance.unlock": "New, finite AI Coach conversation allowance",
+    "wall.entryStories.ai_allowance.category": "YOUR CONVERSATION",
+    "wall.entryStories.ai_allowance.next": "Your message is saved. You decide when to send it.",
+    "wall.entryStories.limited_challenge.title": "Make this challenge\nyour next step.",
+    "wall.entryStories.limited_challenge.description": "Join while registration is open, with more ways to train along the way.",
+    "wall.entryStories.limited_challenge.unlock": "Access to this eligible Premium challenge",
+    "wall.entryStories.limited_challenge.category": "YOUR SELECTED CHALLENGE",
+    "wall.entryStories.limited_challenge.next": "Return to confirm your entry while registration is open.",
+    "wall.entryStories.membership.title": "Choose your\nPremium plan.",
+    "wall.entryStories.membership.description": "One membership for your training. Choose the billing period that fits you.",
+    "wall.entryStories.membership.unlock": "Premium training, plans & insights",
+    "wall.entryStories.membership.category": "YOUR MEMBERSHIP",
+    "wall.entryStories.membership.next": "One membership across your Premium training features.",
+    "wall.education.title": "Make your next\nworkout a habit.",
+    "wall.education.description": "More ways to move. A routine to follow. Support along the way.",
+    "wall.education.stories.0.label": "Workouts",
+    "wall.education.stories.0.title": "Find a workout you want to come back to.",
+    "wall.education.stories.0.description": "Explore Premium courses, real-world routes, movement workouts and complete Training Programs. Choose a session for today, or a sequence to keep following.",
+    "wall.education.stories.0.examples.0": "Trainer-led courses",
+    "wall.education.stories.0.examples.1": "World Tours",
+    "wall.education.stories.0.examples.2": "Movements",
+    "wall.education.stories.0.examples.3": "Training Programs",
+    "wall.education.stories.1.label": "Plans",
+    "wall.education.stories.1.title": "Know what to do next.",
+    "wall.education.stories.1.description": "Activate the Dynamic Plan you previewed with AI Coach, then follow your upcoming sessions together.",
+    "wall.education.stories.1.examples.0": "Preview your routine",
+    "wall.education.stories.1.examples.1": "Activate your plan",
+    "wall.education.stories.1.examples.2": "Follow your next session",
+    "wall.education.stories.2.label": "Insights",
+    "wall.education.stories.2.title": "Understand more than the numbers.",
+    "wall.education.stories.2.description": "Add an AI perspective to a completed workout or your weekly report. Reflect on your effort, workout mix and consistency.",
+    "wall.education.stories.2.examples.0": "After a workout",
+    "wall.education.stories.2.examples.1": "Across your week",
+    "wall.education.stories.3.label": "AI Coach",
+    "wall.education.stories.3.title": "Talk through your next step.",
+    "wall.education.stories.3.description": "Discuss your goals, available time and equipment with AI Coach as you shape your routine.",
+    "wall.education.stories.3.examples.0": "Explore workout ideas",
+    "wall.education.stories.3.examples.1": "Discuss your plan",
+    "wall.education.questions.0.title": "What does Premium include?",
+    "wall.education.questions.0.answer": "Your subscription includes Premium courses, World Tours, Training Programs, Dynamic Plan activation, AI insights and eligible challenges while your membership is active.",
+    "wall.education.questions.1.title": "Is AI Coach unlimited?",
+    "wall.education.questions.1.answer": "Free and Premium both have a finite conversation allowance. Your first Premium subscription gives you fresh allowance immediately. Your training features remain available if that allowance is used up.",
+    "wall.education.questions.2.title": "Can I turn off renewal?",
+    "wall.education.questions.2.answer": "You can turn off auto-renewal in subscription settings. Your Premium access continues until the end of your current paid period.",
+    "profile.card.title": "Membership & Usage",
+    "profile.status.free": "Free account",
+    "profile.status.active": "Premium active",
+    "profile.status.canceled": "Premium · Renewal off",
+    "profile.status.expired": "Premium expired",
+    "profile.card.freePrompt": "Explore Premium",
+    "profile.card.expiredPrompt": "Your account is now Free",
+    "profile.allowance.low": "AI Coach · Running low",
+    "profile.allowance.label": "AI Coach allowance",
+    "profile.allowance.emptyFree": "Allowance used up · Explore Premium",
+    "profile.allowance.emptyMember": "Allowance used up · Training stays available",
+    "profile.allowance.emptyExpired": "Allowance used up · Free workouts available",
+    "profile.allowance.unknown": "Open to check your allowance.",
+    "membership.preview.eyebrow": "SUNNYFIT PREMIUM",
+    "membership.preview.title": "Find your next\nreason to move.",
+    "membership.preview.expiredTitle": "Find your\ntraining rhythm again.",
+    "membership.preview.description": "Build a routine that fits your day.",
+    "membership.preview.point1": "A plan for your goals",
+    "membership.preview.point2": "More ways to train",
+    "membership.preview.point3": "Insights that guide you",
+    "membership.preview.explore": "Explore Premium",
+    "membership.preview.plans": "View plans",
+    "membership.preview.retention": "Your workout history and saved conversations are still here.",
+    "membership.active.title": "Ready for your next move",
+    "membership.active.description": "Your training benefits are included with Premium.",
+    "membership.utility.restore": "Restore purchases",
+    "membership.utility.history": "Billing history",
+    "membership.manage.button": "Manage subscription",
+    "paywall.learn": "See what Premium includes",
+    "paywall.alsoLabel": "ALSO IN PREMIUM",
+    "paywall.alsoDescription": "Workouts · Personal plans · AI insights",
+    "paywall.guideTitle": "Explore SunnyFit Premium",
+    "paywall.guideEyebrow": "ONE SUNNYFIT PREMIUM MEMBERSHIP",
+    "paywall.comparisonTitle": "What changes with Premium?",
+    "paywall.faqTitle": "Before you decide",
+    "paywall.plansTitle": "Choose your plan",
+    "paywall.coachBenefit": "Fresh AI Coach allowance",
+    "paywall.trainingBenefit": "Premium workouts, plans & insights",
+    "paywall.exampleQuestion": "How can I fit a workout into a busy day?",
+    "paywall.exampleAnswer": "Let’s start with your time and equipment.",
+    "actions.chat.upgrade": "Upgrade",
+    "actions.chat.upgradeSend": "Upgrade to send",
+    "actions.chat.add": "Add credits",
+    "actions.chat.resend": "Resend",
+    "actions.chat.check": "Retry",
+    "actions.chat.low": "{percent}% left",
+    "actions.chat.empty": "Allowance used up",
+    "actions.allowance.upgrade": "Get Premium allowance",
+    "actions.credits.title": "More room for\nyour next question.",
+    "actions.credits.description": "Add AI Coach Credits to keep this conversation going.",
+    "actions.credits.buy": "Buy for {price}",
+    "actions.result.title": "AI Coach Insight",
+    "actions.result.description": "See your ride and your effort together, with a personal workout recap.",
+    "actions.result.cta": "Get workout analysis",
+    "actions.weekly.cta": "Explore Premium",
+    "actions.plan.activate": "Activate Plan",
+    "actions.plan.access": "Premium required to activate",
+    "actions.challenge.description": "Included with Premium. Subscribe, then join this event.",
+    "actions.challenge.cta": "Join with Premium",
+    "wall.placements.course.cta": "",
+    "wall.placements.course.trialCta": "",
+    "wall.placements.course.contentCta": "",
+    "wall.placements.course.contentTrialCta": "",
+    "wall.placements.world_tour.cta": "",
+    "wall.placements.world_tour.trialCta": "",
+    "wall.placements.world_tour.contentCta": "",
+    "wall.placements.world_tour.contentTrialCta": "",
+    "wall.placements.training_program.cta": "",
+    "wall.placements.training_program.trialCta": "",
+    "wall.placements.training_program.contentCta": "",
+    "wall.placements.training_program.contentTrialCta": "",
+    "wall.placements.movement.cta": "",
+    "wall.placements.movement.trialCta": "",
+    "wall.placements.dynamic_plan.cta": "",
+    "wall.placements.dynamic_plan.trialCta": "",
+    "wall.placements.workout_insight.cta": "",
+    "wall.placements.workout_insight.trialCta": "",
+    "wall.placements.weekly_insight.cta": "",
+    "wall.placements.weekly_insight.trialCta": "",
+    "wall.placements.ai_allowance.cta": "",
+    "wall.placements.ai_allowance.trialCta": "",
+    "wall.placements.limited_challenge.cta": "",
+    "wall.placements.limited_challenge.trialCta": "",
+    "wall.placements.membership.cta": "",
+    "wall.placements.membership.trialCta": "",
+    "actions.chat.resendMessage": "Resend message",
+    "actions.weekly.title": "See the story behind your training.",
+    "actions.weekly.description": "Go beyond your weekly totals with an AI perspective on your workout mix and consistency."
+  }
+}

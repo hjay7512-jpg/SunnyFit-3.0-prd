@@ -9,7 +9,7 @@ const store = createStore(databasePath)
 if(process.env.MVP_REVIEW_FIXTURES!=='0')require('./mvp-demo.cjs').ensureMvpDemo(store,databasePath)
 const apiPrefix = '/api/commercialization'
 const dist = path.resolve(__dirname, '../dist')
-const copyFiles=require('./operations-copy.cjs').createCopyFiles(path.resolve(process.env.COPY_CONFIG_DIR||path.join(__dirname,'../config/operations-copy')))
+const collaboration=require('./collaboration.cjs').createLocalCollaboration()
 function json(response, status, data) { response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); response.end(JSON.stringify(data)) }
 async function readBody(request) {
   let text = ''
@@ -20,11 +20,13 @@ const server = http.createServer(async (request, response) => {
   try {
     const url = new URL(request.url, 'http://127.0.0.1')
     const route = url.pathname
-    if(route==='/api/prototype-copy'){
-      if(request.method==='GET')return json(response,200,copyFiles.latest())
-      if(request.method==='POST'){const result=copyFiles.save(await readBody(request));return json(response,result.status,result)}
-      return json(response,405,{message:'Method not supported.'})
+    if(route.startsWith('/api/collaboration/')){
+      const service=await collaboration,headers=new Headers();for(const [name,value] of Object.entries(request.headers))if(value)headers.set(name,String(value));
+      const body=['POST','PUT','DELETE'].includes(request.method)?JSON.stringify(await readBody(request)):undefined;
+      const result=await service.handler(new Request('http://127.0.0.1'+request.url,{method:request.method,headers,body}));
+      response.writeHead(result.status,Object.fromEntries(result.headers));return response.end(Buffer.from(await result.arrayBuffer()))
     }
+    if(route==='/api/prototype-copy')return json(response,410,{message:'旧文案写入入口已停用，请使用授权协作服务。'})
     if (route === '/api/health') return json(response, 200, { code: 20000, data: { status: 'ok', demo: { workspace: path.resolve(__dirname,'..'), database: databasePath }, modules: ['catalog', 'suits', 'products', 'users', 'wallet', 'content', 'pricing', 'orders', 'subscriptions', 'campaigns', 'audit', 'app'] } })
     if (route.startsWith(apiPrefix)) {
       const body = ['POST','PUT','DELETE'].includes(request.method) ? await readBody(request) : {}

@@ -1,5 +1,5 @@
 <template>
-  <div class="coach-message-notice" :class="{'is-failed':failed,'is-urgent':!failed&&item.quotaReminder.threshold===5}" :role="failed?'alert':'status'" :data-threshold="item.quotaReminder&&item.quotaReminder.threshold">
+  <div v-copy-block="'actions.chat'" class="coach-message-notice" :class="{'is-failed':failed,'is-urgent':!failed&&item.quotaReminder.threshold===5}" :role="failed?'alert':'status'" :data-threshold="item.quotaReminder&&item.quotaReminder.threshold">
     <span v-if="failed" class="coach-message-notice__status"><span :title="failureDescription">{{ item.failure==='unknown'?'Allowance unavailable':$copy('actions.chat.empty') }}</span></span>
     <p v-else>{{ $copy('actions.chat.low',{percent:item.quotaReminder.percent}) }}</p>
     <span class="coach-message-notice__separator" aria-hidden="true">·</span>

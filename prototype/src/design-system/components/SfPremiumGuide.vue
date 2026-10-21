@@ -1,12 +1,12 @@
 <template>
   <div class="sf-premium-guide">
     <div v-if="!generalOverview" class="sf-premium-guide__context"><span><sf-icon :name="wall.benefits[0].icon" :size="18"/></span><div><small>{{ wall.entry.category }}</small><strong>{{ wall.resource.name }}</strong><p>{{ wall.entry.next }}</p></div></div>
-    <header class="sf-premium-guide__intro"><span>{{ $copy('paywall.guideEyebrow') }}</span><h1>{{ wall.education.title }}</h1><p>{{ wall.education.description }}</p></header>
+    <header v-copy-block="'premium-intro'" class="sf-premium-guide__intro"><span>{{ $copy('paywall.guideEyebrow') }}</span><h1>{{ wall.education.title }}</h1><p>{{ wall.education.description }}</p></header>
     <section class="sf-premium-guide__stories" aria-label="How you can use Premium">
       <div class="sf-premium-guide__tabs" role="tablist" aria-label="Explore Premium benefits">
         <button v-for="item in wall.education.stories" :id="'premium-guide-tab-'+item.id" :key="item.id" type="button" role="tab" :tabindex="story.id===item.id?0:-1" :aria-selected="story.id===item.id?'true':'false'" aria-controls="premium-guide-story" :disabled="disabled" @click="$emit('benefit',item.id)" @keydown="navigate($event,item.id)">{{ item.label }}</button>
       </div>
-      <article id="premium-guide-story" role="tabpanel" :aria-labelledby="'premium-guide-tab-'+story.id" :data-benefit="story.id">
+      <article v-copy-block="'premium-'+story.id" id="premium-guide-story" role="tabpanel" :aria-labelledby="'premium-guide-tab-'+story.id" :data-benefit="story.id">
         <sf-paywall-artwork v-if="story.id!=='coach'" :kind="story.artwork"/>
         <div v-else class="sf-premium-guide__conversation" aria-label="Example AI Coach conversation"><small>EXAMPLE CONVERSATION</small><p>{{ $copy('paywall.exampleQuestion') }}</p><p><sf-icon name="coach" :size="15"/>{{ $copy('paywall.exampleAnswer') }}</p></div>
         <h2>{{ story.title }}</h2><p>{{ story.description }}</p>
@@ -14,9 +14,9 @@
         <p class="sf-premium-guide__detail">{{ story.detail }}</p>
       </article>
     </section>
-    <section class="sf-premium-guide__comparison" aria-label="Free and Premium comparison"><h2>{{ $copy('paywall.comparisonTitle') }}</h2><table><thead><tr><th scope="col">Your SunnyFit</th><th scope="col">Free</th><th scope="col">Premium</th></tr></thead><tbody><tr v-for="row in wall.education.comparison" :key="row[0]"><th scope="row">{{ row[0] }}</th><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr></tbody></table></section>
+    <section v-copy-block="'paywall'" class="sf-premium-guide__comparison" aria-label="Free and Premium comparison"><h2>{{ $copy('paywall.comparisonTitle') }}</h2><table><thead><tr><th scope="col">Your SunnyFit</th><th scope="col">Free</th><th scope="col">Premium</th></tr></thead><tbody><tr v-for="row in wall.education.comparison" :key="row[0]"><th scope="row">{{ row[0] }}</th><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr></tbody></table></section>
     <slot/>
-    <section class="sf-premium-guide__questions" aria-label="Before you decide"><h2>{{ $copy('paywall.faqTitle') }}</h2><details v-for="question in questions" :key="question.title"><summary>{{ question.title }}<sf-icon name="plus" :size="13"/></summary><p>{{ question.answer }}</p></details><details v-if="disclosure"><summary>{{ trial?'What happens after the free trial?':'How will I be billed?' }}<sf-icon name="plus" :size="13"/></summary><p>{{ disclosure }}</p></details></section>
+    <section v-copy-block="'premium-faq'" class="sf-premium-guide__questions" aria-label="Before you decide"><h2>{{ $copy('paywall.faqTitle') }}</h2><details v-for="question in questions" :key="question.title"><summary>{{ question.title }}<sf-icon name="plus" :size="13"/></summary><p>{{ question.answer }}</p></details><details v-if="disclosure"><summary>{{ trial?'What happens after the free trial?':'How will I be billed?' }}<sf-icon name="plus" :size="13"/></summary><p>{{ disclosure }}</p></details></section>
     <div v-if="!generalOverview" class="sf-premium-guide__return"><sf-icon name="check" :size="16"/><span>{{ wall.entry.next }}</span></div>
   </div>
 </template>

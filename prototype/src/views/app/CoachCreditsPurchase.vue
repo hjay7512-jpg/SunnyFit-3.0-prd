@@ -2,7 +2,7 @@
   <sf-sheet class="coach-credits-purchase" :open="true" contained :resizable="false" :title="title" :busy="busy" @input="$emit('close')">
     <span class="coach-credits-purchase__icon"><sf-icon :name="gate.stage==='success'?'check':'coach'" :size="28"/></span>
     <template v-if="['offer','processing'].includes(gate.stage)">
-      <h3 class="operations-copy-title">{{ $copy('actions.credits.title') }}</h3><p>{{ $copy('actions.credits.description') }}</p>
+      <h3 v-copy-block="'actions.credits'" class="operations-copy-title">{{ $copy('actions.credits.title') }}</h3><p>{{ $copy('actions.credits.description') }}</p>
       <div v-if="selected" class="coach-credits-purchase__pack"><strong>{{ selected.product.credits.amount }}<small>AI Coach Credits</small></strong><span>{{ money(selected) }}<small>One-time purchase</small></span></div>
       <div v-if="offers.length>1" class="coach-credits-purchase__options" role="radiogroup" aria-label="AI Coach credit packs"><button v-for="offer in offers" :key="offer.offerId" type="button" role="radio" :aria-checked="offer.offerId===selected.offerId?'true':'false'" :disabled="busy" @click="$emit('select',offer)">{{ offer.product.credits.amount }} credits · {{ money(offer) }}</button></div>
       <p v-if="selected" class="coach-credits-purchase__terms"><sf-icon name="check" :size="15"/>No expiry. Your subscription stays the same.</p><p v-else role="status">Credit packs aren’t available right now.</p>
@@ -14,7 +14,7 @@
       <sf-button v-if="gate.stage==='success'" @click="$emit('resume')">{{ gate.context.messageId?$copy('actions.chat.resendMessage'):gate.context.continueLabel }}</sf-button>
       <sf-button v-else-if="['failure','cancelled'].includes(gate.stage)" @click="$emit('retry')">Back to credit packs</sf-button>
       <sf-button v-else-if="gate.stage==='pending'" @click="$emit('check')">Check purchase status</sf-button>
-      <sf-button v-else :disabled="!selected||busy" @click="$emit('purchase',selected)">{{ busy?'Confirming purchase…':selected?$copy('actions.credits.buy',{price:money(selected)}):'Credit packs unavailable' }}</sf-button>
+      <sf-button v-copy-block="'actions.credits'" v-else :disabled="!selected||busy" @click="$emit('purchase',selected)">{{ busy?'Confirming purchase…':selected?$copy('actions.credits.buy',{price:money(selected)}):'Credit packs unavailable' }}</sf-button>
       <button class="coach-credits-purchase__back" type="button" :disabled="busy" @click="$emit('close')">{{ gate.stage==='pending'?'Return while we confirm':'Back to conversation' }}</button>
     </template>
   </sf-sheet>

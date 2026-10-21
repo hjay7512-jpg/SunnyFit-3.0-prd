@@ -1,6 +1,6 @@
 <template>
   <section class="sf-paywall-plans" aria-label="Premium plans">
-    <h2>{{ $copy('paywall.plansTitle') }}</h2>
+    <h2 v-copy-block="'paywall'">{{ $copy('paywall.plansTitle') }}</h2>
     <div v-if="offers.length" class="context-purchase-offers" role="radiogroup" aria-label="Subscription billing period">
       <button v-for="offer in offers" :key="offer.offerId" type="button" role="radio" :aria-checked="selectedId===offer.offerId?'true':'false'" :disabled="disabled" :data-offer-id="offer.offerId" :data-sku-id="offer.sku.id" @click="$emit('select',offer)">
         <span class="sf-paywall-plans__period"><i/><strong>{{ offer.sku.billingPeriod==='annual'?'Yearly':'Monthly' }}</strong></span>

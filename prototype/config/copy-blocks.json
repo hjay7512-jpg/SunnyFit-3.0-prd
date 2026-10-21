@@ -1,0 +1,488 @@
+{
+  "schemaVersion": 1,
+  "registryVersion": 1,
+  "blocks": [
+    {
+      "id": "wall-common",
+      "label": "通用订阅与内容 CTA",
+      "fields": [
+        "wall.base.cta",
+        "wall.base.trialCta",
+        "wall.base.contentCta",
+        "wall.base.contentTrialCta"
+      ]
+    },
+    {
+      "id": "entry-course",
+      "label": "课程 · 付费引导",
+      "fields": [
+        "wall.placements.course.contentCta",
+        "wall.placements.course.label",
+        "wall.placements.course.continueLabel",
+        "wall.placements.course.success",
+        "wall.placements.course.cancelLabel",
+        "wall.entryStories.course.title",
+        "wall.entryStories.course.description",
+        "wall.entryStories.course.unlock",
+        "wall.entryStories.course.category",
+        "wall.entryStories.course.next",
+        "wall.placements.course.contentTrialCta",
+        "wall.placements.course.cta",
+        "wall.placements.course.trialCta"
+      ]
+    },
+    {
+      "id": "entry-world_tour",
+      "label": "World Tour · 付费引导",
+      "fields": [
+        "wall.placements.world_tour.label",
+        "wall.placements.world_tour.continueLabel",
+        "wall.placements.world_tour.success",
+        "wall.placements.world_tour.cancelLabel",
+        "wall.entryStories.world_tour.title",
+        "wall.entryStories.world_tour.description",
+        "wall.entryStories.world_tour.unlock",
+        "wall.entryStories.world_tour.category",
+        "wall.entryStories.world_tour.next",
+        "wall.placements.world_tour.contentCta",
+        "wall.placements.world_tour.contentTrialCta",
+        "wall.placements.world_tour.cta",
+        "wall.placements.world_tour.trialCta"
+      ]
+    },
+    {
+      "id": "entry-training_program",
+      "label": "Training Program · 付费引导",
+      "fields": [
+        "wall.placements.training_program.label",
+        "wall.placements.training_program.continueLabel",
+        "wall.placements.training_program.success",
+        "wall.placements.training_program.cancelLabel",
+        "wall.entryStories.training_program.title",
+        "wall.entryStories.training_program.description",
+        "wall.entryStories.training_program.unlock",
+        "wall.entryStories.training_program.category",
+        "wall.entryStories.training_program.next",
+        "wall.placements.training_program.contentCta",
+        "wall.placements.training_program.contentTrialCta",
+        "wall.placements.training_program.cta",
+        "wall.placements.training_program.trialCta"
+      ]
+    },
+    {
+      "id": "entry-movement",
+      "label": "动作训练 · 付费引导",
+      "fields": [
+        "wall.placements.movement.label",
+        "wall.placements.movement.continueLabel",
+        "wall.placements.movement.success",
+        "wall.placements.movement.cancelLabel",
+        "wall.entryStories.movement.title",
+        "wall.entryStories.movement.description",
+        "wall.entryStories.movement.unlock",
+        "wall.entryStories.movement.category",
+        "wall.entryStories.movement.next",
+        "wall.placements.movement.cta",
+        "wall.placements.movement.trialCta"
+      ]
+    },
+    {
+      "id": "entry-dynamic_plan",
+      "label": "动态计划 · 付费引导",
+      "fields": [
+        "wall.placements.dynamic_plan.label",
+        "wall.placements.dynamic_plan.continueLabel",
+        "wall.placements.dynamic_plan.success",
+        "wall.placements.dynamic_plan.cancelLabel",
+        "wall.entryStories.dynamic_plan.title",
+        "wall.entryStories.dynamic_plan.description",
+        "wall.entryStories.dynamic_plan.unlock",
+        "wall.entryStories.dynamic_plan.category",
+        "wall.entryStories.dynamic_plan.next",
+        "wall.placements.dynamic_plan.cta",
+        "wall.placements.dynamic_plan.trialCta"
+      ]
+    },
+    {
+      "id": "entry-workout_insight",
+      "label": "运动结果分析 · 付费引导",
+      "fields": [
+        "wall.placements.workout_insight.label",
+        "wall.placements.workout_insight.continueLabel",
+        "wall.placements.workout_insight.success",
+        "wall.placements.workout_insight.cancelLabel",
+        "wall.entryStories.workout_insight.title",
+        "wall.entryStories.workout_insight.description",
+        "wall.entryStories.workout_insight.unlock",
+        "wall.entryStories.workout_insight.category",
+        "wall.entryStories.workout_insight.next",
+        "wall.placements.workout_insight.cta",
+        "wall.placements.workout_insight.trialCta"
+      ]
+    },
+    {
+      "id": "entry-weekly_insight",
+      "label": "每周分析 · 付费引导",
+      "fields": [
+        "wall.placements.weekly_insight.label",
+        "wall.placements.weekly_insight.continueLabel",
+        "wall.placements.weekly_insight.success",
+        "wall.placements.weekly_insight.cancelLabel",
+        "wall.entryStories.weekly_insight.title",
+        "wall.entryStories.weekly_insight.description",
+        "wall.entryStories.weekly_insight.unlock",
+        "wall.entryStories.weekly_insight.category",
+        "wall.entryStories.weekly_insight.next",
+        "wall.placements.weekly_insight.cta",
+        "wall.placements.weekly_insight.trialCta"
+      ]
+    },
+    {
+      "id": "entry-ai_allowance",
+      "label": "AI Coach 对话 · 付费引导",
+      "fields": [
+        "wall.placements.ai_allowance.label",
+        "wall.placements.ai_allowance.continueLabel",
+        "wall.placements.ai_allowance.success",
+        "wall.placements.ai_allowance.cancelLabel",
+        "wall.entryStories.ai_allowance.title",
+        "wall.entryStories.ai_allowance.description",
+        "wall.entryStories.ai_allowance.unlock",
+        "wall.entryStories.ai_allowance.category",
+        "wall.entryStories.ai_allowance.next",
+        "wall.placements.ai_allowance.cta",
+        "wall.placements.ai_allowance.trialCta"
+      ]
+    },
+    {
+      "id": "entry-limited_challenge",
+      "label": "限时挑战 · 付费引导",
+      "fields": [
+        "wall.placements.limited_challenge.label",
+        "wall.placements.limited_challenge.continueLabel",
+        "wall.placements.limited_challenge.success",
+        "wall.placements.limited_challenge.cancelLabel",
+        "wall.entryStories.limited_challenge.title",
+        "wall.entryStories.limited_challenge.description",
+        "wall.entryStories.limited_challenge.unlock",
+        "wall.entryStories.limited_challenge.category",
+        "wall.entryStories.limited_challenge.next",
+        "wall.placements.limited_challenge.cta",
+        "wall.placements.limited_challenge.trialCta"
+      ]
+    },
+    {
+      "id": "entry-membership",
+      "label": "会员中心 · 付费引导",
+      "fields": [
+        "wall.placements.membership.label",
+        "wall.placements.membership.continueLabel",
+        "wall.placements.membership.success",
+        "wall.placements.membership.cancelLabel",
+        "wall.entryStories.membership.title",
+        "wall.entryStories.membership.description",
+        "wall.entryStories.membership.unlock",
+        "wall.entryStories.membership.category",
+        "wall.entryStories.membership.next",
+        "wall.placements.membership.cta",
+        "wall.placements.membership.trialCta"
+      ]
+    },
+    {
+      "id": "premium-intro",
+      "label": "完整会员介绍 · 开场",
+      "fields": [
+        "wall.education.title",
+        "wall.education.description"
+      ]
+    },
+    {
+      "id": "premium-workouts",
+      "label": "完整会员介绍 · 训练",
+      "fields": [
+        "wall.education.stories.0.label",
+        "wall.education.stories.0.title",
+        "wall.education.stories.0.description",
+        "wall.education.stories.0.examples.0",
+        "wall.education.stories.0.examples.1",
+        "wall.education.stories.0.examples.2",
+        "wall.education.stories.0.examples.3"
+      ]
+    },
+    {
+      "id": "premium-plans",
+      "label": "完整会员介绍 · 动态计划",
+      "fields": [
+        "wall.education.stories.1.label",
+        "wall.education.stories.1.title",
+        "wall.education.stories.1.description",
+        "wall.education.stories.1.examples.0",
+        "wall.education.stories.1.examples.1",
+        "wall.education.stories.1.examples.2"
+      ]
+    },
+    {
+      "id": "premium-insights",
+      "label": "完整会员介绍 · 复盘分析",
+      "fields": [
+        "wall.education.stories.2.label",
+        "wall.education.stories.2.title",
+        "wall.education.stories.2.description",
+        "wall.education.stories.2.examples.0",
+        "wall.education.stories.2.examples.1"
+      ]
+    },
+    {
+      "id": "premium-coach",
+      "label": "完整会员介绍 · AI Coach",
+      "fields": [
+        "wall.education.stories.3.label",
+        "wall.education.stories.3.title",
+        "wall.education.stories.3.description",
+        "wall.education.stories.3.examples.0",
+        "wall.education.stories.3.examples.1"
+      ]
+    },
+    {
+      "id": "premium-faq",
+      "label": "完整会员介绍 · 常见疑问",
+      "fields": [
+        "wall.education.questions.0.title",
+        "wall.education.questions.0.answer",
+        "wall.education.questions.1.title",
+        "wall.education.questions.1.answer",
+        "wall.education.questions.2.title",
+        "wall.education.questions.2.answer"
+      ]
+    },
+    {
+      "id": "profile.membership",
+      "label": "个人中心 · 权益卡",
+      "fields": [
+        "profile.card.title",
+        "profile.status.free",
+        "profile.status.active",
+        "profile.status.canceled",
+        "profile.status.expired",
+        "profile.card.freePrompt",
+        "profile.card.expiredPrompt",
+        "profile.allowance.low",
+        "profile.allowance.label",
+        "profile.allowance.emptyFree",
+        "profile.allowance.emptyMember",
+        "profile.allowance.emptyExpired",
+        "profile.allowance.unknown"
+      ]
+    },
+    {
+      "id": "membership.discovery",
+      "label": "会员中心 · 价值介绍",
+      "fields": [
+        "membership.preview.eyebrow",
+        "membership.preview.title",
+        "membership.preview.expiredTitle",
+        "membership.preview.description",
+        "membership.preview.point1",
+        "membership.preview.point2",
+        "membership.preview.point3",
+        "membership.preview.explore",
+        "membership.preview.plans",
+        "membership.preview.retention"
+      ]
+    },
+    {
+      "id": "membership.active",
+      "label": "会员中心 · 已订阅权益",
+      "fields": [
+        "membership.active.title",
+        "membership.active.description",
+        "membership.manage.button"
+      ]
+    },
+    {
+      "id": "membership.utilities",
+      "label": "会员中心 · 购买与账单入口",
+      "fields": [
+        "membership.utility.restore",
+        "membership.utility.history"
+      ]
+    },
+    {
+      "id": "paywall",
+      "label": "付费墙 · 通用引导",
+      "fields": [
+        "paywall.learn",
+        "paywall.alsoLabel",
+        "paywall.alsoDescription",
+        "paywall.guideTitle",
+        "paywall.guideEyebrow",
+        "paywall.comparisonTitle",
+        "paywall.faqTitle",
+        "paywall.plansTitle",
+        "paywall.coachBenefit",
+        "paywall.trainingBenefit",
+        "paywall.exampleQuestion",
+        "paywall.exampleAnswer"
+      ]
+    },
+    {
+      "id": "actions.chat",
+      "label": "对话 · 额度提醒",
+      "fields": [
+        "actions.chat.upgrade",
+        "actions.chat.upgradeSend",
+        "actions.chat.add",
+        "actions.chat.resend",
+        "actions.chat.check",
+        "actions.chat.low",
+        "actions.chat.empty",
+        "actions.chat.resendMessage"
+      ]
+    },
+    {
+      "id": "actions.allowance",
+      "label": "用量 · 升级入口",
+      "fields": [
+        "actions.allowance.upgrade"
+      ]
+    },
+    {
+      "id": "actions.credits",
+      "label": "额度 · 加购引导",
+      "fields": [
+        "actions.credits.title",
+        "actions.credits.description",
+        "actions.credits.buy"
+      ]
+    },
+    {
+      "id": "actions.result",
+      "label": "结果 · 分析引导",
+      "fields": [
+        "actions.result.title",
+        "actions.result.description",
+        "actions.result.cta"
+      ]
+    },
+    {
+      "id": "actions.weekly",
+      "label": "周报 · 分析引导",
+      "fields": [
+        "actions.weekly.cta",
+        "actions.weekly.title",
+        "actions.weekly.description"
+      ]
+    },
+    {
+      "id": "actions.plan",
+      "label": "计划 · 激活入口",
+      "fields": [
+        "actions.plan.activate",
+        "actions.plan.access"
+      ]
+    },
+    {
+      "id": "actions.challenge",
+      "label": "挑战 · 加入引导",
+      "fields": [
+        "actions.challenge.description",
+        "actions.challenge.cta"
+      ]
+    },
+    {
+      "id": "page.home",
+      "label": "首页 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.workout",
+      "label": "课程列表 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.course",
+      "label": "课程详情 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.program",
+      "label": "Training Program · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.world-tour",
+      "label": "World Tour · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.world-tour-detail",
+      "label": "实景详情 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.challenge",
+      "label": "限时挑战 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.movement",
+      "label": "动作训练 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.movement-detail",
+      "label": "动作详情 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.movement-training",
+      "label": "运动准备与训练 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.coach",
+      "label": "AI Coach · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.plan",
+      "label": "Dynamic Plan · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.weekly",
+      "label": "每周报告 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.result",
+      "label": "运动结果 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.profile",
+      "label": "个人中心 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.membership",
+      "label": "会员与用量 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.plans",
+      "label": "方案与权益 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.billing",
+      "label": "账单记录 · 页面备注",
+      "fields": []
+    },
+    {
+      "id": "page.wallet",
+      "label": "Credits · 页面备注",
+      "fields": []
+    }
+  ]
+}

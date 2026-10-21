@@ -26,6 +26,15 @@ jobs:
         run: npm ci --prefix prototype --no-audit --no-fund
       - name: Validate shared business rules
         run: npm test --prefix prototype
+      - name: Install collaboration service dependencies
+        run: npm ci --prefix prototype/collaboration-service --no-audit --no-fund
+      - name: Validate collaboration storage and deployed contract
+        run: |
+          cd prototype/collaboration-service
+          node node_modules/typescript/bin/tsc --noEmit
+          node scripts/test-d1.mjs
+          cd ..
+          node scripts/check-collaboration-deployment.cjs
       - name: Build standalone review prototype
         run: npm run build:pages --prefix prototype
         env:

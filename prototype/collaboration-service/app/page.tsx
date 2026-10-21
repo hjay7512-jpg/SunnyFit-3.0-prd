@@ -1,0 +1,1 @@
+export default function Home(){return <main style={{maxWidth:620,margin:'12vh auto',padding:32,fontFamily:'system-ui',lineHeight:1.8}}><p style={{color:'#cf443d'}}>SunnyFit · Prototype collaboration</p><h1>原型协作服务</h1><p>文案、评论和修改历史保存在共享数据库。请从维护者分享的原型协作链接进入。</p><p>文案修改需要有效的编辑链接；普通链接不会获得编辑权限。</p></main>}

@@ -22,7 +22,7 @@
         <sf-menu-row v-for="(course,index) in members" :key="course.id" :data-action="'open-course:'+course.id" :label="course.name" :description="'Workout '+(index+1)+' · '+course.durationMinutes+' min'" :class="{'is-current':workout&&workout.id===course.id}" @click="$emit('action','open-course:'+course.id)"/>
         <sf-feedback v-if="!members.length" tone="empty" title="No workouts available"/>
       </section>
-      <template #footer><sf-button data-action="start-program" :data-content-id="content.id" @click.stop="$emit('action','start-program')">{{ startLabel||'Select Program' }}</sf-button></template>
+      <template #footer><sf-button v-copy-block="startLabel&&startLabel!=='Select Program'?'entry-training_program':null" data-action="start-program" :data-content-id="content.id" @click.stop="$emit('action','start-program')">{{ startLabel||'Select Program' }}</sf-button></template>
     </sf-page-layout>
   </div>
 </template>

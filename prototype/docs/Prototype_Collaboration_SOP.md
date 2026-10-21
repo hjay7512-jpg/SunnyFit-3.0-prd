@@ -1,0 +1,104 @@
+# SunnyFit 原型协作与迭代 SOP
+
+原型继续采用左侧导航、中间交互页面、右侧说明。运营从页面上的文案区块进入编辑或评论；团队版本以协作服务的数据库为准。原型中模拟的会员、购买和训练数据仍属于演示环境，不进入协作数据库。
+
+## 运营使用
+
+1. 打开维护者分享的协作链接。编辑链接可修改文案和评论；评审链接只能查看、提交评论。普通预览链接不显示「编辑文案」。
+2. 悬停文案区块，点击「编辑文案」。触屏可点按区块唤出工具；键盘用户可使用「选择文案区块」。右侧只列出这个区块在当前状态下对应的字段。
+3. 填写显示名称，修改文案并查看中间预览。名称由协作者自行填写，用于记录，不代表已核验的个人身份。同一链接内的人员拥有相同权限；需要分别撤销人员权限时，应分别发放链接。
+4. 点击「保存此区块」后，文案立即成为团队的生效版本。其他浏览器重新打开页面时读取该版本，已打开的页面在无草稿时每 20 秒刷新。
+5. 若提示已有新版本，当前草稿会保留，不能直接覆盖。复制需要保留的草稿，再选择「载入最新版本」并重新修改。
+6. 「备注/评论」记录选中区块、页面和页面/组件状态。提交后其他协作者可查看。编辑者可标记解决；评审者可解决由同一评审链接提交的评论。
+7. 「版本记录」可预览历史文案。恢复后仍需保存，生成一个新版本；原历史不删除。切换页面或刷新前，未保存的修改会触发提示。
+
+已打开的编辑链接会转为当前标签页的临时凭证并从地址栏移除。向别人授权时请转发维护者提供的原始协作链接。不要将编辑链接放入 Git、公开文档、截图或监控日志。
+
+## 源码维护约定
+
+| 文件 | 职责 |
+| --- | --- |
+| `config/operations-copy.json` | 首次读取与断网时的内置默认文案 |
+| `config/operations-copy.fields.json` | 字段名称、长度、变量与继承规则 |
+| `config/copy-blocks.json` | 持久区块 ID 与字段归属；维护者手动管理 |
+| `scripts/prepare-collaboration.cjs` | 验证字段归属，生成前后端共用的注册表 |
+| `src/copy/operations-copy.js` | 共享读取、区块草稿、授权与保存 |
+| `src/views/app/review/CopyHoverTools.vue` | 脱离手机缩放容器的悬停工具 |
+| `src/views/app/review/OperationsCopyEditor.vue` | 当前区块编辑、评论与版本记录 |
+| `collaboration-service/core/service.mjs` | 本地 SQLite / 云端 D1 共用的业务协议 |
+| `collaboration-service/db/schema.ts` 和 `drizzle/` | 云端数据库结构与追加式迁移 |
+
+区块 ID 与字段 key 是数据关联契约，不随组件改名、排序、视觉重排而变化。一个字段只能归属一个区块。同一个 CTA 在多处出现时继续使用同一归属。改版废弃字段时先保留契约并停止渲染；不要复用旧 ID 表示另一个功能。数据库中的历史与评论不会因前端删除节点而消失。
+
+页面通过 `v-copy-block` 显式声明区块，不能通过文字匹配、CSS 路径或节点顺序自动定位。示例：
+
+```vue
+<section v-copy-block="{id:'membership.discovery', fields:['membership.preview.title','membership.preview.description']}">
+  <h2>{{ $copy('membership.preview.title') }}</h2>
+  <p>{{ $copy('membership.preview.description') }}</p>
+</section>
+```
+
+新增文案时同时登记默认值、字段校验与区块归属，运行 `node scripts/prepare-collaboration.cjs`。生成的两个注册表应随同源码提交，不手工修改。新增页面备注只需登记一个 `fields: []` 的区块。新增字段时提升 `registryVersion`，先发布兼容旧客户端的服务，再发布前端。
+
+内置默认值只补足数据库中尚未编辑的字段。构建不会读取历史浏览器文件，也不会把新默认值写回数据库。以前 localStorage / OPFS 的运营文案不再自动载入；需要迁移时人工核对并通过正常区块保存，避免旧稿覆盖团队版本。
+
+## 本地开发与验证
+
+本地协作数据库独立于商业化演示数据库。设置 `COLLAB_DB_PATH`、`COLLAB_ADMIN_KEY` 与 `COLLAB_ALLOWED_ORIGINS` 后启动 `npm start`。管理员密钥必须由进程环境注入，不写入仓库。未设置密钥时管理接口关闭，不能凭 URL 标志自行获得编辑权限。
+
+```text
+npm ci
+npm test
+npm run build
+npm run test:collaboration
+npm run test:review
+npm run test:paywall
+npm run test:prototype-flow
+```
+
+协作浏览器检查自动使用独立数据库和临时授权链接，覆盖普通浏览、编辑/评论权限、跨浏览器保存、冲突、历史、模态页面、窄屏和撤销。测试不写团队数据库。证据存于 `runtime/collaboration-browser-*/results.json`，只分享经过检查且不含授权链接的结果或截图。
+
+云端服务使用自己的锁文件安装依赖，并运行：
+
+```text
+node node_modules/typescript/bin/tsc --noEmit
+node scripts/test-d1.mjs
+node scripts/run-framework.mjs build
+```
+
+上述命令在 `collaboration-service/` 执行。D1 检查使用 Miniflare 临时数据库，验证实际 SQL 迁移、原子保存、审计和评论。Windows 若 Sites 外层 npm shim 无法找到 npm，可直接运行项目的 Node 构建入口；不要因此修改系统 npm 或跳过数据库检查。
+
+## 链接与服务管理
+
+托管目标为 Sites 的 D1 数据库；项目身份保存在 `collaboration-service/.openai/hosting.json`，后续迭代复用该项目，不能重新创建数据库。通过 Sites 的运行时环境管理保存 `COLLAB_ADMIN_KEY`（secret）和 `COLLAB_ALLOWED_ORIGINS`，前端仅保存非敏感的 `public/config/collaboration.json.apiBase`。
+
+管理员通过 `scripts/collaboration-links.mjs` 的 stdin 输入 JSON 创建、列出或撤销链接。密钥不能放在命令行参数。创建示例输入结构：
+
+```json
+{
+  "action": "create",
+  "apiBase": "https://YOUR-SERVICE/api/collaboration",
+  "adminKey": "从密钥管理器读取，不提交此值",
+  "label": "运营姓名或评审组",
+  "role": "editor",
+  "days": 30,
+  "scopes": ["membership.discovery", "profile.membership"],
+  "previewUrl": "https://hjay7512-jpg.github.io/SunnyFit-3.0-prd/prototype/#/app/profile?review=1"
+}
+```
+
+`role` 可为 `editor` / `reviewer`，`scopes: ["*"]` 表示全部区块，有效期 1–90 天。输出的原始链接只交给指定协作者。撤销使用 `action: "revoke"` 与链接 `id`；列出使用 `action: "list"`。数据库仅保存令牌哈希，不提供原始令牌找回；遗失时撤销并新建。
+
+普通预览需要匿名读取生效文案，因此协作 API 需要可从现有 GitHub Pages 访问的服务入口。评论、历史、提交和管理接口仍逐请求校验授权。CORS 只允许登记的原型来源；它不替代权限校验。
+
+## 发布与回滚
+
+1. 修改前记录当前前端 commit、服务版本及数据库迁移版本。环境变更先在独立测试数据库验证；不使用测试脚本探测或改写团队记录。
+2. 数据库结构变更先改 `db/schema.ts`，运行 `npm run db:generate`，检查生成 SQL 与元数据。已执行的迁移不可修改，后续变更追加迁移。迁移只改结构，不重置运营值，不在请求中建表。
+3. 完成前述单测、D1 和浏览器验证。对照正常预览、评审链接、编辑链接确认权限和显示；检查旧写接口仍返回 410。
+4. 按本会话 AGENTS 约定取得生产发布批准后，先发布兼容服务及迁移，核对健康接口。再配置前端 API 地址、构建并发布 GitHub Pages。前端部署不包含数据库文件、密钥、授权链接或评论数据。
+5. 核对线上 `deployment.json.sourceCommit` 与目标 commit 相同，再由两位授权协作者验证读取、评论和一处已获准的文案修改。不要在团队数据库批量写入测试文案。
+6. 前端回滚恢复上一 commit 的构建；服务回滚选择兼容现有迁移的上一版本，不回退或删除已应用的数据库结构。文案回滚从版本面板预览并保存为新版本。数据恢复前先备份现状并单独批准，不能用重新发布前端代替数据恢复。
+
+本次交付的发布状态、服务版本和线上复核结果应保存在相邻交付记录中；上线前不能将本地通过写成云端已生效。

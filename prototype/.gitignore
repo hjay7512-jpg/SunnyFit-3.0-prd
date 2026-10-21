@@ -9,3 +9,10 @@ runtime/
 !.env.example
 public/demo-runtime/
 pages-dist/
+collaboration-service/node_modules/
+collaboration-service/dist/
+collaboration-service/.wrangler/
+collaboration-service/.sites-runtime/
+collaboration-service/.vinext/
+collaboration-service/.git/
+collaboration-service/*.tsbuildinfo

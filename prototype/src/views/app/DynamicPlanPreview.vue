@@ -6,7 +6,7 @@
         <section class="dynamic-plan-stages" aria-labelledby="dynamic-plan-stages-title"><h4 id="dynamic-plan-stages-title">How your plan progresses</h4><ol><li v-for="stage in plan.stages" :key="stage.id"><span class="dynamic-plan-stages__number">{{ stage.number }}</span><div><header><strong>{{ stage.name }}</strong><span>{{ stage.period }}</span></header><p>{{ stage.focus }}</p></div></li></ol></section>
         <button  type="button" class="dynamic-plan-adjust" @click="adjust"><sf-icon name="coach" :size="17"/>Adjust with AI Coach<sf-icon name="arrow" :size="15"/></button>
       </div>
-      <template #footer><sf-button @click="activate">{{ $copy('actions.plan.activate') }}</sf-button><p class="dynamic-plan-access">{{ member.active?'Included with Premium':$copy('actions.plan.access') }}</p></template>
+      <template #footer><sf-button v-copy-block="'actions.plan'" @click="activate">{{ $copy('actions.plan.activate') }}</sf-button><p class="dynamic-plan-access">{{ member.active?'Included with Premium':$copy('actions.plan.access') }}</p></template>
     </sf-sheet>
 </template>
 <script>
