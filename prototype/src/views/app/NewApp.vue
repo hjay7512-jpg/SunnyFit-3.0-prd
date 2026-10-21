@@ -25,7 +25,7 @@
     </template>
   </div><p v-if="reviewMode" class="phone-caption">{{ screenTitle }} · Demo 评审</p></main>
   <review-document v-if="reviewMode" :screen="screen" :model="reviewDocument" :source="note.url" @page-state="applyReviewState('page',$event)" @component-state="applyReviewState($event.id,$event.value)" @action="reviewDocumentAction" @preview="openReviewPreview"/>
-  <copy-hover-tools v-if="reviewMode" :context="collaborationContext"/>
+  <copy-context-menu v-if="reviewMode" :context="collaborationContext"/>
 </div>
 </template>
 <script>
@@ -33,11 +33,11 @@ import controller from './controller'
 import MvpPageFeedback from './MvpPageFeedback'
 import MvpUpgradeSheet from './ContextualSubscription'
 import ReviewDocument from './review/ReviewDocument'
-import CopyHoverTools from './review/CopyHoverTools'
+import CopyContextMenu from './review/CopyContextMenu'
 import {closeCopyBlock,copyState} from '@/copy/operations-copy'
 import fitPreview from '@/demo/fit-preview'
 import CommerceSheets from './CommerceSheets'
 import {SfHeader,SfToast,SfPageLayout,SfMenuRow,SfFeedback} from '@/design-system'
-export default {...controller,beforeRouteUpdate(to,from,next){if(copyState.busy)return next(false);next(closeCopyBlock()?undefined:false)},beforeRouteLeave(to,from,next){if(copyState.busy)return next(false);next(closeCopyBlock()?undefined:false)},directives:{fitPreview},components:{...controller.components,MvpPageFeedback,MvpUpgradeSheet,ReviewDocument,CopyHoverTools,CommerceSheets,SfHeader,SfToast,SfPageLayout,SfMenuRow,SfFeedback},computed:{...controller.computed,collaborationContext(){const state=this.reviewDocument.states.find(state=>state.value===this.reviewDocument.active||state.id===this.reviewDocument.active);return {page:this.screenTitle,state:[state?state.label:this.reviewDocument.active,...this.reviewDocument.sections.filter(section=>section.states&&section.states.length>1).map(section=>{const active=section.states.find(item=>item.value===section.active||item.id===section.active);return active?section.title+'：'+active.label:''})].filter(Boolean).join(' · '),path:this.$route.path}},sheetContext(){return {...this.$data,displayContent:this.displayContent,returnTo:this.returnTo,returnTitle:this.returnTitle,money:this.money,shortDate:this.shortDate,serviceLabel:this.serviceLabel,cadenceLabel:this.cadenceLabel,eventLabel:this.eventLabel}}}}
+export default {...controller,beforeRouteUpdate(to,from,next){if(copyState.busy)return next(false);next(closeCopyBlock()?undefined:false)},beforeRouteLeave(to,from,next){if(copyState.busy)return next(false);next(closeCopyBlock()?undefined:false)},directives:{fitPreview},components:{...controller.components,MvpPageFeedback,MvpUpgradeSheet,ReviewDocument,CopyContextMenu,CommerceSheets,SfHeader,SfToast,SfPageLayout,SfMenuRow,SfFeedback},computed:{...controller.computed,collaborationContext(){const state=this.reviewDocument.states.find(state=>state.value===this.reviewDocument.active||state.id===this.reviewDocument.active);return {page:this.screenTitle,state:[state?state.label:this.reviewDocument.active,...this.reviewDocument.sections.filter(section=>section.states&&section.states.length>1).map(section=>{const active=section.states.find(item=>item.value===section.active||item.id===section.active);return active?section.title+'：'+active.label:''})].filter(Boolean).join(' · '),path:this.$route.path}},sheetContext(){return {...this.$data,displayContent:this.displayContent,returnTo:this.returnTo,returnTitle:this.returnTitle,money:this.money,shortDate:this.shortDate,serviceLabel:this.serviceLabel,cadenceLabel:this.cadenceLabel,eventLabel:this.eventLabel}}}}
 </script>
 <style scoped>.mvp-native-viewport{height:100%;position:relative;min-width:0;overflow:hidden}</style>
