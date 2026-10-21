@@ -1,5 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{randomUUID}=require('node:crypto')
 const {createLocalCollaboration}=require('../server/collaboration.cjs'),registry=require('../config/collaboration-registry.json')
+const {validSession,capabilityRejected}=require('../src/copy/copy-auth.cjs')
 async function fixture(t){
  const filename=path.resolve('runtime','collaboration-test-'+randomUUID()+'.sqlite'),adminKey=randomUUID(),service=await createLocalCollaboration({filename,adminKey,allowedOrigins:['http://localhost:9876']})
  t.after(()=>{service.close();for(const name of [filename,filename+'-wal',filename+'-shm'])if(fs.existsSync(name))fs.unlinkSync(name)})
@@ -8,6 +9,16 @@ async function fixture(t){
  return {...service,call,mint,adminKey}
 }
 const edit=(value='Team copy',expectedRevision=0)=>({values:{'profile.card.title':value},expectedRevision,operationId:randomUUID(),actor:'Operator',context:{page:'个人中心',state:'未订阅',path:'/app/profile'}})
+
+test('Only complete, unexpired server sessions can authorize copy editing',()=>{
+ const valid={role:'editor',scopes:['profile.membership'],expiresAt:'2099-01-01T00:00:00Z'};assert.equal(validSession(valid),true)
+ for(const value of [null,{},'<html>gateway</html>',{...valid,role:'admin'},{...valid,scopes:'*'},{...valid,scopes:[]},{...valid,scopes:[{}]},{...valid,expiresAt:'bad-date'},{...valid,expiresAt:'2000-01-01T00:00:00Z'}])assert.equal(validSession(value),false)
+})
+test('Gateway HTML and unrelated HTTP failures do not invalidate an editing credential',()=>{
+ assert.equal(capabilityRejected(401,{message:'协作链接已失效，请联系原型维护者。'},true),true)
+ assert.equal(capabilityRejected(401,{message:'请使用有效的协作链接。'},true),true)
+ for(const [status,body,isJson]of [[401,null,false],[403,null,false],[503,{message:'协作链接已失效，请联系原型维护者。'},true],[401,{message:'Upstream authentication required'},true]])assert.equal(capabilityRejected(status,body,isJson),false)
+})
 test('Every editable field has one stable block owner and hosted/local contracts agree',()=>{
  const catalog=require('../config/operations-copy.fields.json'),counts=new Map();for(const block of Object.values(registry.blocks))for(const key of block.fields)counts.set(key,(counts.get(key)||0)+1)
  assert.equal(counts.size,catalog.fields.length);assert.ok([...counts.values()].every(n=>n===1));assert.deepEqual(require('../collaboration-service/core/registry.json'),registry);assert.ok(registry.blocks['page.coach'].fields.length===0)

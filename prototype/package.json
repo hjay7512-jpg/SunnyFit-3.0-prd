@@ -46,6 +46,7 @@
     "test:plan-quality": "node scripts/plan-quality-check.cjs",
     "test:operations-copy": "node scripts/collaboration-check.cjs",
     "test:collaboration": "node scripts/collaboration-check.cjs",
+    "test:collaboration-auth": "node scripts/collaboration-auth-check.cjs",
     "check:collaboration": "node scripts/prepare-collaboration.cjs && node --test tests/collaboration.test.cjs"
   },
   "dependencies": {

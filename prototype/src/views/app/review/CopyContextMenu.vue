@@ -5,14 +5,15 @@
       <div ref="menu" class="copy-context-menu" :style="menuStyle" role="menu" :aria-label="label+'操作'" @keydown="navigateMenu" @contextmenu.prevent>
         <div class="copy-context-menu__label">{{ label }}</div>
         <button v-if="editable" type="button" role="menuitem" tabindex="-1" :disabled="state.busy" @click.stop="select('edit')">编辑文案</button>
+        <template v-else-if="needsVerification"><p class="copy-context-menu__status" role="status">{{ state.authStatus==='invalid'?'编辑链接已失效':state.authBusy?'正在验证编辑权限…':'编辑权限暂未验证' }}</p><button type="button" role="menuitem" tabindex="-1" data-copy-auth-retry :disabled="state.busy||state.authBusy" @click.stop="retryAuth">{{ state.authBusy?'验证中…':'重试编辑权限' }}</button></template>
         <button type="button" role="menuitem" tabindex="-1" :disabled="state.busy" @click.stop="select('comments')">备注/评论</button>
       </div>
     </template>
-    <button v-if="state.connected" class="copy-context-picker" type="button" @click="nextBlock">选择区块 <span>↗</span></button>
+    <button v-if="state.connected||state.authStatus!=='none'" class="copy-context-picker" type="button" @click="nextBlock">选择区块 <span>↗</span></button>
   </div>
 </template>
 <script>
-import {copyState,registry,canEdit,selectCopyBlock} from '@/copy/operations-copy'
+import {copyState,registry,canEdit,selectCopyBlock,recoverCopyConnection} from '@/copy/operations-copy'
 
 export default {
   props:{context:{type:Object,required:true}},
@@ -21,6 +22,7 @@ export default {
     id(){return this.target&&this.target.getAttribute('data-copy-block')},
     label(){return registry.blocks[this.id]?.label||'当前区块'},
     editable(){return canEdit(this.id)&&registry.blocks[this.id]?.fields.length>0},
+    needsVerification(){return registry.blocks[this.id]?.fields.length>0&&['checking','unavailable','invalid'].includes(this.state.authStatus)},
     outlineStyle(){return {left:this.rect.left+'px',top:this.rect.top+'px',width:this.rect.width+'px',height:this.rect.height+'px'}},
     menuStyle(){return {left:this.menuX+'px',top:this.menuY+'px'}}
   },
@@ -62,6 +64,7 @@ export default {
     this.$el.remove()
   },
   methods:{
+    async retryAuth(){await recoverCopyConnection(true);this.$nextTick(()=>this.$refs.menu?.querySelector('button:not(:disabled)')?.focus({preventScroll:true}))},
     dismiss(restoreFocus=false){
       if(restoreFocus&&this.$refs.menu?.contains(document.activeElement)&&this.previousFocus?.isConnected)this.previousFocus.focus({preventScroll:true})
       this.target=null;this.rect=null
@@ -117,6 +120,7 @@ export default {
 .copy-context-outline{position:fixed;pointer-events:none;box-sizing:border-box;border:1.5px solid #d56b60;border-radius:5px;z-index:20000;background:#de685009}
 .copy-context-menu{position:fixed;z-index:20001;box-sizing:border-box;width:224px;max-width:calc(100vw - 16px);padding:5px;background:#fff;border:1px solid #e6e2e1;border-radius:9px;box-shadow:0 6px 24px #28314422}
 .copy-context-menu__label{padding:7px 10px 8px;color:#9198a3;font-size:10px;line-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid #f0eef0;margin-bottom:4px}
+.copy-context-menu__status{margin:5px 10px;color:#a07a62;font-size:10px;line-height:17px}
 .copy-context-menu button{display:block;width:100%;min-height:36px;padding:8px 10px;border:0;border-radius:5px;background:transparent;color:#586373;font-family:inherit;font-size:12px;line-height:20px;text-align:left;cursor:pointer}
 .copy-context-menu button:hover,.copy-context-menu button:focus-visible{outline:none;background:#fff2ef;color:#c24c40}
 .copy-context-menu button:disabled{opacity:.5;cursor:default}

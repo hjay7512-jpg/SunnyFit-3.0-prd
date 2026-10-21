@@ -2,31 +2,65 @@ import Vue from 'vue'
 import registry from '../../config/collaboration-registry.json'
 import {defaults,renderCopy,wallCopyConfiguration} from './copy-model.cjs'
 import {locationsForBlock,locationForFields} from './copy-locations.cjs'
+import {validSession,capabilityRejected} from './copy-auth.cjs'
 
-let initialization,endpoint='',token='',timer,pendingOperation,pendingComment
+let initialization,endpoint='',token='',timer,pendingOperation,pendingComment,recovery,authFlight,authSequence=0,copyWriteSequence=0
 const credentialKey='sunnyfit-review-credential:'+process.env.BASE_URL
 const actorKey='sunnyfit-review-name:'+process.env.BASE_URL
-export const copyState=Vue.observable({values:{...defaults.values},saved:{...defaults.values},revisions:{},ready:false,connected:false,busy:false,session:null,status:'',selected:null,tab:'edit',fields:[],visibleFields:[],location:'',preview:null,draft:{},errors:{},comments:[],versions:[],conflict:false,actor:'',commentDraft:'',unavailable:false})
+export const copyState=Vue.observable({values:{...defaults.values},saved:{...defaults.values},revisions:{},ready:false,connected:false,busy:false,session:null,authStatus:'none',authBusy:false,authMessage:'',status:'',selected:null,tab:'edit',fields:[],visibleFields:[],location:'',preview:null,draft:{},errors:{},comments:[],versions:[],conflict:false,actor:'',commentDraft:'',unavailable:false})
 export const copyText=(id,parameters)=>renderCopy(copyState.values,id,parameters)
 export const currentWallCopy=()=>wallCopyConfiguration(copyState.values)
 export const copyDirty=()=>!!copyState.selected&&copyState.fields.some(field=>copyState.draft[field.key]!==copyState.saved[field.key])
 export const hasPendingChanges=()=>copyDirty()||!!copyState.commentDraft.trim()
-export const canEdit=id=>!!copyState.session&&copyState.session.role==='editor'&&copyState.session.scopes.some(scope=>scope==='*'||scope===id)
+export const canEdit=id=>validSession(copyState.session)&&copyState.session.role==='editor'&&copyState.session.scopes.some(scope=>scope==='*'||scope===id)
 export const canReview=id=>Object.prototype.hasOwnProperty.call(registry.blocks,id)
 export {registry}
 function captureCredential(){
-  const url=new URL(location.href),hash=url.hash.split('?'),query=new URLSearchParams(hash[1]||'');token=query.get('reviewKey')||url.searchParams.get('reviewKey')||''
+  const url=new URL(location.href),hash=url.hash.split('?'),query=new URLSearchParams(hash[1]||''),previous=token;token=query.get('reviewKey')||url.searchParams.get('reviewKey')||''
   try{if(token)sessionStorage.setItem(credentialKey,token);else token=sessionStorage.getItem(credentialKey)||''}catch(_){}
+  if(previous!==token){authSequence++;copyState.session=null;copyState.authBusy=false;copyState.authStatus=token?'checking':'none';copyState.authMessage=''}
   if(query.has('reviewKey')||url.searchParams.has('reviewKey')){query.delete('reviewKey');url.searchParams.delete('reviewKey');url.hash=hash[0]+(query.toString()?'?'+query:'');history.replaceState(history.state,'',url.href)}
 }
 async function request(path,body,authorized=true){
   if(!endpoint)throw Error('共享协作服务尚未启用。')
-  const response=await fetch(endpoint+path,{method:body===undefined?'GET':'POST',headers:{...(body!==undefined?{'Content-Type':'application/json'}:{}),...(authorized&&token?{Authorization:'Bearer '+token}:{})},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(8000)})
-  const result=await response.json().catch(()=>({message:'协作服务暂不可用。'}))
-  if(!response.ok){const error=Error(result.message||'协作请求未完成。');error.status=response.status;if(response.status===401){copyState.session=null;token='';try{sessionStorage.removeItem(credentialKey)}catch(_){}}throw error}return result
+  const requestToken=token,sequence=authSequence,response=await fetch(endpoint+path,{method:body===undefined?'GET':'POST',headers:{...(body!==undefined?{'Content-Type':'application/json'}:{}),...(authorized&&requestToken?{Authorization:'Bearer '+requestToken}:{})},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(8000)})
+  const isJson=/\bapplication\/json\b/i.test(response.headers.get('Content-Type')||''),result=isJson?await response.json().catch(()=>null):null
+  if(!response.ok||!result){const error=Error(result?.message||'协作服务连接暂不可用，请重试。');error.status=response.status;error.capabilityRejected=authorized&&!!requestToken&&capabilityRejected(response.status,result,isJson);if(error.capabilityRejected&&sequence===authSequence&&requestToken===token){copyState.session=null;copyState.authStatus='invalid';copyState.authMessage=error.message}throw error}return result
+}
+async function configureEndpoint(){
+  if(endpoint)return
+  if(process.env.VUE_APP_DEMO_RUNTIME!=='browser'){endpoint='/api/collaboration';return}
+  const response=await fetch(process.env.BASE_URL+'config/collaboration.json',{cache:'no-store',signal:AbortSignal.timeout(5000)});if(!response.ok)throw Error('协作配置暂不可用，请重试。');const config=await response.json();if(!config.apiBase)throw Error('共享协作服务尚未启用。');endpoint=config.apiBase
+}
+async function verifySession(force=false){
+  if(!token){copyState.authStatus='none';return}
+  if(copyState.authStatus==='invalid'&&!force)return
+  if(authFlight?.token===token)return authFlight.promise
+  const requestToken=token,sequence=authSequence
+  copyState.authBusy=true;if(!copyState.session)copyState.authStatus='checking'
+  const promise=(async()=>{
+    try{const session=await request('/session',{});if(requestToken!==token||sequence!==authSequence)return;if(!validSession(session))throw Error('编辑权限验证暂未完成，请重试。');copyState.session=session;copyState.authStatus='authorized';copyState.authMessage=''}
+    catch(error){if(requestToken!==token||sequence!==authSequence)return;if(error.capabilityRejected){copyState.session=null;copyState.authStatus='invalid'}else copyState.authStatus='unavailable';copyState.authMessage=error.capabilityRejected?error.message:'编辑权限暂未验证，连接恢复后会自动重试。'}
+    finally{if(requestToken===token&&sequence===authSequence)copyState.authBusy=false}
+  })();authFlight={token:requestToken,promise};try{await promise}finally{if(authFlight?.promise===promise)authFlight=null}
+}
+export async function recoverCopyConnection(force=false){
+  if(recovery){const active=recovery;if(force&&endpoint)await verifySession(true);await active;if(force&&!endpoint)return recoverCopyConnection(true);return}
+  recovery=(async()=>{
+    try{
+      await configureEndpoint()
+      const result=await Promise.allSettled([refresh(),verifySession(force)])
+      if(result[0].status==='rejected'){copyState.connected=false;copyState.status='共享文案连接暂不可用，请重试。'}
+      else if(!copyState.busy&&copyState.selected)await loadBlock(false)
+    }catch(error){copyState.connected=false;copyState.status=error.message;if(token){copyState.authStatus='unavailable';copyState.authMessage='编辑权限暂未验证，连接恢复后会自动重试。'}}
+    finally{copyState.unavailable=!copyState.connected}
+  })();try{await recovery}finally{recovery=null}
 }
 async function refresh(){
+  if(copyState.busy)return
+  const sequence=copyWriteSequence
   const result=await request('/copy',undefined,false)
+  if(sequence!==copyWriteSequence||copyState.busy)return
   if(result.schemaVersion!==1||!result.values||!result.revisions)throw Error('共享文案版本不兼容。')
   const values={...defaults.values};for(const [key,value]of Object.entries(result.values))if(Object.prototype.hasOwnProperty.call(values,key)&&typeof value==='string')values[key]=value
   const selected=copyState.selected,dirty=copyDirty();copyState.saved=values;copyState.revisions=result.revisions
@@ -38,13 +72,13 @@ export function initializeCopy(){
   initialization=(async()=>{
     captureCredential()
     try{copyState.actor=sessionStorage.getItem(actorKey)||''}catch(_){}
-    try{const config=await(await fetch(process.env.BASE_URL+'config/collaboration.json',{cache:'no-store',signal:AbortSignal.timeout(5000)})).json();endpoint=config.apiBase||''}catch(_){}
-    if(process.env.VUE_APP_DEMO_RUNTIME!=='browser')endpoint='/api/collaboration'
-    try{await refresh();if(token)copyState.session=await request('/session',{})}catch(error){copyState.unavailable=!copyState.connected;copyState.status=error.message}finally{copyState.ready=true}
-    window.addEventListener('hashchange',async()=>{if(!new URLSearchParams(location.hash.split('?')[1]||'').has('reviewKey'))return;captureCredential();copyState.session=null;discardCopy();try{copyState.session=await request('/session',{});copyState.unavailable=false;if(copyState.selected)await loadBlock()}catch(error){copyState.status=error.message}})
+    window.addEventListener('hashchange',async()=>{if(!new URLSearchParams(location.hash.split('?')[1]||'').has('reviewKey'))return;captureCredential();await recoverCopyConnection(true)})
     window.addEventListener('beforeunload',event=>{if(hasPendingChanges()){event.preventDefault();event.returnValue=''}})
+    window.addEventListener('online',()=>recoverCopyConnection())
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')recoverCopyConnection()})
     // A small poll keeps independent reviewers current. Dirty drafts retain their base revision.
-    timer=setInterval(()=>{if(document.visibilityState==='visible'&&!copyState.busy&&!copyDirty())refresh().then(()=>copyState.selected&&canReview(copyState.selected.id)?loadBlock(false):null).catch(()=>{copyState.connected=false})},20000)
+    timer=setInterval(()=>{if(document.visibilityState==='visible'&&!copyState.busy)recoverCopyConnection()},20000)
+    await recoverCopyConnection();copyState.ready=true
   })();return initialization
 }
 function resetDraft(){if(!copyState.selected)return;const id=copyState.selected.id;copyState.draft=Object.fromEntries(copyState.fields.map(field=>[field.key,copyState.saved[field.key]]));copyState.selected={...copyState.selected,revision:copyState.revisions[id]||0};copyState.errors={};copyState.conflict=false;pendingOperation=null}
@@ -79,7 +113,7 @@ export async function saveCopy(){
   if(copyState.busy||!copyState.selected||!canEdit(copyState.selected.id)||!copyDirty()||!validateDraft())return
   if(!copyState.actor.trim()){copyState.status='请填写用于修改记录的显示名称。';return}
   try{sessionStorage.setItem(actorKey,copyState.actor)}catch(_){}
-  const selected=copyState.selected;copyState.busy=true
+  const selected=copyState.selected;copyState.busy=true;copyWriteSequence++
   try{
     pendingOperation=pendingOperation||crypto.randomUUID();const result=await request('/blocks/'+selected.id,{values:copyState.draft,expectedRevision:selected.revision,operationId:pendingOperation,actor:copyState.actor,context:selected.context})
     copyState.saved={...copyState.saved,...result.values};copyState.values={...copyState.saved};Vue.set(copyState.revisions,selected.id,result.revision);resetDraft();await loadBlock(false);copyState.status='区块已保存 · v'+result.revision;return result

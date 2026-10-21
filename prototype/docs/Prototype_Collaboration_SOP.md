@@ -14,6 +14,8 @@
 
 已打开的编辑链接会转为当前标签页的临时凭证并从地址栏移除。向别人授权时请转发维护者提供的原始协作链接。不要将编辑链接放入 Git、公开文档、截图或监控日志。
 
+权限验证与公开文案读取独立进行。遇到临时断网、平台 401/403 或异常响应时，会保留临时凭证和草稿；连接恢复、切回页面或每 20 秒轮询时重新验证。右键菜单中的「重试编辑权限」可立即重试，未连接的协作面板也提供「重试连接」。只有服务端返回完整且未过期的有效授权后才显示编辑入口；真实失效、撤销或无范围权限的链接不能通过重试获得编辑权限。旧请求的结果不得覆盖后来换入的新链接，恢复中的旧文案快照不得覆盖刚保存的版本。
+
 文案按字段编辑、按区块保存和记录版本。标题、说明、CTA 按钮分别是字段；多句说明仍属于同一个字段。右侧只显示选中区块在当前状态下对应的字段。同一字段被多处引用时，修改会同步生效。
 
 ### 课程、World Tour 与 Program 的流程文案
@@ -33,6 +35,7 @@
 | `config/copy-blocks.json` | 持久区块 ID 与字段归属；维护者手动管理 |
 | `scripts/prepare-collaboration.cjs` | 验证字段归属，生成前后端共用的注册表 |
 | `src/copy/operations-copy.js` | 共享读取、区块草稿、授权与保存 |
+| `src/copy/copy-auth.cjs` | 校验会话完整性与有效期，区分业务授权拒绝和平台错误 |
 | `src/copy/copy-locations.cjs` | 展示位置、触发条件、可见字段与继承显示 |
 | `src/views/app/review/copy-flow-preview.js` | 不产生业务写入的流程场景预览适配器 |
 | `src/views/app/review/CopyContextMenu.vue` | 脱离手机缩放容器的右键菜单 |
@@ -66,6 +69,7 @@ npm ci
 npm test
 npm run build
 npm run test:collaboration
+npm run test:collaboration-auth
 npm run test:review
 npm run test:paywall
 npm run test:prototype-flow

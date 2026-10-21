@@ -3,7 +3,7 @@
     <header class="copy-panel__heading"><div><small>当前选中区块</small><h2>{{ state.selected.label }}</h2></div><button type="button" aria-label="关闭区块协作" :disabled="state.busy" @click="close">×</button></header>
     <p class="copy-panel__context">{{ state.selected.context.page }}<span v-if="location.label"> · {{ location.label }}</span><span v-else-if="state.selected.context.state"> · {{ state.selected.context.state }}</span></p>
     <div class="copy-panel__tabs" role="tablist" aria-label="区块协作方式"><button v-if="editable" type="button" role="tab" :aria-selected="state.tab==='edit'" @click="state.tab='edit'">文案</button><button type="button" role="tab" :aria-selected="state.tab==='comments'" @click="state.tab='comments'">备注 / 评论 <span v-if="state.comments.length">{{ state.comments.length }}</span></button><button v-if="editable" type="button" role="tab" :aria-selected="state.tab==='history'" @click="state.tab='history'">版本记录</button></div>
-    <div v-if="state.unavailable" class="copy-panel__locked"><p>共享协作服务尚未连接。</p><small>请稍后刷新重试。</small></div>
+    <div v-if="state.unavailable" class="copy-panel__locked"><p>共享协作服务尚未连接。</p><button type="button" :disabled="state.authBusy" @click="refresh">重试连接</button></div>
     <template v-else>
       <label class="copy-panel__author">显示名称<input v-model="state.actor" maxlength="40" placeholder="用于修改与评论记录" :disabled="state.busy"/><small>此名称由协作者填写。</small></label>
       <form v-if="state.tab==='edit'&&editable" class="copy-panel__form" @submit.prevent="save">
@@ -36,7 +36,7 @@
 </template>
 <script>
 import {copyState,copyDirty,canEdit,canReview,editCopy,discardCopy,closeCopyBlock,saveCopy,submitComment,resolveComment,previewVersion,reloadCopy,loadBlock} from '@/copy/operations-copy'
-import {previewCopyLocation,exitCopyPreview} from '@/copy/operations-copy'
+import {previewCopyLocation,exitCopyPreview,recoverCopyConnection} from '@/copy/operations-copy'
 import {locationsForBlock,fieldUsage,effectiveCopy} from '@/copy/copy-locations.cjs'
 export default {
   data:()=>({state:copyState}),
@@ -55,7 +55,7 @@ export default {
         elements[0].scrollIntoView({block:'nearest',inline:'nearest'});elements.forEach(element=>element.classList.add('copy-field-focus'));this.focusTimer=setTimeout(()=>this.clearFocus(),4500)
       })
     },
-    async refresh(){try{await loadBlock();this.state.status='已刷新评论与记录。'}catch(error){this.state.status=error.message}},date(value){return new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value))},context(value){try{const c=JSON.parse(value);return [c.page,c.state].filter(Boolean).join(' · ')}catch(_){return ''}}
+    async refresh(){try{await recoverCopyConnection(true);if(this.state.connected){await loadBlock();this.state.status='已刷新评论与记录。'}}catch(error){this.state.status=error.message}},date(value){return new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value))},context(value){try{const c=JSON.parse(value);return [c.page,c.state].filter(Boolean).join(' · ')}catch(_){return ''}}
   }
 }
 </script>
