@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict')
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http')
 const { chromium } = require('playwright-core')
+const collaborationBase=require('../public/config/collaboration.json').apiBase
 const root = path.resolve(__dirname, '..'), base = '/SunnyFit-3.0-prd/prototype/', dist = path.join(root, 'pages-dist')
 const evidence = path.join(root, 'runtime/pages-validation')
 const checks = [], errors = [], failedAssets = [], externalApi = []
@@ -21,13 +22,15 @@ async function main() {
   const browser = await chromium.launch({ channel: 'msedge', headless: true })
   try {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+    // Shared collaboration has a separate live preflight; keep static runtime tests isolated.
+    await context.route(collaborationBase+'/copy',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,registryVersion:1,values:{},revisions:{}})}))
     const page = await context.newPage()
     context.on('page', monitor)
     monitor(page)
     function monitor(target) {
       target.on('pageerror', error => errors.push(error.message))
       target.on('response', response => { if (response.status() >= 400 && !response.url().endsWith('favicon.ico')) failedAssets.push({ status: response.status(), url: response.url() }) })
-      target.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) externalApi.push(request.url()) })
+      target.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')&&!request.url().startsWith(collaborationBase+'/')) externalApi.push(request.url()) })
     }
     async function visit(route) {
       await page.goto(origin + base + '#' + route)

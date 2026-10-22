@@ -19,14 +19,14 @@
 .coach-allowance{background:var(--sf-content-surface);border:1px solid var(--sf-content-edge);border-radius:22px;padding:17px 16px;margin:0 0 18px;box-shadow:var(--sf-content-shadow);color:var(--sf-text)}
 .coach-allowance__top{display:flex;align-items:center;gap:10px;min-width:0}
 .coach-allowance__top>div{flex:1;min-width:0}
-.coach-allowance__icon{width:34px;height:34px;border-radius:12px;background:#ede9ff;color:#6550aa;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.coach-allowance__icon{width:34px;height:34px;border-radius:12px;background:#e8eff8;color:var(--sf-brand-blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .coach-allowance h3{font-size:15px;font-weight:600;line-height:1.4;margin:0;color:var(--sf-text)}
 .coach-allowance__top p{font-size:11px;line-height:1.5;margin:2px 0 0;color:var(--sf-text-secondary)}
 .coach-percent{display:flex;align-items:baseline;gap:3px;font-size:28px;line-height:1.1;font-weight:600;letter-spacing:-1px;flex-shrink:0}
 .coach-percent small{font-size:11px;letter-spacing:0;font-weight:500;color:var(--sf-text-secondary)}
 .coach-unlimited{font-size:39px;line-height:1;color:#6b51b0;flex-shrink:0}
 .coach-allowance__track{height:6px;overflow:hidden;border-radius:8px;background:var(--sf-meter-track,#e9eaf1);margin:16px 0 11px}
-.coach-allowance__track>span{height:100%;display:block;background:linear-gradient(90deg,#9881d5,#6550aa);border-radius:inherit;transition:width .2s ease}
+.coach-allowance__track>span{height:100%;display:block;background:var(--sf-brand-blue);border-radius:inherit;transition:width .2s ease}
 .coach-allowance--low .coach-allowance__track>span{background:#bd592f}
 .coach-allowance--low .coach-percent{color:#aa4826}
 .coach-allowance__detail{font-size:12px;line-height:1.6;margin:10px 0 0;color:var(--sf-text-secondary)}

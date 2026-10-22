@@ -18,10 +18,11 @@ import {copyState,registry,canEdit,selectCopyBlock,unlockCopyWithPassword,lockCo
 
 export default {
   props:{context:{type:Object,required:true}},
-  data:()=>({state:copyState,target:null,rect:null,menuX:8,menuY:8,passwordOpen:false,password:'',passwordError:'',passwordBusy:false,pendingEdit:null}),
+  data:()=>({state:copyState,target:null,hitContext:{},rect:null,menuX:8,menuY:8,passwordOpen:false,password:'',passwordError:'',passwordBusy:false,pendingEdit:null}),
   computed:{
     id(){return this.target&&this.target.getAttribute('data-copy-block')},
     label(){return registry.blocks[this.id]?.label||'当前区块'},
+    selectedContext(){return {...this.context,target:this.label,...this.hitContext}},
     editable(){return canEdit(this.id)&&registry.blocks[this.id]?.fields.length>0},
     hasCopy(){return registry.blocks[this.id]?.fields.length>0},
     needsVerification(){return registry.blocks[this.id]?.fields.length>0&&['checking','unavailable','invalid'].includes(this.state.authStatus)},
@@ -37,7 +38,8 @@ export default {
       if(!target||!Object.prototype.hasOwnProperty.call(registry.blocks,target.getAttribute('data-copy-block'))){this.dismiss();return}
       event.preventDefault();event.stopPropagation()
       const box=target.getBoundingClientRect(),keyboard=event.clientX===0&&event.clientY===0
-      this.open(target,keyboard?box.left+12:event.clientX,keyboard?box.top+12:event.clientY)
+      const keyed=event.target.closest('[data-copy-key]'),fields=target.hasAttribute('data-copy-fields')?JSON.parse(target.getAttribute('data-copy-fields')):[],field=keyed?.getAttribute('data-copy-key')||(fields.length===1?fields[0]:''),control=event.target.closest('button,[role="tab"],a'),fieldLabel=registry.fields.find(item=>item.key===field)?.label,dialog=event.target.closest('[role="dialog"]'),surface=dialog?.getAttribute('aria-label')||(dialog?.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>document.getElementById(id)?.textContent||'').join(' ').trim()
+      this.open(target,keyboard?box.left+12:event.clientX,keyboard?box.top+12:event.clientY,{target:fieldLabel||control?.getAttribute('aria-label')||control?.innerText?.trim().slice(0,80)||registry.blocks[target.getAttribute('data-copy-block')].label,field:field||'',surface})
     }
     this.onOutsidePointer=event=>{if(this.target&&!this.$el.contains(event.target))this.dismiss()}
     this.onKey=event=>{
@@ -67,7 +69,7 @@ export default {
     this.$el.remove()
   },
   methods:{
-    editOrUnlock(){if(this.editable)return this.select('edit');this.pendingEdit={id:this.id,context:{...this.context},fields:this.target.hasAttribute('data-copy-fields')?JSON.parse(this.target.getAttribute('data-copy-fields')):undefined};this.dismiss();this.password='';this.passwordError='';this.passwordOpen=true;this.$nextTick(()=>this.$refs.passwordInput.focus())},
+    editOrUnlock(){if(this.editable)return this.select('edit');this.pendingEdit={id:this.id,context:{...this.selectedContext},fields:this.target.hasAttribute('data-copy-fields')?JSON.parse(this.target.getAttribute('data-copy-fields')):undefined};this.dismiss();this.password='';this.passwordError='';this.passwordOpen=true;this.$nextTick(()=>this.$refs.passwordInput.focus())},
     cancelPassword(){if(this.passwordBusy)return;this.passwordOpen=false;this.password='';this.passwordError='';this.pendingEdit=null},
     async unlock(){this.passwordBusy=true;this.passwordError='';try{await unlockCopyWithPassword(this.password);const edit=this.pendingEdit;this.passwordOpen=false;this.password='';this.pendingEdit=null;selectCopyBlock(edit.id,'edit',edit.context,edit.fields)}catch(error){this.passwordError=error.message}finally{this.passwordBusy=false}},
     logout(){if(lockCopyEditing())this.dismiss()},
@@ -87,9 +89,9 @@ export default {
       const menu=this.$refs.menu.getBoundingClientRect()
       this.menuX=Math.max(8,Math.min(this.menuX,window.innerWidth-menu.width-8));this.menuY=Math.max(8,Math.min(this.menuY,window.innerHeight-menu.height-8))
     },
-    open(target,x,y){
+    open(target,x,y,detail={}){
       const rect=this.measureTarget(target);if(!rect)return
-      this.previousFocus=document.activeElement;this.lastTarget=target;this.target=target
+      this.previousFocus=document.activeElement;this.lastTarget=target;this.target=target;this.hitContext=detail
       this.rect=rect;this.menuX=Math.max(8,x);this.menuY=Math.max(8,y)
       this.$nextTick(()=>{
         if(this.target!==target||!this.$refs.menu)return
@@ -100,7 +102,7 @@ export default {
     select(tab){
       if(!this.target)return
       const fields=this.target.hasAttribute('data-copy-fields')?JSON.parse(this.target.getAttribute('data-copy-fields')):undefined
-      const opened=selectCopyBlock(this.id,tab,{...this.context},fields)
+      const opened=selectCopyBlock(this.id,tab,{...this.selectedContext},fields)
       this.dismiss()
       if(opened)this.$nextTick(()=>{const panel=document.querySelector('.copy-panel');(panel?.querySelector('input')||panel?.querySelector('textarea')||panel?.querySelector('button'))?.focus({preventScroll:true})})
     },

@@ -37,7 +37,8 @@ const router = new Router({
     { path: '/business-rules', name: 'BusinessRules', component: () => import('@/views/business-rules'), hidden: true, meta: { title: 'Business Rules', app: true, noCache: true } },
     { path: '/demo/lab', component: () => import('@/views/demo/Lab'), hidden: true, meta: { title: 'V3.0 Demo Lab', app: true } },
     { path: '/app', redirect: '/app/home', hidden: true },
-    { path: '/app/:screen(home|workout|course|program|result|plan|history|profile|membership|plans|billing|wallet|coach|weekly|challenge|movement|movement-detail|movement-training|world-tour|world-tour-detail|devices|community|settings|support|invite|equipment-shop)', component: () => import('@/views/app'), hidden: true, meta: { title: 'App Samples', app: true } },
+    { path: '/app/plans', redirect: to => ({path:'/app/membership',query:to.query}), hidden:true },
+    { path: '/app/:screen(home|workout|course|program|result|plan|history|profile|membership|billing|wallet|coach|weekly|challenge|movement|movement-detail|movement-training|world-tour|world-tour-detail|devices|community|settings|support|invite|equipment-shop)', component: () => import('@/views/app'), hidden: true, meta: { title: 'App Samples', app: true } },
     { path: '/app/:withdrawn(content|library|unlocked|program-detail)', redirect: to => ({path:'/app/home',query:to.query}), hidden:true },
     { path: '*', redirect: '/commercialization/overview', hidden: true }
   ]

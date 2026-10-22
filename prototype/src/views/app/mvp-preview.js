@@ -82,10 +82,11 @@ export default {
     selectWallOffer(offer){if(this.mvpGate)this.mvpGate={...this.mvpGate,offer};this.emitPaywallEvent('paywall_offer_selected',offer)},
     async changeWallView(input){
       const view=typeof input==='string'?input:input.view,flow=this.mvpGate
-      if(!flow||flow.kind!=='membership'||flow.stage!=='offer'||!['quick','benefits'].includes(view))return
+      if(!flow||flow.kind!=='membership'||flow.stage!=='offer'||!['quick','benefits','plans'].includes(view))return
       const offer=typeof input==='object'?input.offer:flow.offer,wall=this.mvpWall
-      this.mvpGate={...flow,view,offer:offer||flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:flow.benefitTab||wall.entry.defaultBenefit}
-      if(flow.view!==view)this.emitPaywallEvent(view==='benefits'?'paywall_details_view':'paywall_quick_return',this.mvpGate.offer,{view,benefitId:this.mvpGate.benefitTab})
+      const history=flow.viewHistory||[],viewHistory=typeof input==='object'&&input.back?history.slice(0,-1):flow.view!==view?[...history,flow.view||'quick']:history
+      this.mvpGate={...flow,view,viewHistory,offer:offer||flow.offer||wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:flow.benefitTab||wall.entry.defaultBenefit}
+      if(flow.view!==view)this.emitPaywallEvent(view==='benefits'?'paywall_details_view':view==='plans'?'paywall_plans_view':'paywall_quick_return',this.mvpGate.offer,{view,benefitId:this.mvpGate.benefitTab})
       if(this.reviewMode){this.mvpCheckoutApplying=true;try{await this.replaceReviewQuery({reviewPurchaseView:view,reviewBenefit:this.mvpGate.benefitTab})}finally{this.mvpCheckoutApplying=false}}
     },
     async changeWallBenefit(benefitId){
@@ -104,7 +105,7 @@ export default {
       const actual=this.data&&membershipView(this.data)
       if(this.error||!actual?.active){this.mvpGate={...flow,stage:'offer',feedback:this.error?'Purchases couldn’t be checked. Please try again.':'No active subscription was found for this account.'};this.emitPaywallEvent('paywall_restore_result',null,{result:this.error?'error':'not_found'});return}
       this.mvpCheckoutApplying=true
-      try{await new Promise(resolve=>this.$router.replace({path:this.$route.path,query:{...this.$route.query,membershipState:actual.state,chatRemaining:actual.percent===null?undefined:String(actual.percent)}},resolve,resolve))}finally{this.mvpCheckoutApplying=false}
+      try{await new Promise(resolve=>this.$router.replace({path:this.$route.path,query:{...this.$route.query,membershipState:actual.state}},resolve,resolve))}finally{this.mvpCheckoutApplying=false}
       if(token!==this.mvpCheckoutToken)return
       this.mvpGate={...flow,stage:'success'};this.emitPaywallEvent('paywall_restore_result',null,{result:'restored'})
     },
@@ -121,7 +122,7 @@ export default {
       try{
         await this.load();if(this.error||this.userId!==user||this.$route.fullPath!==origin)return
         const actual=membershipView(this.data)
-        if(actual.active){await new Promise(resolve=>this.$router.replace({path:this.$route.path,query:{...this.$route.query,membershipState:actual.state,chatRemaining:actual.percent===null?undefined:String(actual.percent)}},resolve,resolve));this.notice={title:'Membership restored',body:'Your existing Premium access is available. Restoring does not issue another conversation allowance.'}}
+        if(actual.active){await new Promise(resolve=>this.$router.replace({path:this.$route.path,query:{...this.$route.query,membershipState:actual.state}},resolve,resolve));this.notice={title:'Membership restored',body:'Your existing Premium access is available. Nothing was charged.'}}
         else this.notice={title:'No active subscription found',body:'No active Premium subscription was found for this account. Check that you are using the account linked to your purchase. Nothing was charged.'}
       }finally{this.busy=false}
     },
@@ -138,15 +139,15 @@ export default {
       if(this.mvpPendingPurchase){this.mvpGate=this.mvpPendingPurchase;return}
       const item=placementFor(kind,currentWallCopy())
       const weekly=this.data.weeklyReport
-      const intent={key:++this.mvpFlowSequence,flowId:requestKey(),placementId:item.placementId,entitlementCode:item.entitlementCode,scope:item.scope,userId:this.userId,kind,action:item.action,originScreen:this.screen,originPath:this.$route.path,originQuery:{...this.$route.query},originState:this.mvpPageState,resourceId:content?.id||(kind==='weekly_insight'?weekly?.id:this.$route.query.planId||'preview-dynamic-plan'),resourceName:content?.name||(kind==='weekly_insight'?'Week of '+weekly?.weekStart:'Your saved Dynamic Plan'),label:item.label,detail:kind==='training_program'?(content?.membersPreview?.length||0)+' workouts':content?.durationMinutes?content.durationMinutes+' min':undefined,programId:this.$route.query.fromProgram,stepId:kind==='training_program'?this.programWorkout?.id:undefined,draft:kind==='ai_allowance'?(options.draft===undefined?this.message:options.draft):undefined,messageId:options.messageId,continueLabel:item.continueLabel,cancelLabel:item.cancelLabel,success:item.success}
+      const intent={key:++this.mvpFlowSequence,flowId:requestKey(),placementId:item.placementId,entitlementCode:item.entitlementCode,scope:item.scope,userId:this.userId,kind,action:item.action,originScreen:this.screen,originPath:this.$route.path,originQuery:{...this.$route.query},originState:this.mvpPageState,resourceId:content?.id||(kind==='weekly_insight'?weekly?.id:this.$route.query.planId||'preview-dynamic-plan'),resourceName:content?.name||(kind==='weekly_insight'?'Week of '+weekly?.weekStart:'Your saved Dynamic Plan'),label:item.label,image:content?.coverUrl,detail:kind==='training_program'?(content?.membersPreview?.length||0)+' workouts':content?.durationMinutes?content.durationMinutes+' min':undefined,programId:this.$route.query.fromProgram,stepId:kind==='training_program'?this.programWorkout?.id:undefined,draft:kind==='ai_allowance'?(options.draft===undefined?this.message:options.draft):undefined,messageId:options.messageId,continueLabel:item.continueLabel,cancelLabel:item.cancelLabel,success:item.success}
       if(kind==='limited_challenge'){intent.startsAt=content.challengeRules?.startsAt;intent.endsAt=content.challengeRules?.endsAt;intent.detail='Registration ends '+membershipDate(intent.endsAt)}
       if(kind==='dynamic_plan'){const plan=options.planId?this.findDynamicPlan(options.planId):this.currentDynamicPlan;if(!plan)return;intent.resourceId=plan.id;intent.planId=plan.id;intent.resourceName=plan.title;intent.detail=plan.days+' days / week · '+plan.minutes+' min / session'}
-      if(kind==='workout_insight'){intent.resourceId=this.objectKey;intent.resourceName='Your completed workout';intent.detail='40 min'+(this.resultRpe===null?'':' · Perceived effort '+this.resultRpe+' / 10')}
+      if(kind==='workout_insight'){intent.resourceId=this.objectKey;intent.resourceName=this.resultWorkout.title;intent.detail=this.resultWorkout.duration+(this.resultRpe===null?'':' · RPE '+this.resultRpe+' / 10')}
       if(kind==='membership'){intent.resourceId='premium';intent.resourceName='SunnyFit Premium'}
-      if(kind==='ai_allowance'){if(options.messageId)intent.continueLabel='Resend message';if(!intent.draft)intent.continueLabel='Back to conversation';intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null&&!this.mvpMember.unlimited){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active&&!options.usage){this.mvpGate={kind:'credits',stage:'offer',title:'Add AI Coach Credits',context:intent,offer:this.mvpCreditOffers[0]};return}if(options.usage){this.mvpGate={kind:'usage',stage:'offer',title:'Conversation allowance',context:intent};return}}
+      if(kind==='ai_allowance'){intent.creditCost=this.mvpChatUnitCost;if(options.messageId)intent.continueLabel='Resend message';if(!intent.draft)intent.continueLabel='Back to conversation';intent.resourceId='conversation-'+this.userId;intent.resourceName='AI Coach';if(this.mvpMember.percent===null&&!this.mvpMember.unlimited){this.mvpGate={kind:'unknown',stage:'offer',title:'Check your allowance',context:intent};return}if(this.mvpMember.active&&!options.usage){this.mvpGate={kind:'credits',stage:'offer',title:'Add AI Coach Credits',context:intent,offer:this.mvpCreditOffers[0]};return}if(options.usage){this.mvpGate={kind:'usage',stage:'offer',title:'Conversation allowance',context:intent};return}}
       intent.image=content?.coverUrl||''
-      const requestedView=this.reviewMode&&['quick','benefits'].includes(this.$route.query.reviewPurchaseView)?this.$route.query.reviewPurchaseView:null
-      this.mvpGate={...item,kind:'membership',stage:'offer',view:options.view||requestedView||(kind==='membership'?'benefits':'quick'),benefitTab:this.reviewMode?this.$route.query.reviewBenefit:undefined,context:intent,expired:this.mvpMember.state==='expired'}
+      const requestedView=this.reviewMode&&['quick','benefits','plans'].includes(this.$route.query.reviewPurchaseView)?this.$route.query.reviewPurchaseView:null
+      this.mvpGate={...item,kind:'membership',stage:'offer',viewHistory:[],view:options.view||requestedView||(kind==='membership'?'benefits':'quick'),benefitTab:(this.reviewMode?this.$route.query.reviewBenefit:undefined)||(kind==='membership'?'plans':undefined),context:intent,expired:this.mvpMember.state==='expired'}
       const wall=this.mvpWall;this.mvpGate={...this.mvpGate,offer:wall.offers.find(item=>item.offerId===wall.defaultOfferId),benefitTab:this.mvpGate.benefitTab||wall.entry.defaultBenefit}
     },
     cancelMvpPurchase(reason,offer){if(reason==='dismiss')this.emitPaywallEvent('paywall_dismissed',offer,{reason:'user_dismissed'});this.mvpCheckoutToken++;this.mvpGate=null},
@@ -169,6 +170,7 @@ export default {
       this.mvpPendingPurchase=null
       this.mvpGate={...flow,offer,stage:'success'}
       this.emitPaywallEvent('paywall_purchase_result',offer,{result:'success',attemptId})
+      if(['membership','view-insight'].includes(flow.context.action)){await this.resumeMvpPurchase();this.appToast='Premium is active.'}
     },
     retryMvpPurchase(){if(this.mvpGate)this.mvpGate={...this.mvpGate,stage:'offer'}},
     checkMvpPurchase(){const flow=this.mvpGate||this.mvpPendingPurchase;if(flow){this.mvpGate={...flow,stage:'offer'};this.purchaseMvpOffer(flow.offer)}},
@@ -213,7 +215,7 @@ export default {
       this.cancelMvpPurchase()
       if(intent.kind==='movement'&&this.screen==='movement-training'){this.$refs.movement.begin();return}
       if(intent.action==='start-program'){const step=resource.membersPreview?.find(c=>c.id===intent.stepId)||resource.membersPreview?.[0];if(step){this.contentId=step.id;this.programId=resource.id;this.go('course',{fromProgram:resource.id,courseOrigin:'program',mvpState:undefined})}else this.setMvpPageState('empty');return}
-      this.notice={title:'Ready to train',body:resource.name+' is ready to start.'}
+      this.appToast=resource.name+' is unlocked. Start whenever you’re ready.'
     },
     async handleMvpAction(action){
       if(action.startsWith('activate-plan:')){const id=action.slice(14),plan=this.findDynamicPlan(id);if(!plan)return true;if(this.mvpMember.active)this.activateDynamicPlan(id);else this.mvpUpgrade('dynamic_plan',null,{planId:id});return true}

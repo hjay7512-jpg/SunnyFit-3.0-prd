@@ -14,7 +14,7 @@ function prepare(){
   const contract=JSON.parse(fs.readFileSync(path.join(root,'config/copy-blocks.json'),'utf8')),blocks={},seen=new Set(),known=new Set(catalog.fields.map(field=>field.key))
   for(const block of contract.blocks){if(blocks[block.id]||!/^[-\w.]+$/.test(block.id))throw Error('Duplicate/invalid block ID: '+block.id);blocks[block.id]=block;for(const key of block.fields){if(!known.has(key)||seen.has(key))throw Error('Unknown/duplicate block field: '+key);seen.add(key)}}
   for(const key of known)if(!seen.has(key))throw Error('Register the new field in config/copy-blocks.json: '+key)
-  const manifest={schemaVersion:contract.schemaVersion,registryVersion:contract.registryVersion,blocks,fields:catalog.fields,defaults:defaults.values}
+  const manifest={schemaVersion:contract.schemaVersion,registryVersion:contract.registryVersion,minimumReadRegistryVersion:contract.minimumReadRegistryVersion||contract.registryVersion,blocks,fields:catalog.fields,defaults:defaults.values}
   for(const target of ['config/collaboration-registry.json','collaboration-service/core/registry.json']){fs.mkdirSync(path.dirname(path.join(root,target)),{recursive:true});fs.writeFileSync(path.join(root,target),JSON.stringify(manifest,null,2)+'\n')}
   return manifest
 }

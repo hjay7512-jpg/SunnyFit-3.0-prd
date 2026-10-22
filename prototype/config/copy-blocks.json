@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": 1,
+  "registryVersion": 2,
   "blocks": [
     {
       "id": "wall-common",
@@ -193,7 +193,25 @@
       "label": "完整会员介绍 · 开场",
       "fields": [
         "wall.education.title",
-        "wall.education.description"
+        "wall.education.description",
+        "wall.education.comparison.0.0",
+        "wall.education.comparison.0.1",
+        "wall.education.comparison.0.2",
+        "wall.education.comparison.1.0",
+        "wall.education.comparison.1.1",
+        "wall.education.comparison.1.2",
+        "wall.education.comparison.2.0",
+        "wall.education.comparison.2.1",
+        "wall.education.comparison.2.2",
+        "wall.education.comparison.3.0",
+        "wall.education.comparison.3.1",
+        "wall.education.comparison.3.2",
+        "wall.education.comparison.4.0",
+        "wall.education.comparison.4.1",
+        "wall.education.comparison.4.2",
+        "wall.education.comparison.5.0",
+        "wall.education.comparison.5.1",
+        "wall.education.comparison.5.2"
       ]
     },
     {
@@ -206,7 +224,8 @@
         "wall.education.stories.0.examples.0",
         "wall.education.stories.0.examples.1",
         "wall.education.stories.0.examples.2",
-        "wall.education.stories.0.examples.3"
+        "wall.education.stories.0.examples.3",
+        "wall.education.stories.0.detail"
       ]
     },
     {
@@ -218,7 +237,8 @@
         "wall.education.stories.1.description",
         "wall.education.stories.1.examples.0",
         "wall.education.stories.1.examples.1",
-        "wall.education.stories.1.examples.2"
+        "wall.education.stories.1.examples.2",
+        "wall.education.stories.1.detail"
       ]
     },
     {
@@ -229,7 +249,8 @@
         "wall.education.stories.2.title",
         "wall.education.stories.2.description",
         "wall.education.stories.2.examples.0",
-        "wall.education.stories.2.examples.1"
+        "wall.education.stories.2.examples.1",
+        "wall.education.stories.2.detail"
       ]
     },
     {
@@ -240,7 +261,8 @@
         "wall.education.stories.3.title",
         "wall.education.stories.3.description",
         "wall.education.stories.3.examples.0",
-        "wall.education.stories.3.examples.1"
+        "wall.education.stories.3.examples.1",
+        "wall.education.stories.3.detail"
       ]
     },
     {
@@ -271,7 +293,8 @@
         "profile.allowance.emptyFree",
         "profile.allowance.emptyMember",
         "profile.allowance.emptyExpired",
-        "profile.allowance.unknown"
+        "profile.allowance.unknown",
+        "profile.card.description"
       ]
     },
     {
@@ -287,7 +310,16 @@
         "membership.preview.point3",
         "membership.preview.explore",
         "membership.preview.plans",
-        "membership.preview.retention"
+        "membership.preview.retention",
+        "membership.preview.freeTitle",
+        "membership.preview.freeWorkouts",
+        "membership.preview.freeTracking",
+        "membership.preview.exampleLabel",
+        "membership.preview.example1",
+        "membership.preview.example2",
+        "membership.preview.example3",
+        "membership.preview.freeStep",
+        "membership.preview.premiumStep"
       ]
     },
     {
@@ -296,7 +328,11 @@
       "fields": [
         "membership.active.title",
         "membership.active.description",
-        "membership.manage.button"
+        "membership.manage.button",
+        "membership.active.benefit1",
+        "membership.active.benefit2",
+        "membership.active.benefit3",
+        "membership.active.benefit4"
       ]
     },
     {
@@ -304,7 +340,8 @@
       "label": "会员中心 · 购买与账单入口",
       "fields": [
         "membership.utility.restore",
-        "membership.utility.history"
+        "membership.utility.history",
+        "membership.utility.already"
       ]
     },
     {
@@ -322,7 +359,16 @@
         "paywall.coachBenefit",
         "paywall.trainingBenefit",
         "paywall.exampleQuestion",
-        "paywall.exampleAnswer"
+        "paywall.exampleAnswer",
+        "paywall.exampleLabel",
+        "paywall.planExampleLabel",
+        "paywall.planExample1",
+        "paywall.planExample2",
+        "paywall.planExample3",
+        "paywall.insightExampleLabel",
+        "paywall.insightExampleBody",
+        "paywall.separateBilling",
+        "paywall.planDescription"
       ]
     },
     {
@@ -343,7 +389,10 @@
       "id": "actions.allowance",
       "label": "用量 · 升级入口",
       "fields": [
-        "actions.allowance.upgrade"
+        "actions.allowance.upgrade",
+        "actions.allowance.free",
+        "actions.allowance.member",
+        "actions.allowance.topup"
       ]
     },
     {
@@ -352,7 +401,9 @@
       "fields": [
         "actions.credits.title",
         "actions.credits.description",
-        "actions.credits.buy"
+        "actions.credits.buy",
+        "actions.credits.usage",
+        "actions.credits.terms"
       ]
     },
     {
@@ -378,7 +429,8 @@
       "label": "计划 · 激活入口",
       "fields": [
         "actions.plan.activate",
-        "actions.plan.access"
+        "actions.plan.access",
+        "actions.plan.saved"
       ]
     },
     {
@@ -484,5 +536,6 @@
       "label": "Credits · 页面备注",
       "fields": []
     }
-  ]
+  ],
+  "minimumReadRegistryVersion": 1
 }

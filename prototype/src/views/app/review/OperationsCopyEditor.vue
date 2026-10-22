@@ -1,7 +1,7 @@
 <template>
   <section v-if="state.selected" class="copy-panel" aria-label="区块协作">
     <header class="copy-panel__heading"><div><small>当前选中区块</small><h2>{{ state.selected.label }}</h2></div><button type="button" aria-label="关闭区块协作" :disabled="state.busy" @click="close">×</button></header>
-    <p class="copy-panel__context">{{ state.selected.context.page }}<span v-if="location.label"> · {{ location.label }}</span><span v-else-if="state.selected.context.state"> · {{ state.selected.context.state }}</span></p>
+    <p class="copy-panel__context">{{ state.selected.context.page }}<span v-if="state.selected.context.target"> · {{ state.selected.context.target }}</span><span v-if="location.label"> · {{ location.label }}</span><span v-else-if="state.selected.context.state"> · {{ state.selected.context.state }}</span></p>
     <div class="copy-panel__tabs" role="tablist" aria-label="区块协作方式"><button v-if="editable" type="button" role="tab" :aria-selected="state.tab==='edit'" @click="state.tab='edit'">文案</button><button type="button" role="tab" :aria-selected="state.tab==='comments'" @click="state.tab='comments'">备注 / 评论 <span v-if="state.comments.length">{{ state.comments.length }}</span></button><button v-if="editable" type="button" role="tab" :aria-selected="state.tab==='history'" @click="state.tab='history'">版本记录</button></div>
     <div v-if="state.syncMessage||state.blockMessage" class="copy-panel__sync" role="status"><span>{{ state.blockMessage||'同步暂时延迟，当前内容已保留。' }}</span><button type="button" :disabled="state.busy||state.syncing" @click="refresh">{{ state.syncing?'同步中…':'重新同步' }}</button></div>
     <template>
@@ -17,7 +17,8 @@
         <p class="copy-panel__hint">修改即时预览；保存会一起提交此区块各展示位置的修改。</p>
         <div v-for="field in visibleFields" :key="field.key" :data-copy-field="field.key" class="copy-field" :class="{'has-error':state.errors[field.key]}">
           <label :for="'copy-input-'+field.key"><span>{{ usage(field.key)&&usage(field.key).label||field.label }}</span><small>{{ Array.from(state.draft[field.key]||'').length }} / {{ field.max }}</small></label>
-          <textarea :id="'copy-input-'+field.key" :value="state.draft[field.key]" :rows="field.max>160?3:2" :disabled="state.busy" :aria-invalid="!!state.errors[field.key]" @input="edit(field.key,$event.target.value)" @focus="locate(field.key,false)"/>
+          <textarea :id="'copy-input-'+field.key" :value="state.draft[field.key]" :rows="field.max>160?3:2" :disabled="state.busy||!supported(field)" :aria-invalid="!!state.errors[field.key]" @input="edit(field.key,$event.target.value)" @focus="locate(field.key,false)"/>
+          <small v-if="!supported(field)" class="copy-field__usage">此新增字段暂为只读，更新云端协作服务后可编辑；评论仍可使用。</small>
           <small v-if="state.errors[field.key]" class="copy-field__error">{{ state.errors[field.key] }}</small>
           <small v-else-if="field.tokens.length">保留变量 {{ field.tokens.join('、') }}<template v-if="field.tokens.includes('{days}')">；预览示例为 30 天</template>。</small>
           <div v-if="field.inherit||field.tokens.includes('{days}')" class="copy-field__effective"><small>{{ effective(field).inherited?'沿用通用文案 · 实际显示':'实际显示' }}</small><p>{{ sample(field) }}</p></div>
@@ -36,13 +37,13 @@
 </template>
 <script>
 import {copyState,copyDirty,copyFieldDirty,canEdit,canReview,editCopy,discardCopy,closeCopyBlock,saveCopy,submitComment,resolveComment,previewVersion,reloadCopy} from '@/copy/operations-copy'
-import {previewCopyLocation,exitCopyPreview,recoverCopyConnection} from '@/copy/operations-copy'
+import {previewCopyLocation,exitCopyPreview,recoverCopyConnection,copyFieldSupported} from '@/copy/operations-copy'
 import {locationsForBlock,fieldUsage,effectiveCopy} from '@/copy/copy-locations.cjs'
 export default {
   data:()=>({state:copyState}),
   computed:{editable(){return canEdit(this.state.selected.id)},reviewable(){return canReview(this.state.selected.id)},dirty:copyDirty,locations(){return locationsForBlock(this.state.selected.id)},location(){return this.locations.find(item=>item.id===this.state.location)||{}},visibleFields(){return this.state.fields.filter(field=>this.state.visibleFields.includes(field.key))},hiddenDirty(){return this.state.fields.filter(field=>!this.state.visibleFields.includes(field.key)&&copyFieldDirty(field.key)).length}},
   beforeDestroy(){clearTimeout(this.focusTimer);this.clearFocus()},
-  methods:{edit:editCopy,discard:discardCopy,close:closeCopyBlock,save:saveCopy,comment:submitComment,resolve:resolveComment,restore:previewVersion,reload:reloadCopy,exitPreview:exitCopyPreview,usage:fieldUsage,
+  methods:{edit:editCopy,discard:discardCopy,close:closeCopyBlock,save:saveCopy,comment:submitComment,resolve:resolveComment,restore:previewVersion,reload:reloadCopy,exitPreview:exitCopyPreview,usage:fieldUsage,supported:copyFieldSupported,
     effective(field){return effectiveCopy(this.state.values,field)},sample(field){return this.effective(field).value.replace(/\{days\}/g,'30')},
     preview(id){previewCopyLocation(id);this.$nextTick(()=>this.locate(this.state.visibleFields[0],false))},
     clearFocus(){document.querySelectorAll('.copy-field-focus').forEach(element=>element.classList.remove('copy-field-focus'))},
@@ -55,7 +56,7 @@ export default {
         elements[0].scrollIntoView({block:'nearest',inline:'nearest'});elements.forEach(element=>element.classList.add('copy-field-focus'));this.focusTimer=setTimeout(()=>this.clearFocus(),4500)
       })
     },
-    async refresh(){await recoverCopyConnection(true)},date(value){return new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value))},context(value){try{const c=JSON.parse(value);return [c.page,c.state].filter(Boolean).join(' · ')}catch(_){return ''}}
+    async refresh(){await recoverCopyConnection(true)},date(value){return new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value))},context(value){try{const c=JSON.parse(value);return [c.page,c.surface,c.target,c.state].filter(Boolean).join(' · ')}catch(_){return ''}}
   }
 }
 </script>

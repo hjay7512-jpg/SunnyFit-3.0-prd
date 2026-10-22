@@ -17,7 +17,7 @@ export default {
     copyPreviewGate(){
       if(!this.copyPreviewActive||copyState.preview.stage==='detail')return null
       const preview=copyState.preview,wall=this.copyPreviewWall,copy=placementFor(preview.kind,currentWallCopy())
-      return {kind:'membership',stage:preview.stage,view:preview.view||'quick',benefitTab:preview.benefitId,title:copy.title,offer:wall.offers.find(offer=>offer.offerId===preview.offerId)||wall.offers.find(offer=>offer.offerId===wall.defaultOfferId),context:{key:'copy-preview:'+preview.kind,kind:preview.kind,label:copy.label,resourceId:wall.resource.id,resourceName:wall.resource.name,detail:wall.resource.detail,success:copy.success,continueLabel:copy.continueLabel,cancelLabel:copy.cancelLabel}}
+      return {kind:'membership',stage:preview.stage,view:preview.view||'quick',viewHistory:preview.view==='plans'?['benefits']:preview.view==='benefits'?['quick']:[],benefitTab:preview.benefitId,title:copy.title,offer:wall.offers.find(offer=>offer.offerId===preview.offerId)||wall.offers.find(offer=>offer.offerId===wall.defaultOfferId),context:{key:'copy-preview:'+preview.kind,kind:preview.kind,label:copy.label,resourceId:wall.resource.id,resourceName:wall.resource.name,detail:wall.resource.detail,success:copy.success,continueLabel:copy.continueLabel,cancelLabel:copy.cancelLabel}}
     }
   },
   methods:{
@@ -37,11 +37,11 @@ export default {
         return
       }
       if(type==='select'){
-        const offer=args[0],mode=copyState.preview.offer,location=offer.trialDays?'subscribe-trial':'subscribe-standard'
+        const offer=args[0],mode=copyState.preview.offer,location=copyState.preview.view==='plans'?(offer.trialDays?'plans-trial':'plans'):(offer.trialDays?'subscribe-trial':'subscribe-standard')
         previewCopyLocation(location,copyState.preview.kind);copyState.preview={...copyState.preview,offer:mode,offerId:offer.offerId};return
       }
       if(type==='benefit'){copyState.preview={...copyState.preview,benefitId:args[0]};return}
-      if(type==='view'){previewCopyLocation(args[0].view==='benefits'?'benefits':'quick',copyState.preview.kind);return}
+      if(type==='view'){previewCopyLocation(args[0].view==='benefits'?'benefits':args[0].view==='plans'?'plans':'quick',copyState.preview.kind);return}
       if(['purchase','restore','check'].includes(type)){previewCopyLocation('success',copyState.preview.kind);return}
       if(['close','resume','usage'].includes(type)){
         const hasDetail=['course','world_tour','training_program'].includes(copyState.preview.kind)

@@ -1,7 +1,10 @@
 /* V3 typography and brand. Membership prototypes supply business structure only. */
 .sf-ui {
   --sf-action: #e81d1d;
-  --sf-text: #0a0a0d;
+  --sf-brand-blue: #31426d;
+  --sf-beige: #f7eee3;
+  --sf-sky: #bdd0eb;
+  --sf-text: #26354f;
   --sf-text-secondary: #575c66;
   --sf-chevron: #8c9199;
   --sf-page: #f5f8fe;

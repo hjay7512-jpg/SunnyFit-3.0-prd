@@ -14,7 +14,9 @@ function locationsForBlock(id){
   locations.push(
     {id:'quick',label:'快速付费墙 · 权益引导',condition:'点击受限权益入口后出现；承接用户刚才想使用的内容。',stage:'offer',view:'quick',offer:'standard',fields:(kind==='ai_allowance'?['title','description']:['category','title','description','unlock']).map(key=>story+key)},
     {id:'subscribe-standard',label:'付费墙 · 订阅按钮',condition:'当前选中的方案不含试用。切换方案时，按钮跟随当前方案。',stage:'offer',view:'quick',offer:'standard',fields:[placement+'cta']},
-    {id:'subscribe-trial',label:'付费墙 · 试用按钮',condition:'当前选中的方案含试用。预览选中包含 30 天试用的年度方案。',stage:'offer',view:'quick',offer:'trial',fields:[placement+'trialCta']}
+    {id:'subscribe-trial',label:'付费墙 · 试用按钮',condition:'当前选中的方案含试用。预览选中包含 30 天试用的年度方案。',stage:'offer',view:'quick',offer:'trial',fields:[placement+'trialCta']},
+    {id:'plans',label:'套餐步骤 · 订阅按钮',condition:'从完整权益介绍进入独立套餐步骤，月付和年付均直接可见。',stage:'offer',view:'plans',offer:'standard',fields:[placement+'cta']},
+    {id:'plans-trial',label:'套餐步骤 · 试用按钮',condition:'独立套餐步骤中的年度试用方案，今天金额及试用后完整年费同时展示。',stage:'offer',view:'plans',offer:'trial',fields:[placement+'trialCta']}
   )
   if(kind!=='membership')locations.push({id:'benefits',label:'完整权益介绍 · 原任务提示',condition:'从快速付费墙点击了解更多后出现；顶部提示原任务，底部再次承接。',stage:'offer',view:'benefits',offer:'standard',fields:[story+'category',story+'next']})
   locations.push(

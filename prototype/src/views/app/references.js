@@ -1,7 +1,7 @@
 const mvp = 'https://www.figma.com/design/94S2EVx6mOkJRj8P0VyRLx/V3.0-MVP?node-id=';
 const alpha = 'https://www.figma.com/design/t7g261XYs61EdvYzIZn5YL/V3.0-Alpha?node-id=';
 const formal = 'https://www.figma.com/design/2AT0tm9mkFhes8T81YzA2L/V3.0?node-id=';
-export const pages = [['home', 'Home', '原稿'], ['workout', 'Workout · Course', '原稿'], ['course', '课程详情 · Start', '原稿'], ['program', 'Training Program 首页', '原稿'], ['weekly','Weekly Report · 基础与洞察','原稿'], ['challenge','Limited Challenge · Join','原稿'], ['movement','Movements · Start','组件延展'], ['world-tour','World Tour · Start','组件延展'], ['coach', 'AI Coach', '原稿'], ['result', 'Workout Data · Insight', '原稿'], ['plan', '当前 Plan 详情', '原稿'], ['profile','个人中心','原稿'], ['membership', 'Membership & Usage', '原稿'], ['plans','Plan & Benefits','原入口'], ['billing','Billing History','原入口'], ['wallet', 'Credits · 加购', '新增']].map((item, index) => ({
+export const pages = [['home', 'Home', '原稿'], ['workout', 'Workout · Course', '原稿'], ['course', '课程详情 · Start', '原稿'], ['program', 'Training Program 首页', '原稿'], ['weekly','Weekly Report · 基础与洞察','原稿'], ['challenge','Limited Challenge · Join','原稿'], ['movement','Movements · Start','组件延展'], ['world-tour','World Tour · Start','组件延展'], ['coach', 'AI Coach', '原稿'], ['result', 'Workout Data · Insight', '原稿'], ['plan', '当前 Plan 详情', '原稿'], ['profile','个人中心','原稿'], ['membership', 'Membership & Usage', '原稿'], ['billing','Billing History','原入口'], ['wallet', 'Credits · 加购', '新增']].map((item, index) => ({
   id: item[0],
   label: item[1],
   kind: item[2],

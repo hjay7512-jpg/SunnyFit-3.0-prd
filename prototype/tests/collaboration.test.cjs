@@ -10,6 +10,13 @@ async function fixture(t){
 }
 const edit=(value='Team copy',expectedRevision=0)=>({values:{'profile.card.title':value},expectedRevision,operationId:randomUUID(),actor:'Operator',context:{page:'个人中心',state:'未订阅',path:'/app/profile'}})
 
+test('Comment context retains the exact control and dialog without storing unrelated payloads',async t=>{
+ const {call}=await fixture(t),context={page:'会员与用量',state:'选择套餐',path:'/app/membership',target:'套餐步骤 · 权益说明',field:'paywall.planDescription',surface:'Choose your plan',privateDraft:'Never retain this message'}
+ const posted=await call('/blocks/paywall/comments',{operationId:randomUUID(),actor:'Reviewer',body:'Clarify this section.',context});assert.equal(posted.status,201)
+ const listed=await call('/blocks/paywall/comments'),saved=JSON.parse(listed.data.comments[0].context_json)
+ assert.equal(saved.target,context.target);assert.equal(saved.field,context.field);assert.equal(saved.surface,context.surface);assert.equal(saved.privateDraft,undefined)
+})
+
 test('Only complete, unexpired server sessions can authorize copy editing',()=>{
  const valid={role:'editor',scopes:['profile.membership'],expiresAt:'2099-01-01T00:00:00Z'};assert.equal(validSession(valid),true)
  for(const value of [null,{},'<html>gateway</html>',{...valid,role:'admin'},{...valid,scopes:'*'},{...valid,scopes:[]},{...valid,scopes:[{}]},{...valid,expiresAt:'bad-date'},{...valid,expiresAt:'2000-01-01T00:00:00Z'}])assert.equal(validSession(value),false)

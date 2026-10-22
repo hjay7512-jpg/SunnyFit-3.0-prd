@@ -123,6 +123,7 @@ node scripts/run-framework.mjs build
 2. 数据库结构变更先改 `db/schema.ts`，运行 `npm run db:generate`，检查生成 SQL 与元数据。已执行的迁移不可修改，后续变更追加迁移。迁移只改结构，不重置运营值，不在请求中建表。
 3. 完成前述单测、D1 和浏览器验证。对照正常预览、评审链接、编辑链接确认权限和显示；检查旧写接口仍返回 410。
 4. 按本会话 AGENTS 约定取得生产发布批准后，先发布兼容服务及迁移，核对健康接口。再配置前端 API 地址、构建并发布 GitHub Pages。前端部署不包含数据库文件、密钥、授权链接或评论数据。
+   若服务管理权限暂不可用，可发布经过验证的只读兼容前端：`minimumReadRegistryVersion` 必须覆盖在线版本，新字段登记 `minRegistryVersion` 并在旧服务下禁用编辑；保存旧字段时排除未支持字段。评论和旧字段编辑保持原协议，不能用重复重试替代版本升级。交付时明确未完成的服务升级。
 5. 核对线上 `deployment.json.sourceCommit` 与目标 commit 相同，再由两位授权协作者验证读取、评论和一处已获准的文案修改。不要在团队数据库批量写入测试文案。
    `node scripts/collaboration-online-check.cjs` 从隐藏 stdin 接收 `{"editorUrl":"授权编辑链接"}`，自动检查公开评论、编辑权限、修改历史和可还原的文案预览；它不提交评论或文案，不把授权链接写入证据。
    日常密码方式使用 `node scripts/collaboration-password-online-check.cjs`，从隐藏 stdin 接收 `{"password":"由维护者输入"}`；直接在已发布 GitHub 页面核验真实跨域登录、受保护区块读取、刷新后免登录与同步。它只做可还原的本地预览，不提交团队文案或评论，不将密码或签名凭证存入证据。

@@ -1,6 +1,6 @@
 import {reviewGroups,reviewModel} from './review-model'
 const pick=(query,key,legacy,allowed,fallback='default')=>allowed.includes(query[key])?query[key]:legacy.includes(query.mvpState)?query.mvpState:fallback
-export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit','reviewRpe','reviewRpeValue','reviewResultPanel','reviewResultStage','reviewAchievement','planSetup']
+export const reviewQueryKeys=['reviewFixture','reviewAiCredits','reviewAiCreditsTotal','reviewQuota','reviewPage','reviewContent','reviewInsight','reviewReply','reviewPlan','reviewEvent','reviewWorkouts','reviewScene','reviewMode','reviewPanel','reviewOrientation','reviewWindows','reviewCamera','reviewDevice','reviewOffer','reviewContentOffer','reviewProgramPanel','reviewPurchaseView','reviewBenefit','reviewRpe','reviewRpeValue','reviewResultPanel','reviewResultStage','reviewAchievement','planSetup','reviewStore','reviewSubscriptionPanel']
 export default {
   data(){return {reviewGroups,mvpInternalRoute:'',reviewMovementKey:'',reviewWallKey:''}},
   computed:{
@@ -20,6 +20,8 @@ export default {
       await new Promise(resolve=>this.$router.replace({path:this.$route.path,query},resolve,resolve));await this.$nextTick()
     },
     async applyReviewState(scope,value){
+      if(scope==='subscription-store'){await this.replaceReviewQuery({reviewStore:value,reviewSubscriptionPanel:undefined});return}
+      if(scope==='subscription-management'){await this.replaceReviewQuery({reviewSubscriptionPanel:value==='closed'?undefined:value});return}
       if(scope==='content-offer'){
         this.cancelMvpPurchase();this.reviewWallKey=this.$route.path;await this.replaceReviewQuery({reviewContentOffer:value,reviewOffer:undefined,membershipState:'free'});return
       }

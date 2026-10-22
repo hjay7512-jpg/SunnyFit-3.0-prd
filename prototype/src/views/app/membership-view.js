@@ -19,7 +19,8 @@ export function membershipView(data, query = {}) {
   const unlimited = preview && query.allowanceMode === 'campaign'
   const campaignEndsAt = unlimited ? '2026-10-23T12:00:00Z' : null
   const expiry = preview ? state === 'expired' ? '2026-10-15T12:00:00Z' : active ? query.membershipCycle==='annual'?'2027-10-16T12:00:00Z':'2026-11-16T12:00:00Z' : null : active ? (current && current.grant.expiresAt) || data.effective.base.expiresAt : ended && ended.grant.expiresAt
-  return {state, active, preview, percent, unlimited, campaignEnded:preview&&query.allowanceMode==='ended',campaignEndsAt, expiry, resetAt: !preview && allowance && allowance.resetAt, subscription:current, tier:active?'Premium':'Free', label:state==='expired'?'Premium expired':state==='canceled'?'Renewal off':active?'Active':'Free account'}
+  const purchasedCredits=preview?Math.max(0,Number(query.reviewAiCredits)||0):batches.filter(row=>row.source==='purchase'&&row.expiresAt===null).reduce((sum,row)=>sum+Number(row.available||0),0)
+  return {state, active, preview, percent,purchasedCredits, unlimited, campaignEnded:preview&&query.allowanceMode==='ended',campaignEndsAt, expiry, resetAt: !preview && allowance && allowance.resetAt, subscription:current, tier:active?'Premium':'Free', label:state==='expired'?'Premium expired':state==='canceled'?'Renewal off':active?'Active':'Free account'}
 }
 
 export function membershipDate(value, locale = 'en-US') {

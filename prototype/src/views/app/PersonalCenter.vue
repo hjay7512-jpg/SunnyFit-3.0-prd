@@ -28,13 +28,13 @@ import './membership-mvp.css'
 export default {
   components:{SfMenuRow,SfAvatar,SfIcon,SfBadge},props:{data:Object},
   computed:{
-    visibleCopyFields(){const fields=['profile.card.title','profile.status.'+this.member.state,this.allowanceState==='low'?'profile.allowance.low':'profile.allowance.label'];if(this.member.state==='free')fields.push('profile.card.freePrompt');if(this.member.state==='expired'&&!this.member.expiry)fields.push('profile.card.expiredPrompt');if(this.allowanceMessage&&!this.member.unlimited){if(this.member.percent===null)fields.push('profile.allowance.unknown');else if(this.member.percent===0)fields.push(this.member.active?'profile.allowance.emptyMember':this.member.state==='expired'?'profile.allowance.emptyExpired':'profile.allowance.emptyFree')}return fields},
+    visibleCopyFields(){const fields=['profile.card.title','profile.status.'+this.member.state,this.allowanceState==='low'?'profile.allowance.low':'profile.allowance.label'];if(this.member.state==='expired'&&!this.member.expiry)fields.push('profile.card.expiredPrompt');if(this.allowanceMessage&&!this.member.unlimited){if(this.member.percent===null)fields.push('profile.allowance.unknown');else if(this.member.percent===0)fields.push(this.member.active?'profile.allowance.emptyMember':this.member.state==='expired'?'profile.allowance.emptyExpired':'profile.allowance.emptyFree')}return fields},
     member(){return membershipView(this.data,this.$route.query)},
     allowanceState(){return this.member.unlimited?'campaign':this.member.percent===null?'unavailable':this.member.percent===0?'empty':this.member.percent<=20?'low':'available'},
     statusLabel(){return this.$copy('profile.status.'+this.member.state)},
     statusDetail(){
       const m=this.member,expiry=this.shortDate(m.expiry)
-      if(m.state==='free')return this.$copy('profile.card.freePrompt')
+      if(m.state==='free')return ''
       if(m.state==='expired')return expiry?'Ended '+expiry:this.$copy('profile.card.expiredPrompt')
       if(!expiry)return 'Date unavailable'
       if(m.state==='active')return 'Renews '+expiry
@@ -53,3 +53,7 @@ export default {
   methods:{shortDate(value){if(!value)return '';const date=new Date(value);if(!Number.isFinite(date.getTime()))return '';return new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',...(date.getUTCFullYear()!==new Date().getUTCFullYear()?{year:'numeric'}:{}),timeZone:'UTC'}).format(date)}}
 }
 </script>
+
+<style scoped>
+.profile-membership.profile-membership{background:var(--sf-beige);border:1px solid #ece3d8;padding:18px;box-shadow:none}.profile-membership .profile-membership__heading strong{color:var(--sf-brand-blue)}.profile-membership .profile-membership__icon{color:var(--sf-action);background:#fff9}.profile-membership .profile-usage-summary{margin-top:13px;padding-top:12px;font-size:12px}.profile-membership .profile-usage-summary strong{font-size:20px;color:var(--sf-brand-blue)}
+</style>

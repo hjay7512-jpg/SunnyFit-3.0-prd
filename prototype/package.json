@@ -8,7 +8,7 @@
     "api": "node server/index.cjs",
     "build": "node scripts/prepare-copy-config.cjs && node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js build",
     "start": "node server/index.cjs",
-    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs tests/subscription-wall.test.cjs tests/content-presentation.test.cjs tests/chat-allowance.test.cjs tests/workout-recap.test.cjs tests/dynamic-plan.test.cjs tests/operations-copy.test.cjs tests/collaboration.test.cjs",
+    "test": "node --test tests/domain.test.cjs tests/commerce.test.cjs tests/entitlement-model.test.cjs tests/mvp-commercialization.test.cjs tests/subscription-wall.test.cjs tests/content-presentation.test.cjs tests/chat-allowance.test.cjs tests/workout-recap.test.cjs tests/dynamic-plan.test.cjs tests/operations-copy.test.cjs tests/collaboration.test.cjs tests/copy-compatibility.test.cjs",
     "test:consumer": "node scripts/optimized-demo-check.cjs",
     "test:layout": "node scripts/check-demo-layout.cjs",
     "test:foundation": "node --test tests/demo-runtime.test.cjs && node scripts/demo-foundation-check.cjs",
@@ -41,14 +41,15 @@
     "test:mvp": "node scripts/mvp-commercialization-check.cjs",
     "build:pages": "node scripts/build-pages.cjs",
     "test:pages": "node scripts/pages-check.cjs",
-    "test:paywall": "node --test tests/subscription-wall.test.cjs && node scripts/subscription-wall-check.cjs && node scripts/paywall-decision-check.cjs",
+    "test:paywall": "node --test tests/subscription-wall.test.cjs && node scripts/commerce-ux-check.cjs",
     "test:content-pages": "node --test tests/content-presentation.test.cjs && node scripts/content-refresh-check.cjs",
     "test:plan-quality": "node scripts/plan-quality-check.cjs",
     "test:operations-copy": "node scripts/collaboration-check.cjs",
     "test:collaboration": "node scripts/collaboration-check.cjs",
     "test:collaboration-auth": "node scripts/collaboration-password-check.cjs",
     "test:collaboration-reliability": "node scripts/collaboration-reliability-check.cjs",
-    "check:collaboration": "node scripts/prepare-collaboration.cjs && node --test tests/collaboration.test.cjs"
+    "check:collaboration": "node scripts/prepare-collaboration.cjs && node --test tests/collaboration.test.cjs",
+    "test:commerce-ux": "node scripts/commerce-ux-check.cjs"
   },
   "dependencies": {
     "@noble/hashes": "1.8.0",

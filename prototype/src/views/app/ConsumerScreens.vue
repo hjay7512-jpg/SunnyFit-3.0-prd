@@ -8,26 +8,6 @@
         <p v-if="order.status==='scheduled'" class="consumer-caption">Starts {{ shortDate(order.startsAt) }}. No charge today.</p>
       </sf-card>
     </template>
-    <template v-if="screen==='plans'">
-      <sf-card v-if="subscription" class="consumer-card membership-current" :title="subscription.productName">
-        <p>{{ subscription.autoRenew?'Renews':'Active until' }} {{ shortDate(subscription.grant.expiresAt) }}</p>
-        <p v-if="subscription.autoRenew">Next payment: {{ money((subscription.pendingChange?subscription.pendingChange.sku:subscription.sku).priceCents,(subscription.pendingChange?subscription.pendingChange.sku:subscription.sku).currency) }}</p>
-        <p v-if="subscription.pendingChange" class="consumer-caption">Switching to {{ subscription.pendingChange.product.name }} on {{ shortDate(subscription.pendingChange.startsAt) }}. No charge today.</p>
-        <template #footer><sf-button appearance="glass" :disabled="busy" @click="$emit('renew',subscription)">{{ subscription.autoRenew?'Cancel renewal':'Resume renewal' }}</sf-button></template>
-      </sf-card>
-      <sf-card v-if="data.effective.membershipActive" class="consumer-card benefit-list" title="Your current benefits">
-        <div v-for="benefit in benefits(data.effective.base.config)" :key="benefit">✓ {{ benefit }}</div>
-        <div v-for="rule in usableRules(data.effective.base.config)" :key="rule.serviceId">✓ {{ rule.amount }} {{ serviceName(rule.serviceId) }} {{ rule.period==='weekly'?'each week':'each month' }}</div>
-        <template v-if="data.policyVersion===20261014"><p class="consumer-caption">Your workout and weekly AI insights use no Credits. AI Coach conversations and featured content unlocks use separate credit types.</p><div v-for="grant in data.effective.base.config.creditGrants||[]" :key="grant.creditType" class="benefit-credit-rule">{{ grant.amount }} {{ creditTypeLabel(grant.creditType) }} each month</div><p class="consumer-caption">Monthly gifts refresh from your membership start date. Unused gifts expire at the next refresh.</p></template><p v-else class="consumer-caption">Your purchased benefits remain unchanged for this period. Extra use and independent content unlocks are priced separately.</p>
-      </sf-card>
-      <p class="mobile-section-label">AVAILABLE PLANS</p>
-      <sf-card v-for="product in membershipProducts" :key="product.id" class="consumer-card offer-card" :data-product-id="product.id">
-        <div class="consumer-offer__info"><strong>{{ product.name }}</strong><span>{{ sku(product).billingPeriod==='annual'?'Billed annually':'Billed monthly' }}</span><small v-for="rule in usableRules(product.benefits)" :key="rule.serviceId">{{ rule.amount }} {{ serviceName(rule.serviceId) }} / {{ rule.period==='weekly'?'week':'month' }}</small><template v-if="product.benefits.creditGrants"><small v-for="grant in product.benefits.creditGrants" :key="grant.creditType">{{ creditGrantLabel(grant) }}</small></template><small v-else-if="product.benefits.creditBenefit&&product.benefits.creditBenefit.amount">{{ product.benefits.creditBenefit.amount }} bonus Credits / {{ product.benefits.creditBenefit.cadence==='monthly'?'month':'billing period' }} · valid {{ product.benefits.creditBenefit.validityDays }} days</small></div>
-        <b>{{ money(sku(product).priceCents,sku(product).currency) }} / {{ sku(product).billingPeriod==='annual'?'year':'month' }}</b>
-        <sf-button :disabled="busy || !!(subscription && subscription.productId===product.id)" @click="$emit('checkout',product,sku(product))">{{ subscription?(subscription.productId===product.id?'Current plan':'Switch plan'):'Subscribe' }}</sf-button>
-      </sf-card>
-      <p class="consumer-caption">Your subscription renews until canceled. Independent unlocks and extra Credits remain after cancellation.</p>
-    </template>
     <template v-if="screen==='wallet'">
       <sf-card v-for="account in typedAccounts" :key="account.code" class="consumer-card credits-hero" :data-credit-type="account.code"><span>{{ account.name }}</span><strong>{{ account.available }}</strong><p>{{ account.purchased }} purchased · {{ account.reserved }} reserved</p><p>Purchased credits never expire. Each grant keeps its own expiration.</p></sf-card>
       <sf-card v-if="data.policyVersion!==20261014||data.wallet.batches.some(batch=>batch.creditType==='LEGACY_CREDIT')" class="consumer-card credits-hero"><span>{{ typedAccounts.length?'Legacy Credits available':'Credits available' }}</span><strong>{{ data.wallet.available }}</strong><p>{{ data.wallet.purchased }} purchased Credits</p><p>Existing balances keep their original validity.</p><div v-if="nextExpiry" class="expiry-chip">{{ nextExpiry.available }} {{ nextExpiry.source==='purchase'?'legacy purchased':'bonus' }} Credits expire {{ shortDate(nextExpiry.expiresAt) }}</div></sf-card>

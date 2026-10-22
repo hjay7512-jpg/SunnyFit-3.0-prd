@@ -5,7 +5,7 @@ const hash=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SH
 const now=()=>new Date().toISOString(),uuid=()=>crypto.randomUUID();
 const string=(value,max,label)=>typeof value==='string'&&value.trim()&&[...value].length<=max?value.trim():fail(400,label+'格式不正确。');
 const operation=value=>/^[a-zA-Z0-9-]{16,80}$/.test(value||'')?value:fail(400,'缺少有效的操作标识。');
-const contextOf=input=>Object.fromEntries(['page','state','path'].filter(key=>typeof input?.[key]==='string').map(key=>[key,input[key].slice(0,500)]));
+const contextOf=input=>Object.fromEntries(['page','state','path','target','field','surface'].filter(key=>typeof input?.[key]==='string').map(key=>[key,input[key].slice(0,500)]));
 export function createCollaborationService({db,registry,adminKey='',editPassword='',allowedOrigins=/** @type {string[]} */([])}){
   const fields=new Map(registry.fields.map(field=>[field.key,field]));
   const hasBlock=id=>Object.prototype.hasOwnProperty.call(registry.blocks,id);

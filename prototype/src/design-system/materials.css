@@ -14,3 +14,8 @@
 @supports not(backdrop-filter:blur(1px)){.sf-ui{--sf-glass:var(--sf-surface-solid);--sf-content-surface:var(--sf-surface-solid)}}
 .sf-ui[data-reduce-motion=true] :is(.sf-button,.sf-menu-row):active{transform:none}
 @media(prefers-reduced-motion:reduce){.sf-ui :is(.sf-button,.sf-menu-row):active{transform:none}}
+
+/* SunnyFit light surfaces: content stays solid; translucency belongs to controls. */
+.sf-ui:not([data-theme=dark]){--sf-ambient:#f8f9fb;--sf-page:#f8f9fb;--sf-text-secondary:#484848;--sf-content-surface:#fff;--sf-content-edge:#e7eaf0;--sf-member-surface:#fff;--sf-member-border:#e7eaf0;--sf-content-shadow:none;--sf-glass:rgba(255,255,255,.84)}
+.sf-ui .sf-menu-row{background:#fff;box-shadow:none;backdrop-filter:none;border-color:#e7eaf0}
+.sf-ui .sf-button--v3-full>.sf-button__layer:last-of-type{background:none;box-shadow:none}

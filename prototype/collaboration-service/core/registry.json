@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryVersion": 1,
+  "registryVersion": 2,
+  "minimumReadRegistryVersion": 1,
   "blocks": {
     "wall-common": {
       "id": "wall-common",
@@ -193,7 +194,25 @@
       "label": "完整会员介绍 · 开场",
       "fields": [
         "wall.education.title",
-        "wall.education.description"
+        "wall.education.description",
+        "wall.education.comparison.0.0",
+        "wall.education.comparison.0.1",
+        "wall.education.comparison.0.2",
+        "wall.education.comparison.1.0",
+        "wall.education.comparison.1.1",
+        "wall.education.comparison.1.2",
+        "wall.education.comparison.2.0",
+        "wall.education.comparison.2.1",
+        "wall.education.comparison.2.2",
+        "wall.education.comparison.3.0",
+        "wall.education.comparison.3.1",
+        "wall.education.comparison.3.2",
+        "wall.education.comparison.4.0",
+        "wall.education.comparison.4.1",
+        "wall.education.comparison.4.2",
+        "wall.education.comparison.5.0",
+        "wall.education.comparison.5.1",
+        "wall.education.comparison.5.2"
       ]
     },
     "premium-workouts": {
@@ -206,7 +225,8 @@
         "wall.education.stories.0.examples.0",
         "wall.education.stories.0.examples.1",
         "wall.education.stories.0.examples.2",
-        "wall.education.stories.0.examples.3"
+        "wall.education.stories.0.examples.3",
+        "wall.education.stories.0.detail"
       ]
     },
     "premium-plans": {
@@ -218,7 +238,8 @@
         "wall.education.stories.1.description",
         "wall.education.stories.1.examples.0",
         "wall.education.stories.1.examples.1",
-        "wall.education.stories.1.examples.2"
+        "wall.education.stories.1.examples.2",
+        "wall.education.stories.1.detail"
       ]
     },
     "premium-insights": {
@@ -229,7 +250,8 @@
         "wall.education.stories.2.title",
         "wall.education.stories.2.description",
         "wall.education.stories.2.examples.0",
-        "wall.education.stories.2.examples.1"
+        "wall.education.stories.2.examples.1",
+        "wall.education.stories.2.detail"
       ]
     },
     "premium-coach": {
@@ -240,7 +262,8 @@
         "wall.education.stories.3.title",
         "wall.education.stories.3.description",
         "wall.education.stories.3.examples.0",
-        "wall.education.stories.3.examples.1"
+        "wall.education.stories.3.examples.1",
+        "wall.education.stories.3.detail"
       ]
     },
     "premium-faq": {
@@ -271,7 +294,8 @@
         "profile.allowance.emptyFree",
         "profile.allowance.emptyMember",
         "profile.allowance.emptyExpired",
-        "profile.allowance.unknown"
+        "profile.allowance.unknown",
+        "profile.card.description"
       ]
     },
     "membership.discovery": {
@@ -287,7 +311,16 @@
         "membership.preview.point3",
         "membership.preview.explore",
         "membership.preview.plans",
-        "membership.preview.retention"
+        "membership.preview.retention",
+        "membership.preview.freeTitle",
+        "membership.preview.freeWorkouts",
+        "membership.preview.freeTracking",
+        "membership.preview.exampleLabel",
+        "membership.preview.example1",
+        "membership.preview.example2",
+        "membership.preview.example3",
+        "membership.preview.freeStep",
+        "membership.preview.premiumStep"
       ]
     },
     "membership.active": {
@@ -296,7 +329,11 @@
       "fields": [
         "membership.active.title",
         "membership.active.description",
-        "membership.manage.button"
+        "membership.manage.button",
+        "membership.active.benefit1",
+        "membership.active.benefit2",
+        "membership.active.benefit3",
+        "membership.active.benefit4"
       ]
     },
     "membership.utilities": {
@@ -304,7 +341,8 @@
       "label": "会员中心 · 购买与账单入口",
       "fields": [
         "membership.utility.restore",
-        "membership.utility.history"
+        "membership.utility.history",
+        "membership.utility.already"
       ]
     },
     "paywall": {
@@ -322,7 +360,16 @@
         "paywall.coachBenefit",
         "paywall.trainingBenefit",
         "paywall.exampleQuestion",
-        "paywall.exampleAnswer"
+        "paywall.exampleAnswer",
+        "paywall.exampleLabel",
+        "paywall.planExampleLabel",
+        "paywall.planExample1",
+        "paywall.planExample2",
+        "paywall.planExample3",
+        "paywall.insightExampleLabel",
+        "paywall.insightExampleBody",
+        "paywall.separateBilling",
+        "paywall.planDescription"
       ]
     },
     "actions.chat": {
@@ -343,7 +390,10 @@
       "id": "actions.allowance",
       "label": "用量 · 升级入口",
       "fields": [
-        "actions.allowance.upgrade"
+        "actions.allowance.upgrade",
+        "actions.allowance.free",
+        "actions.allowance.member",
+        "actions.allowance.topup"
       ]
     },
     "actions.credits": {
@@ -352,7 +402,9 @@
       "fields": [
         "actions.credits.title",
         "actions.credits.description",
-        "actions.credits.buy"
+        "actions.credits.buy",
+        "actions.credits.usage",
+        "actions.credits.terms"
       ]
     },
     "actions.result": {
@@ -378,7 +430,8 @@
       "label": "计划 · 激活入口",
       "fields": [
         "actions.plan.activate",
-        "actions.plan.access"
+        "actions.plan.access",
+        "actions.plan.saved"
       ]
     },
     "actions.challenge": {
@@ -1495,21 +1548,21 @@
     {
       "key": "membership.preview.point1",
       "group": "membership",
-      "label": "价值点 1 · 计划",
+      "label": "其他新增权益 · 内容",
       "max": 160,
       "tokens": []
     },
     {
       "key": "membership.preview.point2",
       "group": "membership",
-      "label": "价值点 2 · 训练",
+      "label": "计划激活（旧版本字段）",
       "max": 160,
       "tokens": []
     },
     {
       "key": "membership.preview.point3",
       "group": "membership",
-      "label": "价值点 3 · 分析",
+      "label": "其他新增权益 · 分析",
       "max": 160,
       "tokens": []
     },
@@ -1523,7 +1576,7 @@
     {
       "key": "membership.preview.plans",
       "group": "membership",
-      "label": "直接查看方案 · 次入口",
+      "label": "查看订阅价格",
       "max": 160,
       "tokens": []
     },
@@ -1588,7 +1641,9 @@
       "group": "paywall",
       "label": "其他会员权益 · 简述",
       "max": 600,
-      "tokens": []
+      "tokens": [
+        "{benefits}"
+      ]
     },
     {
       "key": "paywall.guideTitle",
@@ -2036,6 +2091,424 @@
       "label": "周报 · 引导说明",
       "max": 600,
       "tokens": []
+    },
+    {
+      "key": "profile.card.description",
+      "group": "profile",
+      "label": "权益卡 · 价值主张",
+      "max": 120,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.0.detail",
+      "group": "premium-workouts",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.1.detail",
+      "group": "premium-plans",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.2.detail",
+      "group": "premium-insights",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.3.detail",
+      "group": "premium-coach",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.0.0",
+      "group": "premium-intro",
+      "label": "课程、路线与动作 · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.0.1",
+      "group": "premium-intro",
+      "label": "课程、路线与动作 · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.0.2",
+      "group": "premium-intro",
+      "label": "课程、路线与动作 · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.1.0",
+      "group": "premium-intro",
+      "label": "Training Programs · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.1.1",
+      "group": "premium-intro",
+      "label": "Training Programs · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.1.2",
+      "group": "premium-intro",
+      "label": "Training Programs · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.2.0",
+      "group": "premium-intro",
+      "label": "Dynamic Plan · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.2.1",
+      "group": "premium-intro",
+      "label": "Dynamic Plan · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.2.2",
+      "group": "premium-intro",
+      "label": "Dynamic Plan · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.3.0",
+      "group": "premium-intro",
+      "label": "AI 分析 · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.3.1",
+      "group": "premium-intro",
+      "label": "AI 分析 · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.3.2",
+      "group": "premium-intro",
+      "label": "AI 分析 · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.4.0",
+      "group": "premium-intro",
+      "label": "AI Coach · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.4.1",
+      "group": "premium-intro",
+      "label": "AI Coach · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.4.2",
+      "group": "premium-intro",
+      "label": "AI Coach · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.5.0",
+      "group": "premium-intro",
+      "label": "限时挑战 · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.5.1",
+      "group": "premium-intro",
+      "label": "限时挑战 · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.5.2",
+      "group": "premium-intro",
+      "label": "限时挑战 · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.exampleLabel",
+      "group": "paywall",
+      "label": "AI Coach 示例 · 标签",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExampleLabel",
+      "group": "paywall",
+      "label": "计划示例 · 标签",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExample1",
+      "group": "paywall",
+      "label": "计划示例 · 周一",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExample2",
+      "group": "paywall",
+      "label": "计划示例 · 周三",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExample3",
+      "group": "paywall",
+      "label": "计划示例 · 周五",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.insightExampleLabel",
+      "group": "paywall",
+      "label": "分析示例 · 标签",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.insightExampleBody",
+      "group": "paywall",
+      "label": "分析示例 · 内容",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.separateBilling",
+      "group": "paywall",
+      "label": "单独计费说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.plan.saved",
+      "group": "actions",
+      "label": "计划 · 保存提示",
+      "max": 120,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.credits.usage",
+      "group": "actions",
+      "label": "额度包 · 消耗说明",
+      "max": 300,
+      "tokens": [
+        "{cost}"
+      ],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.credits.terms",
+      "group": "actions",
+      "label": "额度包 · 有效期说明",
+      "max": 160,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.allowance.free",
+      "group": "actions",
+      "label": "用量卡 · 免费账户说明",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.allowance.member",
+      "group": "actions",
+      "label": "用量卡 · 会员说明",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.allowance.topup",
+      "group": "actions",
+      "label": "额度耗尽 · 加购入口",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeTitle",
+      "group": "membership",
+      "label": "免费权益 · 标题",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeWorkouts",
+      "group": "membership",
+      "label": "免费权益 · 内容",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeTracking",
+      "group": "membership",
+      "label": "免费权益 · 运动记录",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planDescription",
+      "group": "paywall",
+      "label": "套餐步骤 · 权益说明",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.exampleLabel",
+      "group": "membership",
+      "label": "计划示意 · 示例标识",
+      "max": 40,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.example1",
+      "group": "membership",
+      "label": "计划示意 · 周一训练",
+      "max": 32,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.example2",
+      "group": "membership",
+      "label": "计划示意 · 周三训练",
+      "max": 32,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.example3",
+      "group": "membership",
+      "label": "计划示意 · 周五训练",
+      "max": 32,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeStep",
+      "group": "membership",
+      "label": "计划示意 · 免费阶段",
+      "max": 50,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.premiumStep",
+      "group": "membership",
+      "label": "计划示意 · 会员阶段",
+      "max": 60,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit1",
+      "group": "membership",
+      "label": "已包含 · 训练内容",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit2",
+      "group": "membership",
+      "label": "已包含 · 计划激活",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit3",
+      "group": "membership",
+      "label": "已包含 · 训练分析",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit4",
+      "group": "membership",
+      "label": "已包含 · 对话额度",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.utility.already",
+      "group": "membership",
+      "label": "恢复购买 · 适用场景",
+      "max": 60,
+      "tokens": [],
+      "minRegistryVersion": 2
     }
   ],
   "defaults": {
@@ -2044,15 +2517,15 @@
     "wall.base.contentCta": "Unlock with Premium",
     "wall.base.contentTrialCta": "Start {days}-day free trial",
     "wall.placements.course.label": "YOUR SELECTED WORKOUT",
-    "wall.placements.course.continueLabel": "Start this workout",
+    "wall.placements.course.continueLabel": "Back to workout",
     "wall.placements.course.cancelLabel": "Back to workout",
     "wall.placements.course.success": "Your selected workout is ready.",
     "wall.placements.world_tour.label": "YOUR SELECTED ROUTE",
-    "wall.placements.world_tour.continueLabel": "Start this route",
+    "wall.placements.world_tour.continueLabel": "Back to route",
     "wall.placements.world_tour.cancelLabel": "Back to routes",
     "wall.placements.world_tour.success": "Your selected route is ready.",
     "wall.placements.training_program.label": "YOUR SELECTED PROGRAM",
-    "wall.placements.training_program.continueLabel": "Continue this Program",
+    "wall.placements.training_program.continueLabel": "Open selected workout",
     "wall.placements.training_program.cancelLabel": "Back to Program",
     "wall.placements.training_program.success": "Your Program and selected session are ready.",
     "wall.placements.movement.label": "YOUR SELECTED MOVEMENT GROUP",
@@ -2074,7 +2547,7 @@
     "wall.placements.ai_allowance.label": "YOUR CONVERSATION",
     "wall.placements.ai_allowance.continueLabel": "Send saved message",
     "wall.placements.ai_allowance.cancelLabel": "Back to conversation",
-    "wall.placements.ai_allowance.success": "Your new conversation allowance is ready. Your message is saved.",
+    "wall.placements.ai_allowance.success": "Your membership is active. Your saved message is ready when you are.",
     "wall.placements.limited_challenge.label": "YOUR SELECTED CHALLENGE",
     "wall.placements.limited_challenge.continueLabel": "Join this challenge",
     "wall.placements.limited_challenge.cancelLabel": "Back to challenge",
@@ -2082,45 +2555,45 @@
     "wall.placements.membership.label": "YOUR MEMBERSHIP",
     "wall.placements.membership.continueLabel": "View membership & usage",
     "wall.placements.membership.cancelLabel": "Back to benefits",
-    "wall.placements.membership.success": "Your Premium membership and finite AI Coach allowance are ready.",
-    "wall.entryStories.course.title": "Start this workout\nwith Premium.",
-    "wall.entryStories.course.description": "Follow the session you chose, with more workouts to come back to.",
-    "wall.entryStories.course.unlock": "This workout + the Premium training library",
+    "wall.placements.membership.success": "Welcome to Premium. Find your next workout, follow your plan, or explore your insights.",
+    "wall.entryStories.course.title": "Make this workout\npart of your routine.",
+    "wall.entryStories.course.description": "Train with the session you chose, with more Premium courses, routes and Programs to come back to.",
+    "wall.entryStories.course.unlock": "This workout is included with Premium",
     "wall.entryStories.course.category": "YOUR SELECTED WORKOUT",
-    "wall.entryStories.course.next": "Your selected workout is ready to start after subscribing.",
-    "wall.entryStories.world_tour.title": "Take this route\nwith Premium.",
-    "wall.entryStories.world_tour.description": "Make this session a change of scenery. Keep exploring on your next one.",
+    "wall.entryStories.course.next": "Your selected workout stays here. Subscribe, then return when you’re ready to train.",
+    "wall.entryStories.world_tour.title": "Take your training\nsomewhere new.",
+    "wall.entryStories.world_tour.description": "Unlock your selected route and explore more Premium World Tours when you want a change of scenery.",
     "wall.entryStories.world_tour.unlock": "This route + more Premium destinations",
     "wall.entryStories.world_tour.category": "YOUR SELECTED ROUTE",
     "wall.entryStories.world_tour.next": "Return to this route after subscribing.",
-    "wall.entryStories.training_program.title": "Follow the whole\nProgram.",
-    "wall.entryStories.training_program.description": "Go from one workout to a routine, with the full sequence ready to follow.",
+    "wall.entryStories.training_program.title": "Your next sessions,\nalready laid out.",
+    "wall.entryStories.training_program.description": "Unlock every workout in this Program and follow the series one session at a time.",
     "wall.entryStories.training_program.unlock": "Every workout in this Program",
     "wall.entryStories.training_program.category": "YOUR SELECTED PROGRAM",
     "wall.entryStories.training_program.next": "Your Program and selected session stay ready for you.",
-    "wall.entryStories.movement.title": "Make time\nfor this workout.",
-    "wall.entryStories.movement.description": "Follow your selected movements, then find more ways to build your routine.",
+    "wall.entryStories.movement.title": "Follow this workout\nyour way.",
+    "wall.entryStories.movement.description": "Unlock this movement group. Follow the video or choose vision mode when supported by the workout and your phone.",
     "wall.entryStories.movement.unlock": "This movement group + Premium workouts",
     "wall.entryStories.movement.category": "YOUR SELECTED WORKOUT",
     "wall.entryStories.movement.next": "Return to preparation and choose how to train.",
-    "wall.entryStories.dynamic_plan.title": "Put your plan\ninto action.",
-    "wall.entryStories.dynamic_plan.description": "You have a routine in mind. Premium lets you activate it and follow through.",
-    "wall.entryStories.dynamic_plan.unlock": "Activate the plan you already previewed",
+    "wall.entryStories.dynamic_plan.title": "Put your plan\ninto practice.",
+    "wall.entryStories.dynamic_plan.description": "Activate the weekly schedule you previewed and follow its training stages with Premium.",
+    "wall.entryStories.dynamic_plan.unlock": "Plan activation doesn’t use chat allowance",
     "wall.entryStories.dynamic_plan.category": "YOUR SAVED PLAN",
     "wall.entryStories.dynamic_plan.next": "Your saved plan stays here, ready to activate.",
-    "wall.entryStories.workout_insight.title": "Make sense of\nthis session.",
-    "wall.entryStories.workout_insight.description": "Go beyond the numbers with an AI perspective on your workout and effort.",
-    "wall.entryStories.workout_insight.unlock": "An insight for this completed workout",
+    "wall.entryStories.workout_insight.title": "Understand this\nworkout.",
+    "wall.entryStories.workout_insight.description": "Bring your training data and effort rating together in an AI recap, and reflect on your next session.",
+    "wall.entryStories.workout_insight.unlock": "Workout & weekly AI insights included",
     "wall.entryStories.workout_insight.category": "YOUR WORKOUT",
     "wall.entryStories.workout_insight.next": "Return to this workout to generate its insight.",
-    "wall.entryStories.weekly_insight.title": "See what your\nweek adds up to.",
-    "wall.entryStories.weekly_insight.description": "Understand your workout mix and consistency as you plan what comes next.",
+    "wall.entryStories.weekly_insight.title": "See how your week\ncame together.",
+    "wall.entryStories.weekly_insight.description": "Look beyond totals with an AI recap of your training mix and activity across the week.",
     "wall.entryStories.weekly_insight.unlock": "Your weekly AI insight",
     "wall.entryStories.weekly_insight.category": "YOUR WEEKLY REPORT",
     "wall.entryStories.weekly_insight.next": "This report and its basic stats stay available.",
     "wall.entryStories.ai_allowance.title": "Keep this\nconversation going.",
-    "wall.entryStories.ai_allowance.description": "More support for your goals, from your next question to your next workout.",
-    "wall.entryStories.ai_allowance.unlock": "New, finite AI Coach conversation allowance",
+    "wall.entryStories.ai_allowance.description": "Premium includes a member AI Coach allowance for workout questions and planning, alongside Premium training and insights.",
+    "wall.entryStories.ai_allowance.unlock": "Member AI Coach conversation allowance",
     "wall.entryStories.ai_allowance.category": "YOUR CONVERSATION",
     "wall.entryStories.ai_allowance.next": "Your message is saved. You decide when to send it.",
     "wall.entryStories.limited_challenge.title": "Make this challenge\nyour next step.",
@@ -2129,81 +2602,81 @@
     "wall.entryStories.limited_challenge.category": "YOUR SELECTED CHALLENGE",
     "wall.entryStories.limited_challenge.next": "Return to confirm your entry while registration is open.",
     "wall.entryStories.membership.title": "Choose your\nPremium plan.",
-    "wall.entryStories.membership.description": "One membership for your training. Choose the billing period that fits you.",
+    "wall.entryStories.membership.description": "Premium workouts, Dynamic Plan activation, AI insights and member conversation allowance. Monthly and yearly plans include the same benefits.",
     "wall.entryStories.membership.unlock": "Premium training, plans & insights",
     "wall.entryStories.membership.category": "YOUR MEMBERSHIP",
     "wall.entryStories.membership.next": "One membership across your Premium training features.",
-    "wall.education.title": "Make your next\nworkout a habit.",
-    "wall.education.description": "More ways to move. A routine to follow. Support along the way.",
+    "wall.education.title": "More ways to train.\nA plan to follow.",
+    "wall.education.description": "Build on your free SunnyFit experience with Premium workouts, training plans and personal AI insights.",
     "wall.education.stories.0.label": "Workouts",
-    "wall.education.stories.0.title": "Find a workout you want to come back to.",
-    "wall.education.stories.0.description": "Explore Premium courses, real-world routes, movement workouts and complete Training Programs. Choose a session for today, or a sequence to keep following.",
-    "wall.education.stories.0.examples.0": "Trainer-led courses",
-    "wall.education.stories.0.examples.1": "World Tours",
-    "wall.education.stories.0.examples.2": "Movements",
-    "wall.education.stories.0.examples.3": "Training Programs",
+    "wall.education.stories.0.title": "Find your next workout.",
+    "wall.education.stories.0.description": "Add Premium courses, World Tours and Training Programs to your free selection. Choose a session or follow a complete series.",
+    "wall.education.stories.0.examples.0": "Premium courses",
+    "wall.education.stories.0.examples.1": "Premium World Tours",
+    "wall.education.stories.0.examples.2": "Movement workouts",
+    "wall.education.stories.0.examples.3": "Complete Programs",
     "wall.education.stories.1.label": "Plans",
     "wall.education.stories.1.title": "Know what to do next.",
-    "wall.education.stories.1.description": "Activate the Dynamic Plan you previewed with AI Coach, then follow your upcoming sessions together.",
-    "wall.education.stories.1.examples.0": "Preview your routine",
-    "wall.education.stories.1.examples.1": "Activate your plan",
-    "wall.education.stories.1.examples.2": "Follow your next session",
+    "wall.education.stories.1.description": "Preview a plan with AI Coach around your goals and schedule. Premium lets you activate it and follow the training stages.",
+    "wall.education.stories.1.examples.0": "Preview before activating",
+    "wall.education.stories.1.examples.1": "A weekly schedule",
+    "wall.education.stories.1.examples.2": "Training stages to follow",
     "wall.education.stories.2.label": "Insights",
-    "wall.education.stories.2.title": "Understand more than the numbers.",
-    "wall.education.stories.2.description": "Add an AI perspective to a completed workout or your weekly report. Reflect on your effort, workout mix and consistency.",
+    "wall.education.stories.2.title": "Understand your effort.",
+    "wall.education.stories.2.description": "An AI recap brings your workout data and effort rating together. Weekly insights help you reflect on your training over time.",
     "wall.education.stories.2.examples.0": "After a workout",
     "wall.education.stories.2.examples.1": "Across your week",
     "wall.education.stories.3.label": "AI Coach",
-    "wall.education.stories.3.title": "Talk through your next step.",
-    "wall.education.stories.3.description": "Discuss your goals, available time and equipment with AI Coach as you shape your routine.",
+    "wall.education.stories.3.title": "Work through it with AI Coach.",
+    "wall.education.stories.3.description": "Use your member conversation allowance to discuss workouts and shape a plan around your time and equipment.",
     "wall.education.stories.3.examples.0": "Explore workout ideas",
     "wall.education.stories.3.examples.1": "Discuss your plan",
     "wall.education.questions.0.title": "What does Premium include?",
-    "wall.education.questions.0.answer": "Your subscription includes Premium courses, World Tours, Training Programs, Dynamic Plan activation, AI insights and eligible challenges while your membership is active.",
+    "wall.education.questions.0.answer": "Premium workouts, World Tours, complete Training Programs, Dynamic Plan activation, workout and weekly AI insights, member AI Coach allowance and eligible challenges. Access lasts while your membership is active.",
     "wall.education.questions.1.title": "Is AI Coach unlimited?",
-    "wall.education.questions.1.answer": "Free and Premium both have a finite conversation allowance. Your first Premium subscription gives you fresh allowance immediately. Your training features remain available if that allowance is used up.",
+    "wall.education.questions.1.answer": "Premium includes a conversation allowance. Your balance is shown in Membership & Usage. Extra Credits are available separately. Workouts, plan activation and AI insights do not use your chat allowance.",
     "wall.education.questions.2.title": "Can I turn off renewal?",
     "wall.education.questions.2.answer": "You can turn off auto-renewal in subscription settings. Your Premium access continues until the end of your current paid period.",
     "profile.card.title": "Membership & Usage",
-    "profile.status.free": "Free account",
-    "profile.status.active": "Premium active",
+    "profile.status.free": "Free",
+    "profile.status.active": "Premium",
     "profile.status.canceled": "Premium · Renewal off",
     "profile.status.expired": "Premium expired",
     "profile.card.freePrompt": "Explore Premium",
     "profile.card.expiredPrompt": "Your account is now Free",
     "profile.allowance.low": "AI Coach · Running low",
-    "profile.allowance.label": "AI Coach allowance",
-    "profile.allowance.emptyFree": "Allowance used up · Explore Premium",
+    "profile.allowance.label": "AI Coach",
+    "profile.allowance.emptyFree": "Included conversations used up",
     "profile.allowance.emptyMember": "Allowance used up · Training stays available",
     "profile.allowance.emptyExpired": "Allowance used up · Free workouts available",
     "profile.allowance.unknown": "Open to check your allowance.",
     "membership.preview.eyebrow": "SUNNYFIT PREMIUM",
-    "membership.preview.title": "Find your next\nreason to move.",
-    "membership.preview.expiredTitle": "Find your\ntraining rhythm again.",
-    "membership.preview.description": "Build a routine that fits your day.",
-    "membership.preview.point1": "A plan for your goals",
-    "membership.preview.point2": "More ways to train",
-    "membership.preview.point3": "Insights that guide you",
+    "membership.preview.title": "A plan you can put into practice.",
+    "membership.preview.expiredTitle": "Find your next step.",
+    "membership.preview.description": "Build a plan in AI Coach. Follow it with Premium.",
+    "membership.preview.point1": "Premium workouts, routes & Programs",
+    "membership.preview.point2": "Activate your Dynamic Plan",
+    "membership.preview.point3": "Workout & weekly AI insights",
     "membership.preview.explore": "Explore Premium",
-    "membership.preview.plans": "View plans",
+    "membership.preview.plans": "View pricing",
     "membership.preview.retention": "Your workout history and saved conversations are still here.",
-    "membership.active.title": "Ready for your next move",
-    "membership.active.description": "Your training benefits are included with Premium.",
+    "membership.active.title": "Included with Premium",
+    "membership.active.description": "Your subscription includes these training benefits.",
     "membership.utility.restore": "Restore purchases",
     "membership.utility.history": "Billing history",
     "membership.manage.button": "Manage subscription",
-    "paywall.learn": "See what Premium includes",
-    "paywall.alsoLabel": "ALSO IN PREMIUM",
-    "paywall.alsoDescription": "Workouts · Personal plans · AI insights",
+    "paywall.learn": "Explore Premium benefits",
+    "paywall.alsoLabel": "ONE MEMBERSHIP, MORE POSSIBILITIES",
+    "paywall.alsoDescription": "{benefits} & more",
     "paywall.guideTitle": "Explore SunnyFit Premium",
-    "paywall.guideEyebrow": "ONE SUNNYFIT PREMIUM MEMBERSHIP",
+    "paywall.guideEyebrow": "SUNNYFIT PREMIUM",
     "paywall.comparisonTitle": "What changes with Premium?",
-    "paywall.faqTitle": "Before you decide",
+    "paywall.faqTitle": "Common questions",
     "paywall.plansTitle": "Choose your plan",
-    "paywall.coachBenefit": "Fresh AI Coach allowance",
+    "paywall.coachBenefit": "Member AI Coach allowance",
     "paywall.trainingBenefit": "Premium workouts, plans & insights",
-    "paywall.exampleQuestion": "How can I fit a workout into a busy day?",
-    "paywall.exampleAnswer": "Let’s start with your time and equipment.",
+    "paywall.exampleQuestion": "I have 15 minutes, three days a week. Can you help me build a routine?",
+    "paywall.exampleAnswer": "Here’s a three-day plan to preview: strength on Monday, cardio on Wednesday and mobility on Friday. We can adjust the days together before you activate it.",
     "actions.chat.upgrade": "Upgrade",
     "actions.chat.upgradeSend": "Upgrade to send",
     "actions.chat.add": "Add credits",
@@ -2211,17 +2684,17 @@
     "actions.chat.check": "Retry",
     "actions.chat.low": "{percent}% left",
     "actions.chat.empty": "Allowance used up",
-    "actions.allowance.upgrade": "Get Premium allowance",
+    "actions.allowance.upgrade": "Get more with Premium",
     "actions.credits.title": "More room for\nyour next question.",
     "actions.credits.description": "Add AI Coach Credits to keep this conversation going.",
     "actions.credits.buy": "Buy for {price}",
     "actions.result.title": "AI Coach Insight",
-    "actions.result.description": "See your ride and your effort together, with a personal workout recap.",
-    "actions.result.cta": "Get workout analysis",
+    "actions.result.description": "See how your workout data and effort rating fit together, with an AI recap of this session.",
+    "actions.result.cta": "Explore workout analysis",
     "actions.weekly.cta": "Explore Premium",
     "actions.plan.activate": "Activate Plan",
-    "actions.plan.access": "Premium required to activate",
-    "actions.challenge.description": "Included with Premium. Subscribe, then join this event.",
+    "actions.plan.access": "Activate with Premium",
+    "actions.challenge.description": "Make this challenge part of your routine with Premium.",
     "actions.challenge.cta": "Join with Premium",
     "wall.placements.course.cta": "",
     "wall.placements.course.trialCta": "",
@@ -2250,7 +2723,59 @@
     "wall.placements.membership.cta": "",
     "wall.placements.membership.trialCta": "",
     "actions.chat.resendMessage": "Resend message",
-    "actions.weekly.title": "See the story behind your training.",
-    "actions.weekly.description": "Go beyond your weekly totals with an AI perspective on your workout mix and consistency."
+    "actions.weekly.title": "What’s your week telling you?",
+    "actions.weekly.description": "Find the patterns behind your sessions with a personal AI perspective.",
+    "profile.card.description": "Your membership and AI Coach allowance, in one place.",
+    "wall.education.stories.0.detail": "Free workouts remain available. Eligible Premium challenges are included while registration is open; event rules apply.",
+    "wall.education.stories.1.detail": "Generate and preview your plan in the conversation. Premium is required to activate it. Activation does not use chat allowance.",
+    "wall.education.stories.2.detail": "Your records and basic stats stay free. Workout insights appear after you save your effort rating. AI insights do not use chat allowance.",
+    "wall.education.stories.3.detail": "Free includes a conversation allowance too. Premium includes member allowance; extra Credits are separate. View your current balance in Membership & Usage.",
+    "wall.education.comparison.0.0": "Courses, routes & movements",
+    "wall.education.comparison.0.1": "Free selection",
+    "wall.education.comparison.0.2": "Free + Premium",
+    "wall.education.comparison.1.0": "Training Programs",
+    "wall.education.comparison.1.1": "Free selection",
+    "wall.education.comparison.1.2": "Free + Premium",
+    "wall.education.comparison.2.0": "Dynamic Plan",
+    "wall.education.comparison.2.1": "Preview",
+    "wall.education.comparison.2.2": "Preview + activate",
+    "wall.education.comparison.3.0": "AI insights",
+    "wall.education.comparison.3.1": "Basic stats",
+    "wall.education.comparison.3.2": "Workout + weekly insights",
+    "wall.education.comparison.4.0": "AI Coach",
+    "wall.education.comparison.4.1": "Free allowance",
+    "wall.education.comparison.4.2": "Member allowance",
+    "wall.education.comparison.5.0": "Limited Challenges",
+    "wall.education.comparison.5.1": "—",
+    "wall.education.comparison.5.2": "Eligible events",
+    "paywall.exampleLabel": "Example conversation",
+    "paywall.planExampleLabel": "Example week · 3 days, 15 min each",
+    "paywall.planExample1": "Strength",
+    "paywall.planExample2": "Cardio",
+    "paywall.planExample3": "Mobility",
+    "paywall.insightExampleLabel": "Example workout recap",
+    "paywall.insightExampleBody": "You rated this session 4 out of 10. Keep that effort rating alongside your workout data to reflect on how the session felt and discuss your next workout with AI Coach.",
+    "paywall.separateBilling": "AI Coach has an allowance. Extra AI Credits and Star Content are separate from your subscription.",
+    "actions.plan.saved": "Your preview stays saved.",
+    "actions.credits.usage": "Each message uses {cost} Credits at the current rate. Credits can also be used for other AI Coach services.",
+    "actions.credits.terms": "One-time purchase. Credits don’t expire.",
+    "actions.allowance.free": "Conversations",
+    "actions.allowance.member": "Conversations",
+    "actions.allowance.topup": "Add AI Coach Credits",
+    "membership.preview.freeTitle": "Included with Free",
+    "membership.preview.freeWorkouts": "Free workouts",
+    "membership.preview.freeTracking": "Workout history & stats",
+    "paywall.planDescription": "Monthly and yearly plans include the same Premium benefits.",
+    "membership.preview.exampleLabel": "PLAN EXAMPLE",
+    "membership.preview.example1": "Strength",
+    "membership.preview.example2": "Mobility",
+    "membership.preview.example3": "Cardio",
+    "membership.preview.freeStep": "Free · Preview",
+    "membership.preview.premiumStep": "Premium · Activate & follow",
+    "membership.active.benefit1": "Premium workouts, World Tours & Programs",
+    "membership.active.benefit2": "Dynamic Plan activation",
+    "membership.active.benefit3": "Workout & weekly AI insights",
+    "membership.active.benefit4": "Member AI Coach allowance",
+    "membership.utility.already": "Already subscribed?"
   }
 }

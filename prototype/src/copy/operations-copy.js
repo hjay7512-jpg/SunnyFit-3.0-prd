@@ -3,6 +3,7 @@ import registry from '../../config/collaboration-registry.json'
 import {defaults,renderCopy,wallCopyConfiguration} from './copy-model.cjs'
 import {locationsForBlock,locationForFields} from './copy-locations.cjs'
 import {validSession,capabilityRejected} from './copy-auth.cjs'
+import {fieldSupported,supportedValues} from './copy-compatibility.cjs'
 
 let initialization,endpoint='',token='',timer,pendingOperation,pendingComment,recovery,authFlight,authSequence=0,copyWriteSequence=0,selectionSequence=0,draftBase={},syncFailures=0
 const credentialKey='sunnyfit-review-credential:'+process.env.BASE_URL
@@ -17,6 +18,7 @@ export const copyDirty=()=>!!copyState.selected&&copyState.fields.some(field=>co
 export const hasPendingChanges=()=>copyDirty()||!!copyState.commentDraft.trim()
 export const canEdit=id=>validSession(copyState.session)&&copyState.session.role==='editor'&&copyState.session.scopes.some(scope=>scope==='*'||scope===id)
 export const canReview=id=>Object.prototype.hasOwnProperty.call(registry.blocks,id)
+export const copyFieldSupported=field=>fieldSupported(field,copyState.serverRegistryVersion)
 export {registry}
 function captureCredential(){
   const url=new URL(location.href),hash=url.hash.split('?'),query=new URLSearchParams(hash[1]||''),previous=token;token=query.get('reviewKey')||url.searchParams.get('reviewKey')||''
@@ -79,7 +81,7 @@ async function refresh(){
   if(sequence!==copyWriteSequence||copyState.busy)return
   if(result.schemaVersion!==1||!result.values||!result.revisions)throw Error('共享文案版本不兼容。')
   const values={...defaults.values};for(const [key,value]of Object.entries(result.values))if(Object.prototype.hasOwnProperty.call(values,key)&&typeof value==='string')values[key]=value
-  const selected=copyState.selected,dirty=copyDirty();copyState.saved=values;copyState.revisions=result.revisions
+  const selected=copyState.selected,dirty=copyDirty();Vue.set(copyState,'serverRegistryVersion',result.registryVersion||1);copyState.saved=values;copyState.revisions=result.revisions
   copyState.values={...values,...(dirty?copyState.draft:{})};copyState.connected=true;copyState.unavailable=false;copyState.snapshotReady=true;copyState.lastSyncedAt=Date.now()
   if(selected&&!dirty)resetDraft()
 }
@@ -114,7 +116,7 @@ export function previewCopyLocation(id,kind){
   copyState.preview={...location,kind:blockId.slice(6)}
 }
 export function exitCopyPreview(){copyState.preview=null}
-export function editCopy(id,value){if(!copyState.selected||!canEdit(copyState.selected.id)||!copyState.fields.some(field=>field.key===id))return;Vue.set(copyState.draft,id,value);Vue.set(copyState.values,id,value);copyState.status='';pendingOperation=null;validateDraft()}
+export function editCopy(id,value){if(!copyState.selected||!canEdit(copyState.selected.id)||!copyState.fields.some(field=>field.key===id&&copyFieldSupported(field)))return;Vue.set(copyState.draft,id,value);Vue.set(copyState.values,id,value);copyState.status='';pendingOperation=null;validateDraft()}
 function validateDraft(){const errors={};for(const field of copyState.fields){const value=copyState.draft[field.key];if(!value.trim()&&field.inherit)continue;if(!value.trim())errors[field.key]='请填写文案。';else if([...value].length>field.max)errors[field.key]='最多 '+field.max+' 个字符。';else{const tokens=[...new Set(value.match(/\{[a-zA-Z]+\}/g)||[])];if(tokens.some(t=>!field.tokens.includes(t))||field.tokens.some(t=>!tokens.includes(t)))errors[field.key]='请保留变量 '+field.tokens.join('、')+'。'}}copyState.errors=errors;return !Object.keys(errors).length}
 export function discardCopy(){copyState.values={...copyState.saved};resetDraft();copyState.status=''}
 export async function loadBlock(reset=true){
@@ -133,7 +135,7 @@ export async function saveCopy(){
   try{sessionStorage.setItem(actorKey,copyState.actor)}catch(_){}
   const selected=copyState.selected;copyState.busy=true;copyWriteSequence++
   try{
-    pendingOperation=pendingOperation||crypto.randomUUID();const result=await request('/blocks/'+selected.id,{values:copyState.draft,expectedRevision:selected.revision,operationId:pendingOperation,actor:copyState.actor,context:selected.context})
+    pendingOperation=pendingOperation||crypto.randomUUID();const result=await request('/blocks/'+selected.id,{values:supportedValues(copyState.draft,copyState.fields,copyState.serverRegistryVersion),expectedRevision:selected.revision,operationId:pendingOperation,actor:copyState.actor,context:selected.context})
     copyState.saved={...copyState.saved,...result.values};copyState.values={...copyState.saved};Vue.set(copyState.revisions,selected.id,result.revision);resetDraft();copyState.status='区块已保存 · v'+result.revision;loadBlock(false).catch(()=>{});return result
   }catch(error){copyState.status=error.transient?'保存结果尚未确认，草稿已保留；再次保存会核对同一次提交。':error.message;copyState.conflict=error.status===409;return null}finally{copyState.busy=false}
 }

@@ -687,7 +687,9 @@
             "$copy": "wall.education.stories.0.examples.3"
           }
         ],
-        "detail": "Eligible Limited Challenges give you another reason to show up. Registration dates and event rules apply."
+        "detail": {
+          "$copy": "wall.education.stories.0.detail"
+        }
       },
       {
         "id": "plans",
@@ -713,7 +715,9 @@
             "$copy": "wall.education.stories.1.examples.2"
           }
         ],
-        "detail": "Plan activation is a Premium feature. It does not use your conversation allowance."
+        "detail": {
+          "$copy": "wall.education.stories.1.detail"
+        }
       },
       {
         "id": "insights",
@@ -736,7 +740,9 @@
             "$copy": "wall.education.stories.2.examples.1"
           }
         ],
-        "detail": "Your workout records and basic weekly stats remain free. AI insights do not use conversation allowance."
+        "detail": {
+          "$copy": "wall.education.stories.2.detail"
+        }
       },
       {
         "id": "coach",
@@ -759,39 +765,77 @@
             "$copy": "wall.education.stories.3.examples.1"
           }
         ],
-        "detail": "Premium includes a finite conversation allowance. Your first subscription adds fresh allowance immediately; it is not unlimited chat."
+        "detail": {
+          "$copy": "wall.education.stories.3.detail"
+        }
       }
     ],
     "comparison": [
       [
-        "Courses, routes & movements",
-        "Free selection",
-        "Free + Premium"
+        {
+          "$copy": "wall.education.comparison.0.0"
+        },
+        {
+          "$copy": "wall.education.comparison.0.1"
+        },
+        {
+          "$copy": "wall.education.comparison.0.2"
+        }
       ],
       [
-        "Training Programs",
-        "Free selection",
-        "Free + Premium"
+        {
+          "$copy": "wall.education.comparison.1.0"
+        },
+        {
+          "$copy": "wall.education.comparison.1.1"
+        },
+        {
+          "$copy": "wall.education.comparison.1.2"
+        }
       ],
       [
-        "Dynamic Plan",
-        "Preview",
-        "Preview + activate"
+        {
+          "$copy": "wall.education.comparison.2.0"
+        },
+        {
+          "$copy": "wall.education.comparison.2.1"
+        },
+        {
+          "$copy": "wall.education.comparison.2.2"
+        }
       ],
       [
-        "AI insights",
-        "Basic stats",
-        "Workout + weekly insights"
+        {
+          "$copy": "wall.education.comparison.3.0"
+        },
+        {
+          "$copy": "wall.education.comparison.3.1"
+        },
+        {
+          "$copy": "wall.education.comparison.3.2"
+        }
       ],
       [
-        "AI Coach",
-        "Free allowance",
-        "Member allowance"
+        {
+          "$copy": "wall.education.comparison.4.0"
+        },
+        {
+          "$copy": "wall.education.comparison.4.1"
+        },
+        {
+          "$copy": "wall.education.comparison.4.2"
+        }
       ],
       [
-        "Limited Challenges",
-        "—",
-        "Eligible events"
+        {
+          "$copy": "wall.education.comparison.5.0"
+        },
+        {
+          "$copy": "wall.education.comparison.5.1"
+        },
+        {
+          "$copy": "wall.education.comparison.5.2"
+        }
       ]
     ],
     "questions": [

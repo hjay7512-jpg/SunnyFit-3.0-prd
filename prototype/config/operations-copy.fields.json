@@ -1032,21 +1032,21 @@
     {
       "key": "membership.preview.point1",
       "group": "membership",
-      "label": "价值点 1 · 计划",
+      "label": "其他新增权益 · 内容",
       "max": 160,
       "tokens": []
     },
     {
       "key": "membership.preview.point2",
       "group": "membership",
-      "label": "价值点 2 · 训练",
+      "label": "计划激活（旧版本字段）",
       "max": 160,
       "tokens": []
     },
     {
       "key": "membership.preview.point3",
       "group": "membership",
-      "label": "价值点 3 · 分析",
+      "label": "其他新增权益 · 分析",
       "max": 160,
       "tokens": []
     },
@@ -1060,7 +1060,7 @@
     {
       "key": "membership.preview.plans",
       "group": "membership",
-      "label": "直接查看方案 · 次入口",
+      "label": "查看订阅价格",
       "max": 160,
       "tokens": []
     },
@@ -1125,7 +1125,9 @@
       "group": "paywall",
       "label": "其他会员权益 · 简述",
       "max": 600,
-      "tokens": []
+      "tokens": [
+        "{benefits}"
+      ]
     },
     {
       "key": "paywall.guideTitle",
@@ -1573,6 +1575,424 @@
       "label": "周报 · 引导说明",
       "max": 600,
       "tokens": []
+    },
+    {
+      "key": "profile.card.description",
+      "group": "profile",
+      "label": "权益卡 · 价值主张",
+      "max": 120,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.0.detail",
+      "group": "premium-workouts",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.1.detail",
+      "group": "premium-plans",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.2.detail",
+      "group": "premium-insights",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.stories.3.detail",
+      "group": "premium-coach",
+      "label": "权益边界与使用说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.0.0",
+      "group": "premium-intro",
+      "label": "课程、路线与动作 · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.0.1",
+      "group": "premium-intro",
+      "label": "课程、路线与动作 · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.0.2",
+      "group": "premium-intro",
+      "label": "课程、路线与动作 · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.1.0",
+      "group": "premium-intro",
+      "label": "Training Programs · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.1.1",
+      "group": "premium-intro",
+      "label": "Training Programs · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.1.2",
+      "group": "premium-intro",
+      "label": "Training Programs · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.2.0",
+      "group": "premium-intro",
+      "label": "Dynamic Plan · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.2.1",
+      "group": "premium-intro",
+      "label": "Dynamic Plan · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.2.2",
+      "group": "premium-intro",
+      "label": "Dynamic Plan · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.3.0",
+      "group": "premium-intro",
+      "label": "AI 分析 · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.3.1",
+      "group": "premium-intro",
+      "label": "AI 分析 · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.3.2",
+      "group": "premium-intro",
+      "label": "AI 分析 · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.4.0",
+      "group": "premium-intro",
+      "label": "AI Coach · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.4.1",
+      "group": "premium-intro",
+      "label": "AI Coach · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.4.2",
+      "group": "premium-intro",
+      "label": "AI Coach · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.5.0",
+      "group": "premium-intro",
+      "label": "限时挑战 · 项目名称",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.5.1",
+      "group": "premium-intro",
+      "label": "限时挑战 · Free",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "wall.education.comparison.5.2",
+      "group": "premium-intro",
+      "label": "限时挑战 · Premium",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.exampleLabel",
+      "group": "paywall",
+      "label": "AI Coach 示例 · 标签",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExampleLabel",
+      "group": "paywall",
+      "label": "计划示例 · 标签",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExample1",
+      "group": "paywall",
+      "label": "计划示例 · 周一",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExample2",
+      "group": "paywall",
+      "label": "计划示例 · 周三",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planExample3",
+      "group": "paywall",
+      "label": "计划示例 · 周五",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.insightExampleLabel",
+      "group": "paywall",
+      "label": "分析示例 · 标签",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.insightExampleBody",
+      "group": "paywall",
+      "label": "分析示例 · 内容",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.separateBilling",
+      "group": "paywall",
+      "label": "单独计费说明",
+      "max": 600,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.plan.saved",
+      "group": "actions",
+      "label": "计划 · 保存提示",
+      "max": 120,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.credits.usage",
+      "group": "actions",
+      "label": "额度包 · 消耗说明",
+      "max": 300,
+      "tokens": [
+        "{cost}"
+      ],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.credits.terms",
+      "group": "actions",
+      "label": "额度包 · 有效期说明",
+      "max": 160,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.allowance.free",
+      "group": "actions",
+      "label": "用量卡 · 免费账户说明",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.allowance.member",
+      "group": "actions",
+      "label": "用量卡 · 会员说明",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "actions.allowance.topup",
+      "group": "actions",
+      "label": "额度耗尽 · 加购入口",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeTitle",
+      "group": "membership",
+      "label": "免费权益 · 标题",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeWorkouts",
+      "group": "membership",
+      "label": "免费权益 · 内容",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeTracking",
+      "group": "membership",
+      "label": "免费权益 · 运动记录",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "paywall.planDescription",
+      "group": "paywall",
+      "label": "套餐步骤 · 权益说明",
+      "max": 200,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.exampleLabel",
+      "group": "membership",
+      "label": "计划示意 · 示例标识",
+      "max": 40,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.example1",
+      "group": "membership",
+      "label": "计划示意 · 周一训练",
+      "max": 32,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.example2",
+      "group": "membership",
+      "label": "计划示意 · 周三训练",
+      "max": 32,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.example3",
+      "group": "membership",
+      "label": "计划示意 · 周五训练",
+      "max": 32,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.freeStep",
+      "group": "membership",
+      "label": "计划示意 · 免费阶段",
+      "max": 50,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.preview.premiumStep",
+      "group": "membership",
+      "label": "计划示意 · 会员阶段",
+      "max": 60,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit1",
+      "group": "membership",
+      "label": "已包含 · 训练内容",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit2",
+      "group": "membership",
+      "label": "已包含 · 计划激活",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit3",
+      "group": "membership",
+      "label": "已包含 · 训练分析",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.active.benefit4",
+      "group": "membership",
+      "label": "已包含 · 对话额度",
+      "max": 100,
+      "tokens": [],
+      "minRegistryVersion": 2
+    },
+    {
+      "key": "membership.utility.already",
+      "group": "membership",
+      "label": "恢复购买 · 适用场景",
+      "max": 60,
+      "tokens": [],
+      "minRegistryVersion": 2
     }
   ]
 }
