@@ -15,4 +15,5 @@ Vue.config.productionTip = false
 if (process.env.VUE_APP_DEMO_RUNTIME === 'browser') document.documentElement.classList.add('pages-review-host')
 initializeDemoAiMotion()
 installCopy(Vue)
-initializeCopy().finally(()=>new Vue({ router, store, render: h => h(App) }).$mount('#app'))
+initializeCopy()
+new Vue({ router, store, render: h => h(App) }).$mount('#app')

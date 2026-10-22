@@ -47,6 +47,7 @@
     "test:operations-copy": "node scripts/collaboration-check.cjs",
     "test:collaboration": "node scripts/collaboration-check.cjs",
     "test:collaboration-auth": "node scripts/collaboration-password-check.cjs",
+    "test:collaboration-reliability": "node scripts/collaboration-reliability-check.cjs",
     "check:collaboration": "node scripts/prepare-collaboration.cjs && node --test tests/collaboration.test.cjs"
   },
   "dependencies": {
