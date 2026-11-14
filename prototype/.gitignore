@@ -1,6 +1,7 @@
 node_modules/
 dist/
 runtime/
+output/
 .env.local
 .env.*.local
 *.log
@@ -16,3 +17,13 @@ collaboration-service/.sites-runtime/
 collaboration-service/.vinext/
 collaboration-service/.git/
 collaboration-service/*.tsbuildinfo
+docs/*-validation/
+docs/*-review/
+docs/*-preview/
+docs/*-alignment/
+docs/*-recovery/
+docs/*-references/
+docs/*-source/
+docs/*-previews/
+docs/validation-round-*/
+docs/native-page-diagnostic.png

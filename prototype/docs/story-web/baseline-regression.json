@@ -1,0 +1,26 @@
+{
+  "baseline": "c58bd62",
+  "isolated": true,
+  "productionData": false,
+  "results": [
+    {
+      "script": "test:ai-ball",
+      "currentExit": 1,
+      "baselineExit": 1,
+      "sameFailure": "missing simulation failure checkbox; scripts/ai-ball-check.cjs:92"
+    },
+    {
+      "script": "test:home-ui",
+      "currentExit": 1,
+      "baselineExit": 1,
+      "sameFailure": "display flex versus expected grid; scripts/home-ui-check.cjs:14"
+    },
+    {
+      "script": "test:prototype-flow",
+      "currentExit": 1,
+      "baselineExit": 1,
+      "sameFailure": "Activate Plan button timeout; scripts/prototype-flow-check.cjs:24"
+    }
+  ],
+  "baselineEvidence": "E:/SunnyFit/monetization/.tmp/story-baseline/prototype/baseline-*.log"
+}

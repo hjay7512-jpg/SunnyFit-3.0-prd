@@ -1,0 +1,5 @@
+const fs=require('node:fs'),path=require('node:path')
+const {args,open,seek,root}=require('./story-runtime.cjs')
+const manifest=require('../src/story/scene-manifest.cjs')
+async function run(){const options=args(),dir=path.resolve(root,options.out||'output/story-keyframes');fs.mkdirSync(dir,{recursive:true});const {browser,page,errors}=await open(options);try{const frames=[...manifest.scenes.flatMap(s=>s.keyStates),...manifest.transitions.map((t,i)=>({id:'transition-'+(i+1),time:t.time})),...[0,4,8,12,16,20,24,28,33,38,43,48,54,60,64,67,70,72].map(time=>({id:'sample-'+String(time).padStart(2,'0'),time}))];for(const frame of frames){await seek(page,frame.time);await page.screenshot({path:path.join(dir,frame.id+'.png')})}fs.writeFileSync(path.join(dir,'manifest.json'),JSON.stringify({viewport:page.viewportSize(),frames,errors},null,2));if(errors.length)throw Error(errors.join('\n'));console.log(`Captured ${frames.length} frames: ${dir}`)}finally{await browser.close()}}
+run().catch(e=>{console.error(e);process.exitCode=1})

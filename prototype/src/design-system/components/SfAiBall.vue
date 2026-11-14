@@ -1,5 +1,5 @@
 <template>
-  <span class="sf-ai-ball" :class="['sf-ai-ball--'+state,'sf-ai-ball--'+variant,{'sf-ai-ball--paused':!active||!visible||!inView,'sf-ai-ball--still':motionReduced,'sf-ai-ball--forced':effectiveMotion==='full'&&!reduceMotion,'sf-ai-ball--small':size<40,'sf-ai-ball--blink':manualBlink}]" :style="{width:fit?'100%':size+'px',height:fit?'100%':size+'px'}" :role="decorative?null:'img'" :aria-hidden="decorative?'true':null" :aria-label="decorative?null:accessibleLabel" :data-state="state" :data-motion="effectiveMotion" :data-head-yaw="head.yaw" :data-head-pitch="head.pitch" @pointerenter="previewBlink">
+  <span class="sf-ai-ball" :class="['sf-ai-ball--'+state,'sf-ai-ball--'+variant,{'sf-ai-ball--paused':!active||!visible||!inView,'sf-ai-ball--still':motionReduced,'sf-ai-ball--forced':effectiveMotion==='full'&&!reduceMotion,'sf-ai-ball--small':size<40,'sf-ai-ball--blink':manualBlink}]" :style="{width:fit?'100%':size+'px',height:fit?'100%':size+'px'}" :role="decorative?null:'img'" :aria-hidden="decorative?'true':null" :aria-label="decorative?null:accessibleLabel" :data-state="state" :data-motion="effectiveMotion" :data-head-yaw="renderHead.yaw" :data-head-pitch="renderHead.pitch" @pointerenter="previewBlink">
     <svg viewBox="0 0 56 56" :width="fit?'100%':size" :height="fit?'100%':size" fill="none" aria-hidden="true" @animationend="settled">
       <defs>
         <clipPath :id="id+'-clip'"><circle cx="28" cy="28" r="16"/></clipPath>
@@ -26,14 +26,15 @@ import {activityHead,blendHead,projectHead} from '../ai-ball-motion'
 let sequence=0
 const labels={idle:'AI Coach is ready',listening:'AI Coach is listening',thinking:'AI Coach is thinking',responding:'AI Coach is responding',success:'AI Coach has completed the task',error:'AI Coach needs you to retry'}
 export default {
-  name:'SfAiBall',props:{state:{type:String,default:'idle',validator:v=>Object.keys(labels).includes(v)},size:{type:Number,default:56},gaze:{type:String,default:'auto',validator:v=>['auto','center','left','right','up','down'].includes(v)},variant:{type:String,default:'glass',validator:v=>['glass','soft'].includes(v)},motionPolicy:{type:String,default:'inherit',validator:v=>['inherit','system','full','reduce'].includes(v)},label:String,decorative:Boolean,reduceMotion:Boolean,fit:Boolean,blinkToken:{type:Number,default:0}},
+  name:'SfAiBall',props:{externalHead:{type:Object,default:null},externalTime:{type:Number,default:null},state:{type:String,default:'idle',validator:v=>Object.keys(labels).includes(v)},size:{type:Number,default:56},gaze:{type:String,default:'auto',validator:v=>['auto','center','left','right','up','down'].includes(v)},variant:{type:String,default:'glass',validator:v=>['glass','soft'].includes(v)},motionPolicy:{type:String,default:'inherit',validator:v=>['inherit','system','full','reduce'].includes(v)},label:String,decorative:Boolean,reduceMotion:Boolean,fit:Boolean,blinkToken:{type:Number,default:0}},
   data(){return {id:'sf-ai-ball-'+(++sequence),active:true,visible:typeof document==='undefined'||document.visibilityState!=='hidden',inView:true,manualBlink:false,blinkSequence:0,head:{yaw:0,pitch:0},systemReduced:typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches}},
   computed:{
     effectiveMotion(){return this.motionPolicy==='inherit'?aiMotionPolicy.value:this.motionPolicy},
     motionReduced(){return this.reduceMotion||this.effectiveMotion==='reduce'||(this.systemReduced&&this.effectiveMotion!=='full')},
-    animating(){return this.active&&this.visible&&this.inView&&!this.motionReduced&&this.size>=40},
+    animating(){return this.externalTime===null&&this.active&&this.visible&&this.inView&&!this.motionReduced&&this.size>=40},
     accessibleLabel(){return this.label||labels[this.state]},
-    face(){return projectHead(this.head.yaw,this.head.pitch)},
+    renderHead(){return this.externalHead||(this.externalTime===null?this.head:activityHead(this.state,this.gaze,this.externalTime*1000))},
+    face(){return projectHead(this.renderHead.yaw,this.renderHead.pitch)},
     colourTransform(){return 'translate('+this.face.colours.x+' '+this.face.colours.y+')'}
   },
   watch:{blinkToken(){this.previewBlink()},state(){this.activityChanged()},gaze(){this.activityChanged()},motionReduced(value){if(value){this.manualBlink=false;this.head=activityHead(this.state,this.gaze,0)}},animating(value){if(value)this.startMotion();else this.stopMotion()}},

@@ -1,0 +1,56 @@
+{
+  "status": "revision-in-progress",
+  "primaryStoryboard": "https://www.figma.com/design/t7g261XYs61EdvYzIZn5YL/V3.0-Alpha?node-id=575-1660",
+  "assets": [
+    {
+      "file": "public/assets/story/home-gym.png",
+      "source": "Alpha 576:1661",
+      "role": "Home Gym photograph; 1832x859; single-plane camera fallback",
+      "bytes": 2558157,
+      "sha256": "51c307a52a1e65d4a08e0b4a785e03324a82c6eb443f4880ae90cf8d8ef3be89"
+    },
+    {
+      "file": "public/assets/story/trainer-banner.png",
+      "source": "Alpha 578:2220",
+      "role": "Trainer banner; original uploaded artwork",
+      "bytes": 106941,
+      "sha256": "dc53d0a24fce76a3a94c97471b678c872fd6ba0896553abef8596a4cdf7573fc"
+    },
+    {
+      "file": "public/assets/story/logo.svg",
+      "source": "Alpha 585:8741",
+      "role": "Original red and white mark",
+      "bytes": 3921,
+      "sha256": "e725b8e4f313bd14ba59e49c041a07d3c8008e28c088c0134307e6fb255d9786"
+    },
+    {
+      "file": "public/assets/story/logo-on-light.svg",
+      "source": "Alpha 585:8741 derivative",
+      "role": "FIT letter contrast adaptation only; red and white figure preserved",
+      "bytes": 3942,
+      "sha256": "e2dc69cc478b7179fd7d30917249502db19c106f646e20fce5953ee460aad0cf"
+    },
+    {
+      "file": "public/assets/figma/v3/home-ai-plan/img6.png",
+      "source": "Existing V3.0 Home AI Plan",
+      "role": "Static treadmill player poster",
+      "bytes": 719416,
+      "sha256": "f5007fd3cc574121e42fd1009aa0208b66315295a1ee574bc8ec08fcb318a065"
+    },
+    {
+      "file": "public/assets/movement/real/arm-triceps-stretch.jpg",
+      "source": "Existing movement assets",
+      "role": "Temporary mobility poster; course and publication rights pending",
+      "bytes": 9569,
+      "sha256": "62a6b2bac9557acea6baac17d9229cf482588a3a0fc129fd2d7e54fcec00dcec"
+    },
+    {
+      "file": "public/assets/figma/v3/plan-completed/imgRectangle1507.png",
+      "source": "Existing V3.0 Plan Completed",
+      "role": "Temporary strength poster; course suitability pending",
+      "bytes": 1405793,
+      "sha256": "46c030635a733d5883a56dc6060968e18e7afcfd3d41cc06d75e5a59f19814a4"
+    }
+  ],
+  "additionalOriginalAssets": "Home icons resolve through src/design-system/assets/home-states.js and public/assets/figma/v3/home-ai-plan/manifest.json; SfInsightCard uses existing restored assets. No external runtime image requests."
+}

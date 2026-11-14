@@ -32,6 +32,7 @@ const router = new Router({
     return selector?scrollToPreview(to,selector):{y:0}
   },
   routes: [
+    { path: '/demo/story-web', component: () => import('@/views/web/StoryHome'), hidden: true, meta: { title: 'SunnyFit 3.0 Story', app: true } },
     { path: '/', redirect: '/commercialization/overview', hidden: true },
     commercialization,
     { path: '/business-rules', name: 'BusinessRules', component: () => import('@/views/business-rules'), hidden: true, meta: { title: 'Business Rules', app: true, noCache: true } },
