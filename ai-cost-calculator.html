@@ -138,7 +138,7 @@ function setMonth(reset){
  const b=baseline($("monthSelect").value);if(!b)return;
  if(reset){editedDAU=false;editedServer=false}
  if(!editedDAU)$("monthly_dau").value=Math.round(b.dau);
- if(!editedServer)$("monthly_server").value=(b.base.server*(n("monthly_dau")/b.base.login)).toFixed(2);
+ if(!editedServer)$("monthly_server").value=(b.historical&&!editedDAU?b.base.server:b.base.server*(n("monthly_dau")/b.base.login)).toFixed(2);
  $("monthStatus").textContent=(b.historical?"Historical actual":"Forecast")+" · "+b.days+" days · Expected daily workout users: "+fmt(b.workout)+" · Historical baseline: "+b.base.key;
  calculate("monthly");
 }
