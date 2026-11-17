@@ -22,11 +22,28 @@ button{font:inherit}button:hover{filter:brightness(.96)}button:focus-visible{out
 @media(max-width:650px){.wrap{padding:19px 12px 30px}.box{padding:17px 12px}.controls{grid-template-columns:1fr 1fr}.controls .ctl:first-child{grid-column:1/-1}table{min-width:550px} .tablewrap{overflow-x:auto}.numbers strong{font-size:27px}.results{padding:20px 18px}.prices{grid-template-columns:1fr}.numbers{gap:8px}}
 
 .reference{border-top:1px solid #edf0f2;margin-top:15px;padding-top:15px}.reference-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}.reference-head strong{font-size:13px;color:#394b56}.reference-head span{font-size:10px;color:#8996a0}.refstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.refstat{background:#f8fafb;border:1px solid #edf1f3;border-radius:9px;padding:10px}.refstat label{display:block;color:#81909a;font-size:10px;line-height:1.35}.refstat b{display:block;color:#344651;font-size:17px;letter-spacing:-.025em;margin-top:5px;font-variant-numeric:tabular-nums}.reference details{margin-top:12px;padding-top:11px}.refscroll{overflow-x:auto;margin-top:10px}.reftable{width:100%;min-width:760px;border-collapse:collapse}.reftable th{font-size:10px;text-align:right;color:#84929b;background:#f8fafb;padding:8px 7px;white-space:nowrap}.reftable th:first-child,.reftable td:first-child{text-align:left}.reftable td{font-size:11px;text-align:right;padding:8px 7px;border-bottom:1px solid #eef1f3;font-variant-numeric:tabular-nums;white-space:nowrap}.reftable tr:last-child td{border-bottom:0}.reftable tr.latest td{background:#fff8f3;font-weight:750}.refnote{font-size:10px;color:#7d8b95;line-height:1.5;margin:9px 0 0}@media(max-width:650px){.refstats{grid-template-columns:1fr 1fr}.refstat b{font-size:16px}}
+
+.forecast-top{display:flex;gap:15px;justify-content:space-between;align-items:start;flex-wrap:wrap;margin-bottom:15px}
+.forecast-top h2{margin-bottom:5px}.forecast-top p{font-size:12px;max-width:560px}
+.forecast-total{text-align:right}.forecast-total small{display:block;color:#8a98a3;font-size:11px}.forecast-total strong{font-size:25px;color:#d36a31;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.forecast-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;max-width:430px;margin:0 0 17px}
+.forecast-controls label{font-size:12px;color:#657782;font-weight:650;display:block;margin-bottom:5px}
+.forecast-controls input{height:39px}
+.forecast-scroll{overflow-x:auto}.forecast-table{min-width:530px;width:100%;border-collapse:collapse;table-layout:auto}
+.forecast-table th{font-size:11px;text-transform:none;text-align:right;white-space:nowrap;padding:9px 12px}.forecast-table th:first-child{width:auto;text-align:left}
+.forecast-table td{font-size:12px;text-align:right;padding:8px 12px;white-space:nowrap;font-variant-numeric:tabular-nums}.forecast-table td:first-child{text-align:left}
+.forecast-table td:last-child{font-weight:760;color:#c6652e}
+.forecast-note{font-size:11px;line-height:1.55;color:#80919c;margin-top:12px}
+details.box.historical-details{margin-top:0;border-top:1px solid var(--line);padding:16px 20px}
+.historical-details>summary{font-size:13px;font-weight:750}.historical-details .history-body{margin-top:15px}
+.historical-details .reference{margin-top:10px}
+.unitcost-details{margin-top:0!important;border-top:0!important;padding-top:0!important}
+@media(max-width:650px){.forecast-top{align-items:start}.forecast-total{text-align:left}.forecast-controls{gap:10px}.forecast-table{min-width:500px}}
 </style></head>
 <body><main class="wrap"><header><div class="logo"><b>S</b>SunnyFit <span style="font-weight:500;color:#9aa6af">/ Cost Calculator</span></div><button id="share" type="button">Copy scenario link</button></header>
 <section class="intro"><h1>AI Cost Calculator</h1><p>Adjust user activity assumptions to estimate daily and monthly AI costs.</p></section>
 <section class="box"><div class="controls">
-<div class="ctl"><label for="dau">Daily active users (DAU)</label><input id="dau" type="number" min="0" step="1000" value="10000"></div>
+<div class="ctl"><label for="dau">Daily active users (DAU)</label><input id="dau" type="number" min="0" step="1" value="3075"></div>
 <div class="ctl"><label for="model">AI model</label><select id="model"><option value="gemini">Gemini 3.1 Flash-Lite</option><option value="luna">GPT-6 Luna (scenario)</option></select></div>
 <div class="ctl"><label for="days">Days to estimate</label><input id="days" type="number" min="1" max="366" value="30"></div>
 </div></section>
@@ -37,9 +54,17 @@ button{font:inherit}button:hover{filter:brightness(.96)}button:focus-visible{out
 <tr><td class="segment">No Chat<span>Background AI only</span></td><td class="readonly" id="noChatPct">45%</td><td class="readonly">0</td><td><input type="number" id="noChatHome" min="0" step="1" value="2"></td><td><input type="number" id="noChatResult" min="0" step="1" value="0"></td><td class="unitcost"><strong id="noChatCost">—</strong></td></tr>
 </tbody></table></div><div class="tip" id="mixNote">Percentages are based on all DAU. No Chat is calculated automatically.</div></section>
 <section class="results"><div>Estimated operating cost <span style="color:#92a4b0"> · USD</span></div><div class="numbers"><div class="k"><small>Per day</small><strong id="daily">—</strong></div><div class="k"><small id="monthlyLabel">30 days</small><strong id="monthly">—</strong></div></div><div class="costline" id="details">—</div></section>
-<section class="box"><div class="mini"><strong>Observed production reference</strong> (Oct 20–Nov 9, 2026): 1,589 users with AI activity; typical ~169 AI-active users/day, ~37 Chat, ~440 Home and ~62 Workout requests/day.<br><span style="color:#8897a1">The activity mix above is a future-use scenario, not the observed production distribution. Historical ledger costs do not capture cache hits.</span></div>
-<div class="reference"><div class="reference-head"><strong>Business scale & server cost reference</strong><span>Oct 2025 – Sep 2026</span></div><div class="refstats"><div class="refstat"><label>Average monthly server cost</label><b>$8,233</b></div><div class="refstat"><label>Average daily login users</label><b>3,207</b></div><div class="refstat"><label>Average daily workout users</label><b>2,023</b></div><div class="refstat"><label>Workout / login ratio</label><b>63.1%</b></div></div><details><summary>View monthly operating data</summary><div class="refscroll"><table class="reftable"><thead><tr><th>Month</th><th>Server cost</th><th>Daily logins</th><th>YoY</th><th>Daily workouts</th><th>YoY</th><th>Workout / login</th></tr></thead><tbody><tr><td>Oct 2025</td><td>$6,507.36</td><td>2,425.45</td><td>50.80%</td><td>1,535.94</td><td>66.03%</td><td>63.3%</td></tr><tr><td>Nov 2025</td><td>$6,482.70</td><td>2,443.73</td><td>39.82%</td><td>1,514.50</td><td>52.45%</td><td>62.0%</td></tr><tr><td>Dec 2025</td><td>$6,948.93</td><td>2,800.10</td><td>39.27%</td><td>1,664.84</td><td>55.57%</td><td>59.5%</td></tr><tr><td>Jan 2026</td><td>$8,440.88</td><td>4,250.74</td><td>25.50%</td><td>2,614.29</td><td>36.83%</td><td>61.5%</td></tr><tr><td>Feb 2026</td><td>$7,626.33</td><td>3,966.93</td><td>27.86%</td><td>2,548.50</td><td>39.17%</td><td>64.2%</td></tr><tr><td>Mar 2026</td><td>$8,891.06</td><td>3,683.10</td><td>25.79%</td><td>2,378.74</td><td>35.28%</td><td>64.6%</td></tr><tr><td>Apr 2026</td><td>$7,281.94</td><td>3,366.50</td><td>22.31%</td><td>2,184.30</td><td>32.51%</td><td>64.9%</td></tr><tr><td>May 2026</td><td>$8,092.78</td><td>3,103.68</td><td>20.47%</td><td>1,963.74</td><td>28.39%</td><td>63.3%</td></tr><tr><td>Jun 2026</td><td>$8,204.31</td><td>3,125.17</td><td>24.18%</td><td>1,989.27</td><td>30.13%</td><td>63.7%</td></tr><tr><td>Jul 2026</td><td>$10,132.67</td><td>3,086.45</td><td>18.64%</td><td>1,960.71</td><td>22.69%</td><td>63.5%</td></tr><tr><td>Aug 2026</td><td>$11,107.48</td><td>3,158.84</td><td>25.72%</td><td>1,988.84</td><td>28.18%</td><td>63.0%</td></tr><tr class="latest"><td>Sep 2026</td><td>$9,078.98</td><td>3,074.50</td><td>26.26%</td><td>1,936.97</td><td>24.69%</td><td>63.0%</td></tr></tbody></table></div><p class="refnote">Daily login and workout users are monthly daily averages. YoY values are provided year-over-year changes. Workout / login is calculated as daily workout users ÷ daily login users. Average figures are simple averages across the 12 months.</p></details><p class="refnote">Server cost is shown as a separate operating-cost reference and is not added to the AI model estimate. Confirm the accounting scope before combining the two, especially if model-provider charges are already included in the server-cost line.</p></div>
-<details><summary>Edit estimated unit costs (USD / request)</summary><div class="prices"><div><label for="chatPrice">Chat</label><input type="number" id="chatPrice" min="0" step=".000001"></div><div><label for="homePrice">Home</label><input type="number" id="homePrice" min="0" step=".000001"></div><div><label for="resultPrice">Workout Result</label><input type="number" id="resultPrice" min="0" step=".000001"></div></div><div class="warning" id="method">—</div></details></section>
+
+<section class="box" id="forecast">
+<div class="forecast-top"><div><h2>Monthly forecast</h2><p>Oct 2026 – Sep 2027 · Projected daily users and AI cost based on historical monthly seasonality.</p></div><div class="forecast-total"><small>12-month AI estimate</small><strong id="forecastTotal">—</strong></div></div>
+<div class="forecast-controls"><div><label for="forecastLoginGrowth">Login users · YoY growth (%)</label><input id="forecastLoginGrowth" type="number" min="-100" max="500" step=".01" value="26.26"></div><div><label for="forecastWorkoutGrowth">Workout users · YoY growth (%)</label><input id="forecastWorkoutGrowth" type="number" min="-100" max="500" step=".01" value="24.69"></div></div>
+<div class="forecast-scroll"><table class="forecast-table"><thead><tr><th>Month</th><th>Daily logins</th><th>Daily workouts</th><th>AI cost / month</th></tr></thead><tbody id="forecastRows"></tbody></table></div>
+<p class="forecast-note" id="forecastNote">Based on Sep 2026 daily logins (3,074.50), seasonal historical DAU, and the selected AI activity scenario. Each month uses its actual calendar days. Workout users are shown for reference; AI cost follows the configured Chat / Home / Result activity per login DAU.</p>
+</section>
+<section class="box"><details class="unitcost-details"><summary>Edit estimated unit costs (USD / request)</summary><div class="prices"><div><label for="chatPrice">Chat</label><input type="number" id="chatPrice" min="0" step=".000001"></div><div><label for="homePrice">Home</label><input type="number" id="homePrice" min="0" step=".000001"></div><div><label for="resultPrice">Workout Result</label><input type="number" id="resultPrice" min="0" step=".000001"></div></div><div class="warning" id="method">—</div></details></section>
+<details class="box historical-details"><summary>Historical reference · Oct 2025 – Sep 2026</summary><div class="history-body"><div class="mini"><strong>Observed production reference</strong> (Oct 20–Nov 9, 2026): 1,589 users with AI activity; typical ~169 AI-active users/day, ~37 Chat, ~440 Home and ~62 Workout requests/day.<br><span style="color:#8897a1">The activity mix above is a future-use scenario, not the observed production distribution. Historical ledger costs do not capture cache hits.</span></div>
+<div class="reference"><div class="reference-head"><strong>Business scale & server cost reference</strong><span>Oct 2025 – Sep 2026</span></div><div class="refstats"><div class="refstat"><label>Average monthly server cost</label><b>$8,233</b></div><div class="refstat"><label>Average daily login users</label><b>3,207</b></div><div class="refstat"><label>Average daily workout users</label><b>2,023</b></div><div class="refstat"><label>Workout / login ratio</label><b>63.1%</b></div></div><div class="refscroll"><table class="reftable"><thead><tr><th>Month</th><th>Server cost</th><th>Daily logins</th><th>YoY</th><th>Daily workouts</th><th>YoY</th><th>Workout / login</th></tr></thead><tbody><tr><td>Oct 2025</td><td>$6,507.36</td><td>2,425.45</td><td>50.80%</td><td>1,535.94</td><td>66.03%</td><td>63.3%</td></tr><tr><td>Nov 2025</td><td>$6,482.70</td><td>2,443.73</td><td>39.82%</td><td>1,514.50</td><td>52.45%</td><td>62.0%</td></tr><tr><td>Dec 2025</td><td>$6,948.93</td><td>2,800.10</td><td>39.27%</td><td>1,664.84</td><td>55.57%</td><td>59.5%</td></tr><tr><td>Jan 2026</td><td>$8,440.88</td><td>4,250.74</td><td>25.50%</td><td>2,614.29</td><td>36.83%</td><td>61.5%</td></tr><tr><td>Feb 2026</td><td>$7,626.33</td><td>3,966.93</td><td>27.86%</td><td>2,548.50</td><td>39.17%</td><td>64.2%</td></tr><tr><td>Mar 2026</td><td>$8,891.06</td><td>3,683.10</td><td>25.79%</td><td>2,378.74</td><td>35.28%</td><td>64.6%</td></tr><tr><td>Apr 2026</td><td>$7,281.94</td><td>3,366.50</td><td>22.31%</td><td>2,184.30</td><td>32.51%</td><td>64.9%</td></tr><tr><td>May 2026</td><td>$8,092.78</td><td>3,103.68</td><td>20.47%</td><td>1,963.74</td><td>28.39%</td><td>63.3%</td></tr><tr><td>Jun 2026</td><td>$8,204.31</td><td>3,125.17</td><td>24.18%</td><td>1,989.27</td><td>30.13%</td><td>63.7%</td></tr><tr><td>Jul 2026</td><td>$10,132.67</td><td>3,086.45</td><td>18.64%</td><td>1,960.71</td><td>22.69%</td><td>63.5%</td></tr><tr><td>Aug 2026</td><td>$11,107.48</td><td>3,158.84</td><td>25.72%</td><td>1,988.84</td><td>28.18%</td><td>63.0%</td></tr><tr class="latest"><td>Sep 2026</td><td>$9,078.98</td><td>3,074.50</td><td>26.26%</td><td>1,936.97</td><td>24.69%</td><td>63.0%</td></tr></tbody></table></div><p class="refnote">Daily login and workout users are monthly daily averages. YoY values are provided year-over-year changes. Workout / login is calculated as daily workout users ÷ daily login users. Average figures are simple averages across the 12 months.</p><p class="refnote">Server cost is shown as a separate operating-cost reference and is not added to the AI model estimate. Confirm the accounting scope before combining the two, especially if model-provider charges are already included in the server-cost line.</p></div>
+</div></details>
 </main>
 <script>
 (function(){
@@ -63,21 +88,54 @@ function compute(){
  const valid=sum<=100&&num("days")>=1&&num("days")<=366;
  $("mixNote").textContent=valid?"Percentages are based on all DAU. No Chat is calculated automatically.":"Shares must total 100% or less, and days must be between 1 and 366.";
  $("mixNote").classList.toggle("error",!valid);
- if(!valid){$("daily").textContent="—";$("monthly").textContent="—";$("details").textContent="Adjust the highlighted assumptions to calculate.";return}
+ if(!valid){$("daily").textContent="—";$("monthly").textContent="—";$("details").textContent="Adjust the highlighted assumptions to calculate.";monthlyForecast(NaN);return}
  const dau=num("dau");
  const groups=[["heavy",a],["moderate",b],["light",c]].map(([k,p])=>({share:p/100,chat:count(k+"Chat"),home:count(k+"Home"),result:count(k+"Result")}));
  groups.push({share:(100-sum)/100,chat:0,home:count("noChatHome"),result:count("noChatResult")});
  const calls={chat:0,home:0,result:0};
  groups.forEach(g=>{Object.keys(calls).forEach(k=>calls[k]+=dau*g.share*g[k])});
  const r=rates[current];const daily=calls.chat*r.chat+calls.home*r.home+calls.result*r.result;const monthly=daily*num("days");
+ const costPerDauDay=groups.reduce((sum,g)=>sum+g.share*(g.chat*r.chat+g.home*r.home+g.result*r.result),0);
+ monthlyForecast(costPerDauDay);
  $("daily").textContent=money(daily);$("monthly").textContent=money(monthly);$("monthlyLabel").textContent=num("days")+" days";
  $("details").textContent="Chat "+money(calls.chat*r.chat)+"  ·  Home "+money(calls.home*r.home)+"  ·  Workout Result "+money(calls.result*r.result)+" per day";
 }
-function state(){const obj={model:current,rates};inputIds.forEach(id=>obj[id]=requestIds.includes(id)?count(id):num(id));return obj}
-function restore(obj){if(!obj||typeof obj!=="object")return;if(obj.model==="gemini"||obj.model==="luna")current=obj.model;inputIds.forEach(id=>{if(Object.hasOwn(obj,id)&&Number.isFinite(Number(obj[id]))&&Number(obj[id])>=0)$(id).value=requestIds.includes(id)?Math.round(Number(obj[id])):Number(obj[id])});["gemini","luna"].forEach(m=>{if(!obj.rates||!obj.rates[m])return;["chat","home","result"].forEach(k=>{const v=Number(obj.rates[m][k]);if(Number.isFinite(v)&&v>=0)rates[m][k]=v})})}
+
+function forecastGrowth(id){const v=Number($(id).value);return Number.isFinite(v)?Math.max(-100,Math.min(500,v))/100:0}
+function monthlyForecast(costPerDauDay){
+ const history=Array.from(document.querySelectorAll(".reftable tbody tr")).map(row=>{
+  const cells=row.querySelectorAll("td"),parse=s=>Number(s.replace(/[^0-9.-]/g,""));
+  return {name:cells[0].textContent.trim(),logins:parse(cells[2].textContent),workouts:parse(cells[4].textContent)};
+ });
+ if(!Number.isFinite(costPerDauDay)||history.length!==12){
+  $("forecastRows").innerHTML="<tr><td colspan='4' style='text-align:center;color:#a55'>Adjust activity shares to calculate.</td></tr>";
+  $("forecastTotal").textContent="—";return;
+ }
+ const last=history[history.length-1];
+ const baseScale=last.logins>0?num("dau")/last.logins:0;
+ const loginFactor=1+forecastGrowth("forecastLoginGrowth");
+ const workoutFactor=1+forecastGrowth("forecastWorkoutGrowth");
+ let annual=0;
+ const number=x=>Math.round(x).toLocaleString("en-US");
+ $("forecastRows").innerHTML=history.map(h=>{
+  const parts=h.name.split(" "),year=Number(parts[1])+1;
+  const monthNo=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(parts[0])+1;
+  const days=new Date(year,monthNo,0).getDate();
+  const logins=h.logins*baseScale*loginFactor;
+  const workouts=h.workouts*baseScale*workoutFactor;
+  const spend=logins*costPerDauDay*days;
+  annual+=spend;
+  return "<tr><td>"+parts[0]+" "+year+"</td><td>"+number(logins)+"</td><td>"+number(workouts)+"</td><td>"+money(spend,0)+"</td></tr>";
+ }).join("");
+ $("forecastTotal").textContent=money(annual,0);
+}
+
+function state(){const obj={model:current,rates};inputIds.forEach(id=>obj[id]=requestIds.includes(id)?count(id):num(id));obj.forecastLoginGrowth=Number($("forecastLoginGrowth").value);obj.forecastWorkoutGrowth=Number($("forecastWorkoutGrowth").value);return obj}
+function restore(obj){if(!obj||typeof obj!=="object")return;["forecastLoginGrowth","forecastWorkoutGrowth"].forEach(id=>{if(id in obj&&Number.isFinite(Number(obj[id])))$(id).value=Math.max(-100,Math.min(500,Number(obj[id])))});if(obj.model==="gemini"||obj.model==="luna")current=obj.model;inputIds.forEach(id=>{if(Object.hasOwn(obj,id)&&Number.isFinite(Number(obj[id]))&&Number(obj[id])>=0)$(id).value=requestIds.includes(id)?Math.round(Number(obj[id])):Number(obj[id])});["gemini","luna"].forEach(m=>{if(!obj.rates||!obj.rates[m])return;["chat","home","result"].forEach(k=>{const v=Number(obj.rates[m][k]);if(Number.isFinite(v)&&v>=0)rates[m][k]=v})})}
 try{const param=new URLSearchParams(location.search).get("cfg");if(param)restore(JSON.parse(param))}catch(e){}
 $("model").value=current;displayRates();compute();
 inputIds.forEach(id=>$(id).addEventListener("input",compute));
+["forecastLoginGrowth","forecastWorkoutGrowth"].forEach(id=>$(id).addEventListener("input",compute));
 requestIds.forEach(id=>$(id).addEventListener("change",function(){this.value=count(id);compute()}));
 $("model").addEventListener("change",function(){current=this.value;displayRates();compute()});
 ["chat","home","result"].forEach(k=>$(k+"Price").addEventListener("input",()=>{rates[current][k]=num(k+"Price");compute()}));
