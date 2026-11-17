@@ -29,10 +29,10 @@ button{font:inherit}button:hover{filter:brightness(.96)}button:focus-visible{out
 <div class="ctl"><label for="days">Days to estimate</label><input id="days" type="number" min="1" max="366" value="30"></div>
 </div></section>
 <section class="box"><h2>User activity</h2><div class="tablewrap"><table><thead><tr><th>User group</th><th>Share of DAU</th><th>Chat / day</th><th>Home / day</th><th>Result / day</th><th>Cost / user / day</th></tr></thead><tbody>
-<tr><td class="segment">Heavy<span>Frequent coaching</span></td><td><input type="number" id="heavyPct" min="0" max="100" value="5"></td><td><input type="number" id="heavyChat" min="0" step=".5" value="8"></td><td><input type="number" id="heavyHome" min="0" step=".5" value="5"></td><td><input type="number" id="heavyResult" min="0" step=".5" value="3"></td><td class="unitcost"><strong id="heavyCost">—</strong></td></tr>
-<tr><td class="segment">Moderate<span>Regular use</span></td><td><input type="number" id="moderatePct" min="0" max="100" value="20"></td><td><input type="number" id="moderateChat" min="0" step=".5" value="3"></td><td><input type="number" id="moderateHome" min="0" step=".5" value="3"></td><td><input type="number" id="moderateResult" min="0" step=".5" value="1"></td><td class="unitcost"><strong id="moderateCost">—</strong></td></tr>
-<tr><td class="segment">Light<span>Occasional use</span></td><td><input type="number" id="lightPct" min="0" max="100" value="30"></td><td><input type="number" id="lightChat" min="0" step=".5" value="1"></td><td><input type="number" id="lightHome" min="0" step=".5" value="2"></td><td><input type="number" id="lightResult" min="0" step=".5" value=".5"></td><td class="unitcost"><strong id="lightCost">—</strong></td></tr>
-<tr><td class="segment">No Chat<span>Background AI only</span></td><td class="readonly" id="noChatPct">45%</td><td class="readonly">0</td><td><input type="number" id="noChatHome" min="0" step=".5" value="2"></td><td><input type="number" id="noChatResult" min="0" step=".1" value=".2"></td><td class="unitcost"><strong id="noChatCost">—</strong></td></tr>
+<tr><td class="segment">Heavy<span>Frequent coaching</span></td><td><input type="number" id="heavyPct" min="0" max="100" value="5"></td><td><input type="number" id="heavyChat" min="0" step="1" value="8"></td><td><input type="number" id="heavyHome" min="0" step="1" value="5"></td><td><input type="number" id="heavyResult" min="0" step="1" value="3"></td><td class="unitcost"><strong id="heavyCost">—</strong></td></tr>
+<tr><td class="segment">Moderate<span>Regular use</span></td><td><input type="number" id="moderatePct" min="0" max="100" value="20"></td><td><input type="number" id="moderateChat" min="0" step="1" value="3"></td><td><input type="number" id="moderateHome" min="0" step="1" value="3"></td><td><input type="number" id="moderateResult" min="0" step="1" value="1"></td><td class="unitcost"><strong id="moderateCost">—</strong></td></tr>
+<tr><td class="segment">Light<span>Occasional use</span></td><td><input type="number" id="lightPct" min="0" max="100" value="30"></td><td><input type="number" id="lightChat" min="0" step="1" value="1"></td><td><input type="number" id="lightHome" min="0" step="1" value="2"></td><td><input type="number" id="lightResult" min="0" step="1" value="1"></td><td class="unitcost"><strong id="lightCost">—</strong></td></tr>
+<tr><td class="segment">No Chat<span>Background AI only</span></td><td class="readonly" id="noChatPct">45%</td><td class="readonly">0</td><td><input type="number" id="noChatHome" min="0" step="1" value="2"></td><td><input type="number" id="noChatResult" min="0" step="1" value="0"></td><td class="unitcost"><strong id="noChatCost">—</strong></td></tr>
 </tbody></table></div><div class="tip" id="mixNote">Percentages are based on all DAU. No Chat is calculated automatically.</div></section>
 <section class="results"><div>Estimated operating cost <span style="color:#92a4b0"> · USD</span></div><div class="numbers"><div class="k"><small>Per day</small><strong id="daily">—</strong></div><div class="k"><small id="monthlyLabel">30 days</small><strong id="monthly">—</strong></div></div><div class="costline" id="details">—</div></section>
 <section class="box"><div class="mini"><strong>Observed production reference</strong> (Oct 20–Nov 9, 2026): 1,589 users with AI activity; typical ~169 AI-active users/day, ~37 Chat, ~440 Home and ~62 Workout requests/day.<br><span style="color:#8897a1">The activity mix above is a future-use scenario, not the observed production distribution. Historical ledger costs do not capture cache hits.</span></div>
@@ -46,33 +46,36 @@ const rates=JSON.parse(JSON.stringify(rateDefaults));
 const inputIds=["dau","days","heavyPct","heavyChat","heavyHome","heavyResult","moderatePct","moderateChat","moderateHome","moderateResult","lightPct","lightChat","lightHome","lightResult","noChatHome","noChatResult"];
 const $=id=>document.getElementById(id);
 const num=id=>{const value=Number($(id).value);return Number.isFinite(value)&&value>=0?value:0};
+const requestIds=["heavyChat","heavyHome","heavyResult","moderateChat","moderateHome","moderateResult","lightChat","lightHome","lightResult","noChatHome","noChatResult"];
+const count=id=>Math.round(num(id));
 const money=(n,d=2)=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
 let current="gemini";
 function displayRates(){["chat","home","result"].forEach(k=>$(k+"Price").value=rates[current][k]);$("method").textContent=current==="gemini"?"Gemini: Chat and Home are based on Nov 11 controlled cache-hit tests. Workout Result is a historical non-cache proxy. These are not reconciled supplier invoices.":"Luna: hypothetical model-switch costs from controlled tests; Workout Result is a proxy. Luna is not validated as a production-wide migration. Confirm pricing, latency and reliability before planning spend.";}
 function compute(){
  const a=num("heavyPct"),b=num("moderatePct"),c=num("lightPct"),sum=a+b+c;
  const pr=rates[current];
- [["heavy","heavy"],["moderate","moderate"],["light","light"]].forEach(([key,id])=>{$(id+"Cost").textContent=money(num(key+"Chat")*pr.chat+num(key+"Home")*pr.home+num(key+"Result")*pr.result,4)});
- $("noChatCost").textContent=money(num("noChatHome")*pr.home+num("noChatResult")*pr.result,4);
+ [["heavy","heavy"],["moderate","moderate"],["light","light"]].forEach(([key,id])=>{$(id+"Cost").textContent=money(count(key+"Chat")*pr.chat+count(key+"Home")*pr.home+count(key+"Result")*pr.result,4)});
+ $("noChatCost").textContent=money(count("noChatHome")*pr.home+count("noChatResult")*pr.result,4);
  $("noChatPct").textContent=Number.isFinite(sum)&&sum<=100?(100-sum).toLocaleString("en-US",{maximumFractionDigits:1})+"%":"—";
  const valid=sum<=100&&num("days")>=1&&num("days")<=366;
  $("mixNote").textContent=valid?"Percentages are based on all DAU. No Chat is calculated automatically.":"Shares must total 100% or less, and days must be between 1 and 366.";
  $("mixNote").classList.toggle("error",!valid);
  if(!valid){$("daily").textContent="—";$("monthly").textContent="—";$("details").textContent="Adjust the highlighted assumptions to calculate.";return}
  const dau=num("dau");
- const groups=[["heavy",a],["moderate",b],["light",c]].map(([k,p])=>({share:p/100,chat:num(k+"Chat"),home:num(k+"Home"),result:num(k+"Result")}));
- groups.push({share:(100-sum)/100,chat:0,home:num("noChatHome"),result:num("noChatResult")});
+ const groups=[["heavy",a],["moderate",b],["light",c]].map(([k,p])=>({share:p/100,chat:count(k+"Chat"),home:count(k+"Home"),result:count(k+"Result")}));
+ groups.push({share:(100-sum)/100,chat:0,home:count("noChatHome"),result:count("noChatResult")});
  const calls={chat:0,home:0,result:0};
  groups.forEach(g=>{Object.keys(calls).forEach(k=>calls[k]+=dau*g.share*g[k])});
  const r=rates[current];const daily=calls.chat*r.chat+calls.home*r.home+calls.result*r.result;const monthly=daily*num("days");
  $("daily").textContent=money(daily);$("monthly").textContent=money(monthly);$("monthlyLabel").textContent=num("days")+" days";
  $("details").textContent="Chat "+money(calls.chat*r.chat)+"  ·  Home "+money(calls.home*r.home)+"  ·  Workout Result "+money(calls.result*r.result)+" per day";
 }
-function state(){const obj={model:current,rates};inputIds.forEach(id=>obj[id]=num(id));return obj}
-function restore(obj){if(!obj||typeof obj!=="object")return;if(obj.model==="gemini"||obj.model==="luna")current=obj.model;inputIds.forEach(id=>{if(Object.hasOwn(obj,id)&&Number.isFinite(Number(obj[id]))&&Number(obj[id])>=0)$(id).value=Number(obj[id])});["gemini","luna"].forEach(m=>{if(!obj.rates||!obj.rates[m])return;["chat","home","result"].forEach(k=>{const v=Number(obj.rates[m][k]);if(Number.isFinite(v)&&v>=0)rates[m][k]=v})})}
+function state(){const obj={model:current,rates};inputIds.forEach(id=>obj[id]=requestIds.includes(id)?count(id):num(id));return obj}
+function restore(obj){if(!obj||typeof obj!=="object")return;if(obj.model==="gemini"||obj.model==="luna")current=obj.model;inputIds.forEach(id=>{if(Object.hasOwn(obj,id)&&Number.isFinite(Number(obj[id]))&&Number(obj[id])>=0)$(id).value=requestIds.includes(id)?Math.round(Number(obj[id])):Number(obj[id])});["gemini","luna"].forEach(m=>{if(!obj.rates||!obj.rates[m])return;["chat","home","result"].forEach(k=>{const v=Number(obj.rates[m][k]);if(Number.isFinite(v)&&v>=0)rates[m][k]=v})})}
 try{const param=new URLSearchParams(location.search).get("cfg");if(param)restore(JSON.parse(param))}catch(e){}
 $("model").value=current;displayRates();compute();
 inputIds.forEach(id=>$(id).addEventListener("input",compute));
+requestIds.forEach(id=>$(id).addEventListener("change",function(){this.value=count(id);compute()}));
 $("model").addEventListener("change",function(){current=this.value;displayRates();compute()});
 ["chat","home","result"].forEach(k=>$(k+"Price").addEventListener("input",()=>{rates[current][k]=num(k+"Price");compute()}));
 $("share").onclick=async function(){const link=new URL(location.href);link.searchParams.set("cfg",JSON.stringify(state()));try{await navigator.clipboard.writeText(link.toString());this.textContent="Copied ✓";setTimeout(()=>this.textContent="Copy scenario link",1800)}catch(e){window.prompt("Copy this link",link.toString())}};
