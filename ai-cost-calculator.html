@@ -1,6 +1,4 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SunnyFit AI Cost Calculator</title>
-<style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SunnyFit AI Cost Calculator</title><style>
 :root{--ink:#202c35;--muted:#74818b;--orange:#ee7337;--line:#e5eaee;--bg:#f7f8fa}
 *{box-sizing:border-box}body{background:var(--bg);margin:0;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px}
 .wrap{max-width:940px;margin:auto;padding:24px 24px 40px}
@@ -39,106 +37,193 @@ details.box.historical-details{margin-top:0;border-top:1px solid var(--line);pad
 .historical-details .reference{margin-top:10px}
 .unitcost-details{margin-top:0!important;border-top:0!important;padding-top:0!important}
 @media(max-width:650px){.forecast-top{align-items:start}.forecast-total{text-align:left}.forecast-controls{gap:10px}.forecast-table{min-width:500px}}
-</style></head>
-<body><main class="wrap"><header><div class="logo"><b>S</b>SunnyFit <span style="font-weight:500;color:#9aa6af">/ Cost Calculator</span></div><button id="share" type="button">Copy scenario link</button></header>
-<section class="intro"><h1>AI Cost Calculator</h1><p>Adjust user activity assumptions to estimate daily and monthly AI costs.</p></section>
-<section class="box"><div class="controls">
-<div class="ctl"><label for="dau">Daily active users (DAU)</label><input id="dau" type="number" min="0" step="1" value="3075"></div>
-<div class="ctl"><label for="model">AI model</label><select id="model"><option value="gemini">Gemini 3.1 Flash-Lite</option><option value="luna">GPT-6 Luna (scenario)</option></select></div>
-<div class="ctl"><label for="days">Days to estimate</label><input id="days" type="number" min="1" max="366" value="30"></div>
-</div></section>
-<section class="box"><h2>User activity</h2><div class="tablewrap"><table><thead><tr><th>User group</th><th>Share of DAU</th><th>Chat / day</th><th>Home / day</th><th>Result / day</th><th>Cost / user / day</th></tr></thead><tbody>
-<tr><td class="segment">Heavy<span>Frequent coaching</span></td><td><input type="number" id="heavyPct" min="0" max="100" value="5"></td><td><input type="number" id="heavyChat" min="0" step="1" value="10"></td><td><input type="number" id="heavyHome" min="0" step="1" value="4"></td><td><input type="number" id="heavyResult" min="0" step="1" value="3"></td><td class="unitcost"><strong id="heavyCost">—</strong></td></tr>
-<tr><td class="segment">Moderate<span>Regular use</span></td><td><input type="number" id="moderatePct" min="0" max="100" value="20"></td><td><input type="number" id="moderateChat" min="0" step="1" value="5"></td><td><input type="number" id="moderateHome" min="0" step="1" value="3"></td><td><input type="number" id="moderateResult" min="0" step="1" value="2"></td><td class="unitcost"><strong id="moderateCost">—</strong></td></tr>
-<tr><td class="segment">Light<span>Occasional use</span></td><td><input type="number" id="lightPct" min="0" max="100" value="30"></td><td><input type="number" id="lightChat" min="0" step="1" value="2"></td><td><input type="number" id="lightHome" min="0" step="1" value="2"></td><td><input type="number" id="lightResult" min="0" step="1" value="2"></td><td class="unitcost"><strong id="lightCost">—</strong></td></tr>
-<tr><td class="segment">No Chat<span>Background AI only</span></td><td class="readonly" id="noChatPct">45%</td><td class="readonly">0</td><td><input type="number" id="noChatHome" min="0" step="1" value="2"></td><td><input type="number" id="noChatResult" min="0" step="1" value="0"></td><td class="unitcost"><strong id="noChatCost">—</strong></td></tr>
-</tbody></table></div><div class="tip" id="mixNote">Percentages are based on all DAU. No Chat is calculated automatically.</div></section>
-<section class="results"><div>Estimated operating cost <span style="color:#92a4b0"> · USD</span></div><div class="numbers"><div class="k"><small>Per day</small><strong id="daily">—</strong></div><div class="k"><small id="monthlyLabel">30 days</small><strong id="monthly">—</strong></div></div><div class="costline" id="details">—</div></section>
 
-<section class="box" id="forecast">
-<div class="forecast-top"><div><h2>Monthly forecast</h2><p>Oct 2026 – Sep 2027 · Projected daily users and AI cost based on historical monthly seasonality.</p></div><div class="forecast-total"><small>12-month AI estimate</small><strong id="forecastTotal">—</strong></div></div>
-<div class="forecast-controls"><div><label for="forecastLoginGrowth">Login users · YoY growth (%)</label><input id="forecastLoginGrowth" type="number" min="-100" max="500" step=".01" value="26.26"></div><div><label for="forecastWorkoutGrowth">Workout users · YoY growth (%)</label><input id="forecastWorkoutGrowth" type="number" min="-100" max="500" step=".01" value="24.69"></div></div>
-<div class="forecast-scroll"><table class="forecast-table"><thead><tr><th>Month</th><th>Daily logins</th><th>Daily workouts</th><th>AI cost / month</th></tr></thead><tbody id="forecastRows"></tbody></table></div>
-<p class="forecast-note" id="forecastNote">Based on Sep 2026 daily logins (3,074.50), seasonal historical DAU, and the selected AI activity scenario. Each month uses its actual calendar days. Workout users are shown for reference; AI cost follows the configured Chat / Home / Result activity per login DAU.</p>
+.tabbar{display:flex;gap:5px;padding:5px;background:#edf1f3;border-radius:12px;margin-bottom:15px}
+.tab{flex:1;border:0;border-radius:9px;background:transparent;color:#74828c;font-size:13px;font-weight:740;padding:12px 9px;cursor:pointer}
+.tab[aria-selected=true]{background:#fff;color:#24343e;box-shadow:0 1px 4px #1b30361c}
+.tab-pane[hidden]{display:none}
+.mode-kicker{text-transform:uppercase;font-size:10px;font-weight:800;color:#d77238;letter-spacing:.1em;margin-bottom:13px}
+.month-fields{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mode-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.mode-head h2{margin:0}
+.mode-head span{font-size:11px;color:#82909b}
+.month-caption{font-size:11px;color:#758795;line-height:1.55;margin-top:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.month-caption button{border:0;background:none;color:#ae622f;text-decoration:underline;font-size:11px;cursor:pointer;padding:0}
+.assumption-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:480px;margin-top:14px}
+.assumptions .info{font-size:11px;color:#7d909b;margin-top:10px}
+.activity .tablewrap{overflow-x:auto}
+.activity table{min-width:665px}
+.activity .tip{margin-top:12px}
+.numbers.triple{grid-template-columns:repeat(3,minmax(0,1fr))}
+.numbers.triple strong{font-size:clamp(20px,3.4vw,30px)}
+.numbers.triple .k:first-child strong,.numbers.triple .k:nth-child(2) strong{color:white}
+.numbers.triple .k:last-child strong{color:#ffa369}
+.reference-area{margin:0 0 16px!important}
+.reference-area>summary{font-size:13px}
+.reference-area .history-body{padding-top:12px}
+.method-note{font-size:11px;color:#788d98;margin-top:10px;line-height:1.55}
+.results .costline{line-height:1.55}
+@media(max-width:850px){.month-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){.tab{font-size:12px;padding:11px 5px}.numbers.triple{gap:5px}.numbers.triple strong{font-size:19px}.month-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.month-fields .ctl:first-child{grid-column:auto}}
+</style></head><body>
+<main class="wrap">
+<header><div class="logo"><b>S</b>SunnyFit <span style="font-weight:500;color:#9aa6af">/ Cost Calculator</span></div><button type="button" id="share">Copy scenario link</button></header>
+<section class="intro"><h1>AI Cost Calculator</h1><p>Estimate one day of AI usage or a selected month's total operating budget.</p></section>
+<nav class="tabbar" role="tablist"><button type="button" id="tab_daily" class="tab" role="tab" aria-controls="pane_daily" aria-selected="true">LLM Usage · Daily</button><button type="button" id="tab_monthly" class="tab" role="tab" aria-controls="pane_monthly" aria-selected="false">Monthly Total Cost</button></nav>
+<section id="pane_daily" class="tab-pane" role="tabpanel" aria-labelledby="tab_daily">
+<section class="box"><div class="mode-kicker">One-day simulation</div><div class="controls"><div class="ctl"><label for="daily_dau">Daily active users (DAU)</label><input type="number" id="daily_dau" min="0" step="1" value="3075"></div><div class="ctl"><label for="daily_model">AI model</label><select id="daily_model"><option value="gemini">Gemini 3.1 Flash-Lite</option><option value="luna">GPT-6 Luna (scenario)</option></select></div></div></section>
+<section class="box activity"><div class="mode-head"><h2>User activity</h2><span>Per user · per day</span></div><div class="tablewrap"><table><thead><tr><th>User group</th><th>Share of DAU</th><th>Chat</th><th>Home</th><th>Analysis</th><th>Cost / user / day</th></tr></thead><tbody><tr><td class="segment">Heavy<span>Frequent coaching</span></td><td><input type="number" id="daily_heavyPct" min="0" max="100" step=".1" value="5" aria-label="Heavy share"></td><td><input type="number" id="daily_heavyChat" min="0" step="1" value="10" aria-label="Heavy Chat/day"></td><td><input type="number" id="daily_heavyHome" min="0" step="1" value="4" aria-label="Heavy Home/day"></td><td><input type="number" id="daily_heavyResult" min="0" step="1" value="3" aria-label="Heavy Analysis/day"></td><td class="unitcost"><strong id="daily_heavyCost">—</strong></td></tr><tr><td class="segment">Moderate<span>Regular workouts</span></td><td><input type="number" id="daily_moderatePct" min="0" max="100" step=".1" value="20" aria-label="Moderate share"></td><td><input type="number" id="daily_moderateChat" min="0" step="1" value="5" aria-label="Moderate Chat/day"></td><td><input type="number" id="daily_moderateHome" min="0" step="1" value="3" aria-label="Moderate Home/day"></td><td><input type="number" id="daily_moderateResult" min="0" step="1" value="2" aria-label="Moderate Analysis/day"></td><td class="unitcost"><strong id="daily_moderateCost">—</strong></td></tr><tr><td class="segment">Light<span>Occasional use</span></td><td><input type="number" id="daily_lightPct" min="0" max="100" step=".1" value="30" aria-label="Light share"></td><td><input type="number" id="daily_lightChat" min="0" step="1" value="2" aria-label="Light Chat/day"></td><td><input type="number" id="daily_lightHome" min="0" step="1" value="2" aria-label="Light Home/day"></td><td><input type="number" id="daily_lightResult" min="0" step="1" value="2" aria-label="Light Analysis/day"></td><td class="unitcost"><strong id="daily_lightCost">—</strong></td></tr><tr><td class="segment">No Chat<span>Background AI only</span></td><td class="readonly" id="daily_noChatPct">45%</td><td class="readonly" style="text-align:center">0</td><td><input type="number" id="daily_noChatHome" min="0" step="1" value="2" aria-label="No Chat Home/day"></td><td><input type="number" id="daily_noChatResult" min="0" step="1" value="0" aria-label="No Chat Analysis/day"></td><td class="unitcost"><strong id="daily_noChatCost">—</strong></td></tr></tbody></table></div><p id="daily_mix" class="tip">No Chat is calculated automatically.</p></section>
+<section class="results"><div>Daily AI consumption · USD</div><div class="numbers"><div class="k"><small>Total AI cost / day</small><strong id="daily_cost">—</strong></div><div class="k"><small>AI requests / day</small><strong id="daily_calls">—</strong></div></div><div class="costline" id="daily_parts">—</div></section>
+<details class="box"><summary>Edit AI unit costs · USD / request</summary><div class="prices"><div><label for="daily_priceChat">Chat</label><input type="number" id="daily_priceChat" min="0" step=".000001"></div><div><label for="daily_priceHome">Home</label><input type="number" id="daily_priceHome" min="0" step=".000001"></div><div><label for="daily_priceResult">Workout Analysis</label><input type="number" id="daily_priceResult" min="0" step=".000001"></div></div><p class="method-note" id="daily_rateNote">Benchmarked unit rates; Analysis cost is a proxy.</p></details>
 </section>
-<section class="box"><details class="unitcost-details"><summary>Edit estimated unit costs (USD / request)</summary><div class="prices"><div><label for="chatPrice">Chat</label><input type="number" id="chatPrice" min="0" step=".000001"></div><div><label for="homePrice">Home</label><input type="number" id="homePrice" min="0" step=".000001"></div><div><label for="resultPrice">Workout Result</label><input type="number" id="resultPrice" min="0" step=".000001"></div></div><div class="warning" id="method">—</div></details></section>
-<details class="box historical-details"><summary>Historical reference · Oct 2025 – Sep 2026</summary><div class="history-body"><div class="mini"><strong>Observed production reference</strong> (Oct 20–Nov 9, 2026): 1,589 users with AI activity; typical ~169 AI-active users/day, ~37 Chat, ~440 Home and ~62 Workout requests/day.<br><span style="color:#8897a1">The activity mix above is a future-use scenario, not the observed production distribution. Historical ledger costs do not capture cache hits.</span></div>
-<div class="reference"><div class="reference-head"><strong>Business scale & server cost reference</strong><span>Oct 2025 – Sep 2026</span></div><div class="refstats"><div class="refstat"><label>Average monthly server cost</label><b>$8,233</b></div><div class="refstat"><label>Average daily login users</label><b>3,207</b></div><div class="refstat"><label>Average daily workout users</label><b>2,023</b></div><div class="refstat"><label>Workout / login ratio</label><b>63.1%</b></div></div><div class="refscroll"><table class="reftable"><thead><tr><th>Month</th><th>Server cost</th><th>Daily logins</th><th>YoY</th><th>Daily workouts</th><th>YoY</th><th>Workout / login</th></tr></thead><tbody><tr><td>Oct 2025</td><td>$6,507.36</td><td>2,425.45</td><td>50.80%</td><td>1,535.94</td><td>66.03%</td><td>63.3%</td></tr><tr><td>Nov 2025</td><td>$6,482.70</td><td>2,443.73</td><td>39.82%</td><td>1,514.50</td><td>52.45%</td><td>62.0%</td></tr><tr><td>Dec 2025</td><td>$6,948.93</td><td>2,800.10</td><td>39.27%</td><td>1,664.84</td><td>55.57%</td><td>59.5%</td></tr><tr><td>Jan 2026</td><td>$8,440.88</td><td>4,250.74</td><td>25.50%</td><td>2,614.29</td><td>36.83%</td><td>61.5%</td></tr><tr><td>Feb 2026</td><td>$7,626.33</td><td>3,966.93</td><td>27.86%</td><td>2,548.50</td><td>39.17%</td><td>64.2%</td></tr><tr><td>Mar 2026</td><td>$8,891.06</td><td>3,683.10</td><td>25.79%</td><td>2,378.74</td><td>35.28%</td><td>64.6%</td></tr><tr><td>Apr 2026</td><td>$7,281.94</td><td>3,366.50</td><td>22.31%</td><td>2,184.30</td><td>32.51%</td><td>64.9%</td></tr><tr><td>May 2026</td><td>$8,092.78</td><td>3,103.68</td><td>20.47%</td><td>1,963.74</td><td>28.39%</td><td>63.3%</td></tr><tr><td>Jun 2026</td><td>$8,204.31</td><td>3,125.17</td><td>24.18%</td><td>1,989.27</td><td>30.13%</td><td>63.7%</td></tr><tr><td>Jul 2026</td><td>$10,132.67</td><td>3,086.45</td><td>18.64%</td><td>1,960.71</td><td>22.69%</td><td>63.5%</td></tr><tr><td>Aug 2026</td><td>$11,107.48</td><td>3,158.84</td><td>25.72%</td><td>1,988.84</td><td>28.18%</td><td>63.0%</td></tr><tr class="latest"><td>Sep 2026</td><td>$9,078.98</td><td>3,074.50</td><td>26.26%</td><td>1,936.97</td><td>24.69%</td><td>63.0%</td></tr></tbody></table></div><p class="refnote">Daily login and workout users are monthly daily averages. YoY values are provided year-over-year changes. Workout / login is calculated as daily workout users ÷ daily login users. Average figures are simple averages across the 12 months.</p><p class="refnote">Server cost is shown as a separate operating-cost reference and is not added to the AI model estimate. Confirm the accounting scope before combining the two, especially if model-provider charges are already included in the server-cost line.</p></div>
+<section id="pane_monthly" class="tab-pane" role="tabpanel" aria-labelledby="tab_monthly" hidden>
+<section class="box"><div class="mode-kicker">Selected-month total budget · Oct 2025 – Sep 2028</div><div class="controls month-fields">
+<div class="ctl"><label for="monthSelect">Selected month</label><select id="monthSelect"></select></div>
+<div class="ctl"><label for="monthly_dau">Average daily login users</label><input id="monthly_dau" type="number" min="0" step="1" value="3075"></div>
+<div class="ctl"><label for="monthly_model">AI model</label><select id="monthly_model"><option value="gemini">Gemini 3.1 Flash-Lite</option><option value="luna">GPT-6 Luna (scenario)</option></select></div>
+<div class="ctl"><label for="monthly_server">Server cost (USD)</label><input id="monthly_server" type="number" min="0" step=".01" value="0"></div>
+</div>
+<div class="month-caption"><span id="monthStatus">Loading monthly estimate…</span><button id="monthReset" type="button">Reset DAU &amp; server to estimate</button></div>
+<details class="assumptions"><summary>Forecast assumptions · YoY growth</summary><div class="assumption-fields">
+<div class="ctl"><label for="loginGrowth">Login users YoY (%)</label><input id="loginGrowth" type="number" min="-100" max="500" step=".01" value="26.26"></div>
+<div class="ctl"><label for="workoutGrowth">Workout users YoY (%)</label><input id="workoutGrowth" type="number" min="-100" max="500" step=".01" value="24.69"></div>
+</div><p class="info">Uses historical same-month daily averages × annual YoY growth, compounded for 2027–2028. Predicted server cost scales from the same-month historical cost in proportion to DAU; both fields remain editable.</p></details>
+</section>
+<section class="box activity"><div class="mode-head"><h2>User activity</h2><span>Per user · per day</span></div><div class="tablewrap"><table><thead><tr><th>User group</th><th>Share of DAU</th><th>Chat</th><th>Home</th><th>Analysis</th><th>Cost / user / day</th></tr></thead><tbody><tr><td class="segment">Heavy<span>Frequent coaching</span></td><td><input type="number" id="monthly_heavyPct" min="0" max="100" step=".1" value="5" aria-label="Heavy share"></td><td><input type="number" id="monthly_heavyChat" min="0" step="1" value="10" aria-label="Heavy Chat/day"></td><td><input type="number" id="monthly_heavyHome" min="0" step="1" value="4" aria-label="Heavy Home/day"></td><td><input type="number" id="monthly_heavyResult" min="0" step="1" value="3" aria-label="Heavy Analysis/day"></td><td class="unitcost"><strong id="monthly_heavyCost">—</strong></td></tr><tr><td class="segment">Moderate<span>Regular workouts</span></td><td><input type="number" id="monthly_moderatePct" min="0" max="100" step=".1" value="20" aria-label="Moderate share"></td><td><input type="number" id="monthly_moderateChat" min="0" step="1" value="5" aria-label="Moderate Chat/day"></td><td><input type="number" id="monthly_moderateHome" min="0" step="1" value="3" aria-label="Moderate Home/day"></td><td><input type="number" id="monthly_moderateResult" min="0" step="1" value="2" aria-label="Moderate Analysis/day"></td><td class="unitcost"><strong id="monthly_moderateCost">—</strong></td></tr><tr><td class="segment">Light<span>Occasional use</span></td><td><input type="number" id="monthly_lightPct" min="0" max="100" step=".1" value="30" aria-label="Light share"></td><td><input type="number" id="monthly_lightChat" min="0" step="1" value="2" aria-label="Light Chat/day"></td><td><input type="number" id="monthly_lightHome" min="0" step="1" value="2" aria-label="Light Home/day"></td><td><input type="number" id="monthly_lightResult" min="0" step="1" value="2" aria-label="Light Analysis/day"></td><td class="unitcost"><strong id="monthly_lightCost">—</strong></td></tr><tr><td class="segment">No Chat<span>Background AI only</span></td><td class="readonly" id="monthly_noChatPct">45%</td><td class="readonly" style="text-align:center">0</td><td><input type="number" id="monthly_noChatHome" min="0" step="1" value="2" aria-label="No Chat Home/day"></td><td><input type="number" id="monthly_noChatResult" min="0" step="1" value="0" aria-label="No Chat Analysis/day"></td><td class="unitcost"><strong id="monthly_noChatCost">—</strong></td></tr></tbody></table></div><p id="monthly_mix" class="tip">No Chat is calculated automatically.</p></section>
+<section class="results"><div>Selected month's total operating budget · USD</div><div class="numbers triple"><div class="k"><small>Monthly AI cost</small><strong id="monthly_ai">—</strong></div><div class="k"><small>Server cost</small><strong id="monthly_serverAmount">—</strong></div><div class="k"><small>Total monthly budget</small><strong id="monthly_total">—</strong></div></div><div class="costline" id="monthly_parts">—</div></section>
+<details class="box"><summary>Edit AI unit costs · USD / request</summary><div class="prices"><div><label for="monthly_priceChat">Chat</label><input type="number" id="monthly_priceChat" min="0" step=".000001"></div><div><label for="monthly_priceHome">Home</label><input type="number" id="monthly_priceHome" min="0" step=".000001"></div><div><label for="monthly_priceResult">Workout Analysis</label><input type="number" id="monthly_priceResult" min="0" step=".000001"></div></div><p class="method-note" id="monthly_rateNote">Benchmarked unit rates; Analysis cost is a proxy.</p></details>
+<details class="box historical-details"><summary>Historical data &amp; assumptions · Oct 2025 – Sep 2026</summary><div class="history-body"><div class="mini"><strong>Observed production reference</strong> (Oct 20–Nov 9, 2026): 1,589 users with AI activity; typical ~169 AI-active users/day, ~37 Chat, ~440 Home and ~62 Workout requests/day.<br><span style="color:#8897a1">The activity mix above is a future-use scenario, not the observed production distribution. Historical ledger costs do not capture cache hits.</span></div>
+<div class="reference"><div class="reference-head"><strong>Business scale & server cost reference</strong><span>Oct 2025 – Sep 2026</span></div><div class="refstats"><div class="refstat"><label>Average monthly server cost</label><b>$8,233</b></div><div class="refstat"><label>Average daily login users</label><b>3,207</b></div><div class="refstat"><label>Average daily workout users</label><b>2,023</b></div><div class="refstat"><label>Workout / login ratio</label><b>63.1%</b></div></div><div class="refscroll"><table class="reftable" id="historyTable"><thead><tr><th>Month</th><th>Server cost</th><th>Daily logins</th><th>YoY</th><th>Daily workouts</th><th>YoY</th><th>Workout / login</th></tr></thead><tbody><tr><td>Oct 2025</td><td>$6,507.36</td><td>2,425.45</td><td>50.80%</td><td>1,535.94</td><td>66.03%</td><td>63.3%</td></tr><tr><td>Nov 2025</td><td>$6,482.70</td><td>2,443.73</td><td>39.82%</td><td>1,514.50</td><td>52.45%</td><td>62.0%</td></tr><tr><td>Dec 2025</td><td>$6,948.93</td><td>2,800.10</td><td>39.27%</td><td>1,664.84</td><td>55.57%</td><td>59.5%</td></tr><tr><td>Jan 2026</td><td>$8,440.88</td><td>4,250.74</td><td>25.50%</td><td>2,614.29</td><td>36.83%</td><td>61.5%</td></tr><tr><td>Feb 2026</td><td>$7,626.33</td><td>3,966.93</td><td>27.86%</td><td>2,548.50</td><td>39.17%</td><td>64.2%</td></tr><tr><td>Mar 2026</td><td>$8,891.06</td><td>3,683.10</td><td>25.79%</td><td>2,378.74</td><td>35.28%</td><td>64.6%</td></tr><tr><td>Apr 2026</td><td>$7,281.94</td><td>3,366.50</td><td>22.31%</td><td>2,184.30</td><td>32.51%</td><td>64.9%</td></tr><tr><td>May 2026</td><td>$8,092.78</td><td>3,103.68</td><td>20.47%</td><td>1,963.74</td><td>28.39%</td><td>63.3%</td></tr><tr><td>Jun 2026</td><td>$8,204.31</td><td>3,125.17</td><td>24.18%</td><td>1,989.27</td><td>30.13%</td><td>63.7%</td></tr><tr><td>Jul 2026</td><td>$10,132.67</td><td>3,086.45</td><td>18.64%</td><td>1,960.71</td><td>22.69%</td><td>63.5%</td></tr><tr><td>Aug 2026</td><td>$11,107.48</td><td>3,158.84</td><td>25.72%</td><td>1,988.84</td><td>28.18%</td><td>63.0%</td></tr><tr class="latest"><td>Sep 2026</td><td>$9,078.98</td><td>3,074.50</td><td>26.26%</td><td>1,936.97</td><td>24.69%</td><td>63.0%</td></tr></tbody></table></div><p class="refnote">Daily login and workout users are monthly daily averages. YoY values are provided year-over-year changes. Workout / login is calculated as daily workout users ÷ daily login users. Average figures are simple averages across the 12 months.</p><p class="refnote">Server cost is shown as a separate operating-cost reference and is not added to the AI model estimate. Confirm the accounting scope before combining the two, especially if model-provider charges are already included in the server-cost line.</p></div>
 </div></details>
-</main>
-<script>
+</section>
+<footer class="warning">AI cost is an estimate based on benchmark unit rates, not a production invoice. Server cost is added as a separate budget item; confirm whether your server-cost records already include any AI-provider charges before treating the combined number as non-overlapping expense.</footer>
+</main><script>
 (function(){
 "use strict";
-const rateDefaults={gemini:{chat:.01125,home:.002691,result:.0027},luna:{chat:.00567,home:.0008,result:.0011}};
-const rates=JSON.parse(JSON.stringify(rateDefaults));
-const inputIds=["dau","days","heavyPct","heavyChat","heavyHome","heavyResult","moderatePct","moderateChat","moderateHome","moderateResult","lightPct","lightChat","lightHome","lightResult","noChatHome","noChatResult"];
 const $=id=>document.getElementById(id);
-const num=id=>{const value=Number($(id).value);return Number.isFinite(value)&&value>=0?value:0};
-const requestIds=["heavyChat","heavyHome","heavyResult","moderateChat","moderateHome","moderateResult","lightChat","lightHome","lightResult","noChatHome","noChatResult"];
-const count=id=>Math.round(num(id));
-const money=(n,d=2)=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
-let current="gemini";
-function displayRates(){["chat","home","result"].forEach(k=>$(k+"Price").value=rates[current][k]);$("method").textContent=current==="gemini"?"Gemini: Chat and Home are based on Nov 11 controlled cache-hit tests. Workout Result is a historical non-cache proxy. These are not reconciled supplier invoices.":"Luna: hypothetical model-switch costs from controlled tests; Workout Result is a proxy. Luna is not validated as a production-wide migration. Confirm pricing, latency and reliability before planning spend.";}
-function compute(){
- const a=num("heavyPct"),b=num("moderatePct"),c=num("lightPct"),sum=a+b+c;
- const pr=rates[current];
- [["heavy","heavy"],["moderate","moderate"],["light","light"]].forEach(([key,id])=>{$(id+"Cost").textContent=money(count(key+"Chat")*pr.chat+count(key+"Home")*pr.home+count(key+"Result")*pr.result,4)});
- $("noChatCost").textContent=money(count("noChatHome")*pr.home+count("noChatResult")*pr.result,4);
- $("noChatPct").textContent=Number.isFinite(sum)&&sum<=100?(100-sum).toLocaleString("en-US",{maximumFractionDigits:1})+"%":"—";
- const valid=sum<=100&&num("days")>=1&&num("days")<=366;
- $("mixNote").textContent=valid?"Percentages are based on all DAU. No Chat is calculated automatically.":"Shares must total 100% or less, and days must be between 1 and 366.";
- $("mixNote").classList.toggle("error",!valid);
- if(!valid){$("daily").textContent="—";$("monthly").textContent="—";$("details").textContent="Adjust the highlighted assumptions to calculate.";monthlyForecast(NaN);return}
- const dau=num("dau");
- const groups=[["heavy",a],["moderate",b],["light",c]].map(([k,p])=>({share:p/100,chat:count(k+"Chat"),home:count(k+"Home"),result:count(k+"Result")}));
- groups.push({share:(100-sum)/100,chat:0,home:count("noChatHome"),result:count("noChatResult")});
- const calls={chat:0,home:0,result:0};
- groups.forEach(g=>{Object.keys(calls).forEach(k=>calls[k]+=dau*g.share*g[k])});
- const r=rates[current];const daily=calls.chat*r.chat+calls.home*r.home+calls.result*r.result;const monthly=daily*num("days");
- const costPerDauDay=groups.reduce((sum,g)=>sum+g.share*(g.chat*r.chat+g.home*r.home+g.result*r.result),0);
- monthlyForecast(costPerDauDay);
- $("daily").textContent=money(daily);$("monthly").textContent=money(monthly);$("monthlyLabel").textContent=num("days")+" days";
- $("details").textContent="Chat "+money(calls.chat*r.chat)+"  ·  Home "+money(calls.home*r.home)+"  ·  Workout Result "+money(calls.result*r.result)+" per day";
+const unitRates={gemini:{chat:0.01125,home:0.002691,result:0.0027},luna:{chat:0.00567,home:0.0008,result:0.0011}};
+const n=id=>{const v=Number($(id).value);return Number.isFinite(v)&&v>=0?v:0};
+const cnt=id=>Math.round(n(id));
+const money=(v,d=2)=>"$"+Number(v||0).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmt=(v,d=0)=>Number(v||0).toLocaleString("en-US",{maximumFractionDigits:d});
+const tiers=["heavy","moderate","light","noChat"], measures=["Chat","Home","Result"];
+const settings=["dau","model",...tiers.flatMap(k=>k==="noChat"?["noChatHome","noChatResult"]:[k+"Pct",k+"Chat",k+"Home",k+"Result"])];
+let tab="daily",editedDAU=false,editedServer=false;
+const history=new Map(Array.from(document.querySelectorAll("#historyTable tbody tr")).map(tr=>{
+ const t=tr.querySelectorAll("td"),num=i=>Number(t[i].textContent.replace(/[^0-9.-]/g,"")),p=t[0].textContent.trim().split(" "),months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+ const key=p[1]+"-"+String(months.indexOf(p[0])+1).padStart(2,"0");
+ return [key,{key,server:num(1),login:num(2),workout:num(4)}];
+}));
+const validMonths=[];
+for(let y=2025;y<=2028;y++)for(let m=1;m<=12;m++){
+ if((y===2025&&m<10)||(y===2028&&m>9))continue;
+ const key=y+"-"+String(m).padStart(2,"0"),opt=document.createElement("option");
+ opt.value=key;opt.textContent=new Date(y,m-1,1).toLocaleDateString("en-US",{month:"short",year:"numeric"});
+ $("monthSelect").appendChild(opt);validMonths.push(key);
 }
-
-function forecastGrowth(id){const v=Number($(id).value);return Number.isFinite(v)?Math.max(-100,Math.min(500,v))/100:0}
-function monthlyForecast(costPerDauDay){
- const history=Array.from(document.querySelectorAll(".reftable tbody tr")).map(row=>{
-  const cells=row.querySelectorAll("td"),parse=s=>Number(s.replace(/[^0-9.-]/g,""));
-  return {name:cells[0].textContent.trim(),logins:parse(cells[2].textContent),workouts:parse(cells[4].textContent)};
+$("monthSelect").value="2026-11";
+function growth(id){const x=Number($(id).value);return Number.isFinite(x)?Math.max(-100,Math.min(500,x))/100:0}
+function baseline(month){
+ let key=month,years=0;while(!history.has(key)&&years<4){const [year,m]=key.split("-");key=(Number(year)-1)+"-"+m;years++}
+ const base=history.get(key);if(!base)return null;
+ const [y,m]=month.split("-").map(Number);
+ const l=base.login*Math.pow(1+growth("loginGrowth"),years);
+ return {base,years,historical:years===0,dau:l,workout:base.workout*Math.pow(1+growth("workoutGrowth"),years),server:base.server*(base.login?l/base.login:1),days:new Date(y,m,0).getDate()};
+}
+function show(tabName){
+ tab=tabName;
+ for(const k of ["daily","monthly"]){$("pane_"+k).hidden=k!==tabName;$("tab_"+k).setAttribute("aria-selected",String(k===tabName))}
+}
+function setMonth(reset){
+ const b=baseline($("monthSelect").value);if(!b)return;
+ if(reset){editedDAU=false;editedServer=false}
+ if(!editedDAU)$("monthly_dau").value=Math.round(b.dau);
+ if(!editedServer)$("monthly_server").value=(b.base.server*(n("monthly_dau")/b.base.login)).toFixed(2);
+ $("monthStatus").textContent=(b.historical?"Historical actual":"Forecast")+" · "+b.days+" days · Expected daily workout users: "+fmt(b.workout)+" · Historical baseline: "+b.base.key;
+ calculate("monthly");
+}
+function modelPrice(p){return unitRates[$(p+"_model").value]}
+function fillRates(p){
+ const model=$(p+"_model").value;
+ for(const key of ["Chat","Home","Result"])$(p+"_price"+key).value=modelPrice(p)[key.toLowerCase()];
+ $(p+"_rateNote").textContent=model==="gemini"?"Gemini Chat and Home use controlled-cache cost estimates; Workout Analysis uses a historical full-price proxy.":"Luna is a hypothetical switch; rates are controlled-test estimates, and Workout Analysis is a proxy. Not yet production-wide validated.";
+}
+function calculate(p){
+ const ps=tiers.slice(0,3).map(k=>n(p+"_"+k+"Pct")),shareSum=ps.reduce((a,b)=>a+b,0),valid=shareSum<=100.000001,noChat=Math.max(0,100-shareSum);
+ $(p+"_noChatPct").textContent=valid?fmt(noChat,1)+"%":"—";
+ $(""+p+"_mix").classList.toggle("error",!valid);
+ $(p+"_mix").textContent=valid?"No Chat = "+fmt(noChat,1)+"% of DAU. Daily usage values are whole numbers.":"User shares exceed 100%. Please adjust.";
+ const r=modelPrice(p);
+ let unit=0,volume=0,chatSpend=0,homeSpend=0,resultSpend=0;
+ tiers.forEach((k,i)=>{
+  const portion=(k==="noChat"?noChat:ps[i])/100;
+  const chat=k==="noChat"?0:cnt(p+"_"+k+"Chat"),home=cnt(p+"_"+k+"Home"),result=cnt(p+"_"+k+"Result");
+  const spend=chat*r.chat+home*r.home+result*r.result;
+  $(p+"_"+k+"Cost").textContent=money(spend,4);
+  unit+=portion*spend;volume+=portion*(chat+home+result);
+  chatSpend+=portion*chat*r.chat;homeSpend+=portion*home*r.home;resultSpend+=portion*result*r.result;
  });
- if(!Number.isFinite(costPerDauDay)||history.length!==12){
-  $("forecastRows").innerHTML="<tr><td colspan='4' style='text-align:center;color:#a55'>Adjust activity shares to calculate.</td></tr>";
-  $("forecastTotal").textContent="—";return;
+ if(!valid){if(p==="daily")["daily_cost","daily_calls","daily_parts"].forEach(id=>$(id).textContent="—");else["monthly_ai","monthly_total","monthly_parts"].forEach(id=>$(id).textContent="—");return}
+ const dau=n(p+"_dau"),aiDay=dau*unit;
+ if(p==="daily"){
+  $("daily_cost").textContent=money(aiDay);
+  $("daily_calls").textContent=fmt(dau*volume);
+  $("daily_parts").textContent="Chat "+money(dau*chatSpend)+" · Home "+money(dau*homeSpend)+" · Analysis "+money(dau*resultSpend)+" / day";
+ }else{
+  const base=baseline($("monthSelect").value),days=base?base.days:30,aiMonth=aiDay*days,server=n("monthly_server");
+  $("monthly_ai").textContent=money(aiMonth);
+  $("monthly_serverAmount").textContent=money(server);
+  $("monthly_total").textContent=money(aiMonth+server);
+  $("monthly_parts").textContent=fmt(dau)+" average daily login users × "+days+" days · AI/day "+money(aiDay)+" · Expected workout users/day "+fmt(base?base.workout:0)+" (reference only)";
  }
- const last=history[history.length-1];
- const baseScale=last.logins>0?num("dau")/last.logins:0;
- const loginFactor=1+forecastGrowth("forecastLoginGrowth");
- const workoutFactor=1+forecastGrowth("forecastWorkoutGrowth");
- let annual=0;
- const number=x=>Math.round(x).toLocaleString("en-US");
- $("forecastRows").innerHTML=history.map(h=>{
-  const parts=h.name.split(" "),year=Number(parts[1])+1;
-  const monthNo=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(parts[0])+1;
-  const days=new Date(year,monthNo,0).getDate();
-  const logins=h.logins*baseScale*loginFactor;
-  const workouts=h.workouts*baseScale*workoutFactor;
-  const spend=logins*costPerDauDay*days;
-  annual+=spend;
-  return "<tr><td>"+parts[0]+" "+year+"</td><td>"+number(logins)+"</td><td>"+number(workouts)+"</td><td>"+money(spend,0)+"</td></tr>";
- }).join("");
- $("forecastTotal").textContent=money(annual,0);
 }
-
-function state(){const obj={model:current,rates};inputIds.forEach(id=>obj[id]=requestIds.includes(id)?count(id):num(id));obj.forecastLoginGrowth=Number($("forecastLoginGrowth").value);obj.forecastWorkoutGrowth=Number($("forecastWorkoutGrowth").value);return obj}
-function restore(obj){if(!obj||typeof obj!=="object")return;["forecastLoginGrowth","forecastWorkoutGrowth"].forEach(id=>{if(id in obj&&Number.isFinite(Number(obj[id])))$(id).value=Math.max(-100,Math.min(500,Number(obj[id])))});if(obj.model==="gemini"||obj.model==="luna")current=obj.model;inputIds.forEach(id=>{if(Object.hasOwn(obj,id)&&Number.isFinite(Number(obj[id]))&&Number(obj[id])>=0)$(id).value=requestIds.includes(id)?Math.round(Number(obj[id])):Number(obj[id])});["gemini","luna"].forEach(m=>{if(!obj.rates||!obj.rates[m])return;["chat","home","result"].forEach(k=>{const v=Number(obj.rates[m][k]);if(Number.isFinite(v)&&v>=0)rates[m][k]=v})})}
-try{const param=new URLSearchParams(location.search).get("cfg");if(param)restore(JSON.parse(param))}catch(e){}
-$("model").value=current;displayRates();compute();
-inputIds.forEach(id=>$(id).addEventListener("input",compute));
-["forecastLoginGrowth","forecastWorkoutGrowth"].forEach(id=>$(id).addEventListener("input",compute));
-requestIds.forEach(id=>$(id).addEventListener("change",function(){this.value=count(id);compute()}));
-$("model").addEventListener("change",function(){current=this.value;displayRates();compute()});
-["chat","home","result"].forEach(k=>$(k+"Price").addEventListener("input",()=>{rates[current][k]=num(k+"Price");compute()}));
-$("share").onclick=async function(){const link=new URL(location.href);link.searchParams.set("cfg",JSON.stringify(state()));try{await navigator.clipboard.writeText(link.toString());this.textContent="Copied ✓";setTimeout(()=>this.textContent="Copy scenario link",1800)}catch(e){window.prompt("Copy this link",link.toString())}};
+function snapshot(){
+ const o={tab,month:$("monthSelect").value,loginGrowth:Number($("loginGrowth").value),workoutGrowth:Number($("workoutGrowth").value),editedDAU,editedServer,server:Number($("monthly_server").value),unitRates};
+ for(const p of ["daily","monthly"]){o[p]={};for(const k of settings){const id=p+"_"+k;o[p][k]=k==="model"?$(id).value:k.endsWith("Chat")||k.endsWith("Home")||k.endsWith("Result")?cnt(id):n(id)}}
+ return o;
+}
+function restore(o){
+ if(!o||typeof o!=="object")return;
+ if(o.month&&validMonths.includes(o.month))$("monthSelect").value=o.month;
+ for(const k of ["loginGrowth","workoutGrowth"]){if(Number.isFinite(Number(o[k])))$(k).value=Number(o[k])}
+ if(o.unitRates)for(const m of ["gemini","luna"])for(const k of ["chat","home","result"]){const v=Number(o.unitRates[m]?.[k]);if(Number.isFinite(v)&&v>=0)unitRates[m][k]=v}
+ setMonth(true);
+ for(const p of ["daily","monthly"]){
+  if(!o[p])continue;
+  for(const k of settings){if(!(k in o[p]))continue;const id=p+"_"+k;
+   if(k==="model"){if(["gemini","luna"].includes(o[p][k]))$(id).value=o[p][k]}
+   else{const v=Number(o[p][k]);if(Number.isFinite(v)&&v>=0)$(id).value=k.endsWith("Chat")||k.endsWith("Home")||k.endsWith("Result")?Math.round(v):v}
+  }
+ }
+ if(Number.isFinite(Number(o.server))&&Number(o.server)>=0)$("monthly_server").value=Number(o.server);
+ editedDAU=Boolean(o.editedDAU);editedServer=Boolean(o.editedServer);
+ if(["daily","monthly"].includes(o.tab))tab=o.tab;
+}
+try{const cfg=new URLSearchParams(location.search).get("cfg");if(cfg)restore(JSON.parse(cfg));else setMonth(true)}catch(e){setMonth(true)}
+for(const p of ["daily","monthly"]){
+ for(const k of settings){const id=p+"_"+k,el=$(id);if(!el)throw Error("Missing input "+id);
+  if(k==="model")el.addEventListener("change",()=>{fillRates(p);calculate(p)});
+  else{el.addEventListener("input",()=>{if(p==="monthly"&&k==="dau"){editedDAU=true;if(!editedServer){const b=baseline($("monthSelect").value);if(b)$("monthly_server").value=(b.base.server*(n("monthly_dau")/b.base.login)).toFixed(2)}}calculate(p)});
+   if(k.endsWith("Chat")||k.endsWith("Home")||k.endsWith("Result"))el.addEventListener("change",()=>{el.value=cnt(id);calculate(p)});
+  }
+ }
+ fillRates(p);
+ for(const k of ["Chat","Home","Result"])$(p+"_price"+k).addEventListener("input",e=>{
+  const v=Number(e.target.value);modelPrice(p)[k.toLowerCase()]=Number.isFinite(v)&&v>=0?v:0;
+  for(const x of ["daily","monthly"]){fillRates(x);calculate(x)}
+ });
+}
+$("monthSelect").addEventListener("change",()=>setMonth(true));
+$("monthly_server").addEventListener("input",()=>{editedServer=true;calculate("monthly")});
+$("monthReset").addEventListener("click",()=>setMonth(true));
+for(const id of ["loginGrowth","workoutGrowth"])$(id).addEventListener("input",()=>setMonth(false));
+for(const p of ["daily","monthly"])$("tab_"+p).addEventListener("click",()=>show(p));
+$("share").addEventListener("click",()=>{
+ const url=new URL(location.href);url.searchParams.set("cfg",JSON.stringify(snapshot()));
+ const copied=()=>{$("share").textContent="Copied!";setTimeout(()=>$("share").textContent="Copy scenario link",1500)};
+ if(navigator.clipboard?.writeText)navigator.clipboard.writeText(url.toString()).then(copied).catch(()=>window.prompt("Copy scenario link",url.toString()));
+ else window.prompt("Copy scenario link",url.toString());
+});
+show(tab);calculate("daily");calculate("monthly");
 })();
 </script></body></html>
