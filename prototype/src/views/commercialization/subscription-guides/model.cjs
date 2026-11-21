@@ -15,6 +15,17 @@ const BENEFITS = [
   { id: 'ai_chat', label: 'AI Chat', headline: 'Your coach, always in reach', description: 'Talk to AI Coach with the credits available on your account.' }
 ]
 const SECTION_IDS = ['comparison', 'details', 'faq']
+const CORE_SCENES = [
+  { code:'course_access', name:'Course Access' },
+  { code:'world_tour_access', name:'World Tour Access' },
+  { code:'training_program_access', name:'Training Program Access' },
+  { code:'movement_access', name:'Movement Access' },
+  { code:'dynamic_plan', name:'Dynamic Plan' },
+  { code:'workout_result_ai_insight', name:'Workout Result AI Insight' },
+  { code:'weekly_report_ai_insight', name:'Weekly Report AI Insight' },
+  { code:'ai_coach_chat', name:'AI Coach Chat' },
+  { code:'challenge_access', name:'Challenge Access' }
+]
 const IMAGE_SIZES = { detail: { width: 750, height: 375 }, banner: { width: 750, height: 320 } }
 const clone = value => JSON.parse(JSON.stringify(value))
 const languageText = (value, locale = 'en') => value && (value[locale] || value.en || '') || ''
@@ -34,7 +45,8 @@ const exampleRow = (id, title, freeOn, premiumOn, freeDesc = '', premiumDesc = '
 })
 function seed(catalog = []) {
   const scenes = {}
-  catalog.filter(item => item.type !== 'consumable_credits' && item.category !== 'Consumable Credits').forEach((item, index) => {
+  const known = new Set(CORE_SCENES.map(item => item.code))
+  CORE_SCENES.concat(catalog.filter(item => item.type !== 'consumable_credits' && item.category !== 'Consumable Credits' && !known.has(item.code))).forEach((item, index) => {
     scenes[item.code] = {
       banner: placeholder('banner', 'SunnyFit Premium', index),
       title: textMap('Unlock more with Premium'),
@@ -169,4 +181,4 @@ function projectScene(config, code, locale = 'en') {
   const scene = config.scenes[code]
   return scene ? { entitlementCode: code, banner: scene.banner && scene.banner.src, title: languageText(scene.title, locale), description: languageText(scene.description, locale) } : null
 }
-module.exports = { LOCALES, BENEFITS, SECTION_IDS, IMAGE_SIZES, clone, languageText, seed, reconcile, validate, projectMembership, projectScene }
+module.exports = { LOCALES, BENEFITS, SECTION_IDS, CORE_SCENES, IMAGE_SIZES, clone, languageText, seed, reconcile, validate, projectMembership, projectScene }
