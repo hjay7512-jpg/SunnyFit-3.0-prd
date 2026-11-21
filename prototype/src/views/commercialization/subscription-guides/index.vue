@@ -152,8 +152,8 @@ export default {
     sectionIds() { return model.SECTION_IDS },
     currentSection() { return this.draft.membership[this.sectionId] },
     currentScene() { return this.draft.scenes[this.sceneId] || null },
-    filteredCatalog() { const term=this.search.toLowerCase();return this.catalog.filter(item => this.draft.scenes[item.code] && (item.name+' '+item.code).toLowerCase().includes(term)) },
-    sceneName() { return (this.catalog.find(item=>item.code===this.sceneId)||{}).name || this.sceneId },
+    filteredCatalog() { const term=this.search.toLowerCase();const items=model.CORE_SCENES.concat(this.catalog.filter(item=>!model.CORE_SCENES.some(known=>known.code===item.code)));return items.filter(item => this.draft.scenes[item.code] && (item.name+' '+item.code).toLowerCase().includes(term)) },
+    sceneName() { return (this.filteredCatalog.find(item=>item.code===this.sceneId)||this.catalog.find(item=>item.code===this.sceneId)||model.CORE_SCENES.find(item=>item.code===this.sceneId)||{}).name || this.sceneId },
     dirty() { return this.draft && snapshot(this.draft)!==this.savedDraft },
     activePreview() { return this.view==='published'?this.published:this.draft },
     previewSections() { return this.activePreview ? model.projectMembership(this.activePreview,this.locale) : [] },
@@ -176,11 +176,25 @@ export default {
     benefitLabel(id) { return (model.BENEFITS.find(item=>item.id===id)||{}).label||id },
     toggleLocale(code,enabled) {
       if (code==='en') return
-      if (enabled && !this.draft.enabledLocales.includes(code)) this.draft.enabledLocales.push(code)
+      if (enabled && !this.draft.enabledLocales.includes(code)) {
+        const walk = item => {
+          if (!item || typeof item!=='object') return
+          if (!Array.isArray(item) && Object.prototype.hasOwnProperty.call(item,'en') && typeof item.en==='string' && !Object.prototype.hasOwnProperty.call(item,code)) this.$set(item,code,'')
+          else Object.values(item).forEach(walk)
+        }
+        walk(this.draft)
+        this.draft.enabledLocales.push(code)
+      }
       else if (!enabled) { this.draft.enabledLocales=this.draft.enabledLocales.filter(item=>item!==code);if(this.locale===code)this.locale='en' }
     },
-    addComparison() { this.currentSection.rows.push({id:'row_'+Date.now(),name:{en:''},free:{enabled:false,description:{en:''}},premium:{enabled:true,description:{en:''}}}) },
-    addFAQ() { this.currentSection.rows.push({id:'faq_'+Date.now(),question:{en:''},answer:{en:''}}) },
+    addComparison() {
+      const localized=()=>Object.fromEntries(this.enabledLocales.map(code=>[code,'']))
+      this.currentSection.rows.push({id:'row_'+Date.now(),name:localized(),free:{enabled:false,description:localized()},premium:{enabled:true,description:localized()}})
+    },
+    addFAQ() {
+      const localized=()=>Object.fromEntries(this.enabledLocales.map(code=>[code,'']))
+      this.currentSection.rows.push({id:'faq_'+Date.now(),question:localized(),answer:localized()})
+    },
     resetDraft() { this.$confirm('Discard current edits and reload the last saved draft?', 'Discard changes', {type:'warning'}).then(()=>{this.draft=model.reconcile(safeRead(DRAFT_KEY),this.catalog);this.savedDraft=snapshot(this.draft)}).catch(()=>{}) },
     persist(key,data) { try { localStorage.setItem(key,snapshot(data));return true } catch(error) { this.$message.error('Browser storage is full or unavailable. Try smaller image assets.');return false } },
     saveDraft() { if (this.persist(DRAFT_KEY,this.draft)) { this.savedDraft=snapshot(this.draft);this.$message.success('Draft saved in this browser. Published preview unchanged.') } },
