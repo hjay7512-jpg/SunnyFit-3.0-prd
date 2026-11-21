@@ -86,3 +86,33 @@ test('annotated Figma references are shipped and closed by default', () => {
     assert.deepEqual(Array.from(data.subarray(0,8)),[137,80,78,71,13,10,26,10])
   }
 })
+
+test('unavailable Movement and Challenge feature paywalls do not appear', () => {
+  const excluded = ['movement_access','challenge_access']
+  assert.deepEqual(model.UNAVAILABLE_SCENE_CODES, excluded)
+  const catalog = excluded.map(code => ({code, name:code, type:'feature_access', category:'Feature Access'}))
+  const seeded = model.seed(catalog)
+  for (const code of excluded) {
+    assert.ok(!model.CORE_SCENES.some(item => item.code===code))
+    assert.equal(seeded.scenes[code],undefined)
+    assert.equal(model.projectScene(seeded,code),null)
+  }
+  assert.equal(Object.keys(seeded.scenes).length,7)
+  assert.ok(seeded.scenes.ai_coach_chat)
+  assert.ok(seeded.scenes.dynamic_plan)
+})
+
+test('older local drafts drop unavailable paywall scenes but retain other edits', () => {
+  const existing = model.seed()
+  existing.scenes.movement_access = {title:{en:'Old movement copy'}}
+  existing.scenes.challenge_access = {title:{en:'Old challenge copy'}}
+  existing.scenes.course_access.title.en = 'Keep my custom copy'
+  const recovered = model.reconcile(existing, [
+    {code:'movement_access',name:'Movement Access',type:'feature_access'},
+    {code:'challenge_access',name:'Challenge Access',type:'feature_access'}
+  ])
+  assert.equal(recovered.scenes.movement_access,undefined)
+  assert.equal(recovered.scenes.challenge_access,undefined)
+  assert.equal(recovered.scenes.course_access.title.en,'Keep my custom copy')
+  assert.deepEqual(model.validate(recovered),[])
+})
