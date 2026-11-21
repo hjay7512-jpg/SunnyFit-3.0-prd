@@ -19,13 +19,15 @@ const CORE_SCENES = [
   { code:'course_access', name:'Course Access' },
   { code:'world_tour_access', name:'World Tour Access' },
   { code:'training_program_access', name:'Training Program Access' },
-  { code:'movement_access', name:'Movement Access' },
   { code:'dynamic_plan', name:'Dynamic Plan' },
   { code:'workout_result_ai_insight', name:'Workout Result AI Insight' },
   { code:'weekly_report_ai_insight', name:'Weekly Report AI Insight' },
   { code:'ai_coach_chat', name:'AI Coach Chat' },
-  { code:'challenge_access', name:'Challenge Access' }
+  // Additional paywall scenes are included only after the corresponding entry exists.
 ]
+// These two feature entry points are not currently supported in V3.0.
+// Exclude them even if an older browser draft or entitlement catalog contains them.
+const UNAVAILABLE_SCENE_CODES = ['movement_access', 'challenge_access']
 const IMAGE_SIZES = { detail: { width: 750, height: 375 }, banner: { width: 750, height: 320 } }
 const clone = value => JSON.parse(JSON.stringify(value))
 const languageText = (value, locale = 'en') => value && (value[locale] || value.en || '') || ''
@@ -46,7 +48,7 @@ const exampleRow = (id, title, freeOn, premiumOn, freeDesc = '', premiumDesc = '
 function seed(catalog = []) {
   const scenes = {}
   const known = new Set(CORE_SCENES.map(item => item.code))
-  CORE_SCENES.concat(catalog.filter(item => item.type !== 'consumable_credits' && item.category !== 'Consumable Credits' && !known.has(item.code))).forEach((item, index) => {
+  CORE_SCENES.concat(catalog.filter(item => item.type !== 'consumable_credits' && item.category !== 'Consumable Credits' && !known.has(item.code) && !UNAVAILABLE_SCENE_CODES.includes(item.code))).forEach((item, index) => {
     scenes[item.code] = {
       banner: placeholder('banner', 'SunnyFit Premium', index),
       title: textMap('Unlock more with Premium'),
@@ -94,6 +96,7 @@ function reconcile(snapshot, catalog = []) {
   if (!target.membership) target.membership = initial.membership
   for (const id of SECTION_IDS) if (!target.membership[id]) target.membership[id] = initial.membership[id]
   if (!target.scenes) target.scenes = {}
+  for (const code of UNAVAILABLE_SCENE_CODES) delete target.scenes[code]
   for (const [code, value] of Object.entries(initial.scenes)) if (!target.scenes[code]) target.scenes[code] = value
   return target
 }
@@ -178,7 +181,8 @@ function projectMembership(config, locale = 'en') {
     })
 }
 function projectScene(config, code, locale = 'en') {
+  if (UNAVAILABLE_SCENE_CODES.includes(code)) return null
   const scene = config.scenes[code]
   return scene ? { entitlementCode: code, banner: scene.banner && scene.banner.src, title: languageText(scene.title, locale), description: languageText(scene.description, locale) } : null
 }
-module.exports = { LOCALES, BENEFITS, SECTION_IDS, CORE_SCENES, IMAGE_SIZES, clone, languageText, seed, reconcile, validate, projectMembership, projectScene }
+module.exports = { LOCALES, BENEFITS, SECTION_IDS, CORE_SCENES, UNAVAILABLE_SCENE_CODES, IMAGE_SIZES, clone, languageText, seed, reconcile, validate, projectMembership, projectScene }
