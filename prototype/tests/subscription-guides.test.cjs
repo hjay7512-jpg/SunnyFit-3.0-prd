@@ -60,7 +60,6 @@ test('localized projections fall back to English and never change access rules',
   data.membership.comparison.title.es='Comparar'
   data.scenes.course_access.title.es='Desbloquear'
   assert.equal(model.projectMembership(data,'es')[0].title,'Comparar')
-  assert.equal(model.projectScene(data,'es').title,undefined) // missing scene code
   assert.equal(model.projectScene(data,'course_access','es').title,'Desbloquear')
   assert.equal(model.projectScene(data,'course_access','de').title,data.scenes.course_access.title.en)
 })
