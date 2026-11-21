@@ -160,7 +160,7 @@ export default {
     sectionIds() { return model.SECTION_IDS },
     currentSection() { return this.draft.membership[this.sectionId] },
     currentScene() { return this.draft.scenes[this.sceneId] || null },
-    filteredCatalog() { const term=this.search.toLowerCase();const items=model.CORE_SCENES.concat(this.catalog.filter(item=>!model.CORE_SCENES.some(known=>known.code===item.code)));return items.filter(item => this.draft.scenes[item.code] && (item.name+' '+item.code).toLowerCase().includes(term)) },
+    filteredCatalog() { const term=this.search.toLowerCase();const items=model.CORE_SCENES.concat(this.catalog.filter(item=>!model.CORE_SCENES.some(known=>known.code===item.code) && !model.UNAVAILABLE_SCENE_CODES.includes(item.code)));return items.filter(item => this.draft.scenes[item.code] && !model.UNAVAILABLE_SCENE_CODES.includes(item.code) && (item.name+' '+item.code).toLowerCase().includes(term)) },
     sceneName() { return (this.filteredCatalog.find(item=>item.code===this.sceneId)||this.catalog.find(item=>item.code===this.sceneId)||model.CORE_SCENES.find(item=>item.code===this.sceneId)||{}).name || this.sceneId },
     dirty() { return this.draft && snapshot(this.draft)!==this.savedDraft },
     referenceFigmaUrl() { return this.workspace==='membership'
