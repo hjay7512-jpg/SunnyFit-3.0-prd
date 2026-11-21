@@ -72,3 +72,17 @@ test('old saved data gains only missing fixed scenarios without deleting existin
   assert.equal(recovered.scenes.course_access.title.en,original)
   assert.ok(recovered.scenes.ai_coach_chat)
 })
+
+test('annotated Figma references are shipped and closed by default', () => {
+  const fs=require('node:fs'), path=require('node:path')
+  const root=path.join(__dirname,'..')
+  const page=fs.readFileSync(path.join(root,'src/views/commercialization/subscription-guides/index.vue'),'utf8')
+  assert.match(page,/referenceOpen:false/)
+  assert.match(page,/aside v-if="referenceOpen"/)
+  assert.match(page,/annotated-ui-reference/)
+  assert.doesNotMatch(page,/Draft Preview/)
+  for(const asset of ['membership-ui.png','paywall-ui.png']) {
+    const data=fs.readFileSync(path.join(root,'public/assets/figma/subscription-guidance',asset))
+    assert.deepEqual(Array.from(data.subarray(0,8)),[137,80,78,71,13,10,26,10])
+  }
+})
