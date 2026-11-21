@@ -17,7 +17,7 @@ This is an **interactive admin prototype**, not a production configuration API. 
 | Q&A | Add/remove questions; 50-character question and 300-character answer; optional module title |
 | Feature entitlement guidance | One banner (750 × 320, without copy overlay), required 30-character title and 120-character description per existing entitlement |
 | Multilingual | English fallback, optional ES/FR/DE/IT/ZH-CN language activation, independent text per locale, publish-time validation |
-| Operator workflow | Save draft, discard changes, view published snapshot, publication validation and version indicator |
+| Operator workflow | Save draft, discard changes, publication validation and version indicator. The annotation panel uses exact Figma screenshots (Membership & Usage 9128:2550 and contextual Paywall 9156:3283), and is **collapsed by default**. |
 
 Default images are **illustrative placeholders**, not endorsed production creative. Uploaded images are checked for MIME, exact pixel size and prototype storage size (350 KB per image); the production design must use a real media service and returned asset IDs.
 
@@ -45,3 +45,7 @@ npm run build
 ```
 
 The source change was prepared via the GitHub connector. Local builds/browser verification are **not asserted** unless separately run in a development environment.
+
+## Figma reference screenshots
+
+The previously generated `Draft Preview` phone mockup has been replaced with a read-only **UI Reference · Figma** panel. The panel is closed when the configuration page opens; clicking `Show UI reference` expands it. Numbered outlines mark which elements are configured by §4.1, with read-only store pricing and purchase areas clearly separated. The image assets are committed in `public/assets/figma/subscription-guidance/` so links do not expire. The editing workflow and browser-local draft/publication state are unchanged.
