@@ -3,6 +3,7 @@ export const implementationScopes = {
   catalog: { kind: 'new', label: '建议新增模块', title: '权益管理 · 权益目录', priority: 'MVP', priorityNote: 'MVP 先用固定目录定义内容、功能和额度项；可视化维护目录属于 P1。', description: '系统能力的只读目录；与权益套餐同属权益管理。能力定义由代码维护。' },
   suits: { kind: 'new', label: '建议新增模块', title: '权益管理 · 权益套餐', priority: 'P1', priorityNote: 'MVP 需预置 Free / Premium 组合；完整的套餐管理后台列为 P1。', description: '配置内容 Scope、功能项、Credits 发放规则和发布版本。', businessTopic: 'composition', businessNode: 'suit' },
   products: { kind: 'new', label: '建议新增模块', title: '商业商品管理', priority: 'MVP', priorityNote: 'MVP 覆盖会员商品与 Apple / Google SKU 关联；单独销售的 Credits 商品是 P2。', description: '管理会员及 Credits 商品；SKU 放在商品详情内。如原后台已有商品管理，扩展原模块。', businessTopic: 'orders', businessNode: 'membership_product' },
+  'subscription-guides': { kind: 'new', label: '新增运营配置', title: '商业化配置 · 订阅引导', priority: 'P1', priorityNote: 'V3.0.0 §4.1 会员权益介绍与按权益场景的订阅引导配置；当前仅浏览器原型存储。', description: '三个固定模块、启停与排序、功能场景 Banner / 标题 / 描述、多语言校验与发布预览。', businessTopic: 'relations', businessNode: 'entitlement' },
   pricing: { kind: 'new', label: '建议新增配置', title: 'Credits 服务计价', priority: 'P1', priorityNote: 'AI Credits 额度授予、报价和消费闭环列为 P1；具体服务扣额仍待业务定义。', description: '配置用户操作与 Credits 价格的对应关系；独立菜单是方案，可并入商业化配置。', businessTopic: 'credits', businessNode: 'consume_policy' },
   'content-management': { kind: 'new', label: '权益管理', title: '权益管理 · 内容管理', priority: 'MVP', priorityNote: '按内容类型维护范围标签与内容关联；课程范围关联属于 MVP，限时挑战授权仍为 P3。', description: '先选内容类型，再选范围标签，从对应内容库添加内容；每条内容只能关联一个范围标签。迁移范围时替换原关联。', businessTopic: 'content', businessNode: 'content' },
   content: { kind: 'extension', label: '扩展现有模块', title: '现有内容库 · Course / World Tour / Training Program', priority: 'MVP', priorityNote: '现有内容库展示各自内容的范围归属；范围标签及关联统一在权益管理 → 内容管理维护。Content Credits 兑换与限时挑战授权是 P3。', description: '按各自内容类型查看内容库与范围归属，基础内容编辑继续复用原功能；范围关联在权益管理的内容管理中维护。', businessTopic: 'content', businessNode: 'content', links: [{ path: 'redemptions', title: '兑换记录样例' }] },
@@ -37,6 +38,7 @@ export const sidebarGroups = [
   ] },
   { key: 'commerce', title: 'Commercialization', icon: 'el-icon-money', items: [
     item('products', 'Products', 'el-icon-goods'),
+    item('subscription-guides', 'Subscription Guidance', 'el-icon-picture-outline-round'),
     item('pricing', 'Service Pricing', 'el-icon-coin')
   ] },
   { key: 'extensions', title: 'Existing Modules', icon: 'el-icon-folder-opened', items: [
