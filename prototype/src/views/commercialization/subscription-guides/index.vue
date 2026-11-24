@@ -88,23 +88,64 @@
           </section>
         </template>
         <template v-else>
-          <div class="section-heading"><div><h2>Feature paywall introductions</h2><p>Each existing entitlement has a separate Banner, title and description. No store pricing or eligibility is configured here.</p></div></div>
-          <div class="scene-picker">
-            <el-input v-model="search" clearable size="small" prefix-icon="el-icon-search" placeholder="Find an entitlement" />
-            <button v-for="item in filteredCatalog" :key="item.code" type="button" class="scene-item" :class="{active:sceneId===item.code}" @click="sceneId=item.code">
-              <strong>{{ item.name }}</strong><small>{{ item.code }}</small>
-            </button>
-            <p v-if="!filteredCatalog.length" class="muted">No matching entitlements</p>
+          <div class="section-heading">
+            <div><h2>Feature Paywalls</h2><p>Configure each entry separately. Membership is a general upgrade entry; feature entries use their existing entitlement codes.</p></div>
           </div>
-          <section v-if="currentScene" class="edit-panel">
-            <div class="edit-panel-heading"><h3>{{ sceneName }}</h3><el-tag size="small" type="info">Entitlement linked</el-tag></div>
-            <p class="field-help">Shown when this entitlement's corresponding feature entry opens the subscription paywall. Effective access and offers remain decided by the server and store.</p>
-            <label>Banner · 750 × 320 · required (no overlaid copy)
-              <div class="asset-upload"><img v-if="currentScene.banner" :src="currentScene.banner.src" alt="Paywall banner"/><span v-else>No banner</span><div><input type="file" accept="image/png,image/jpeg,image/webp" @change="upload($event,currentScene,'banner','banner')"/><small v-if="currentScene.banner && currentScene.banner.demo">Example image · replace before production</small></div></div>
-            </label>
-            <label>Main title · max 30<el-input v-model="currentScene.title[locale]" maxlength="30" show-word-limit/></label>
-            <label>Description · max 120<el-input v-model="currentScene.description[locale]" type="textarea" :rows="3" maxlength="120" show-word-limit/></label>
-          </section>
+          <div class="scene-picker" data-testid="feature-paywall-picker">
+            <el-input v-model="search" clearable size="small" prefix-icon="el-icon-search" placeholder="Search paywall entries" />
+            <button v-for="item in filteredCatalog" :key="item.code" type="button" class="scene-item" :class="{active:sceneId===item.code}" :data-testid="'paywall-entry-'+item.code" @click="selectScene(item.code)">
+              <div class="scene-item-head"><strong>{{ item.name }}</strong><el-tag v-if="item.code==='membership'" size="mini" type="success">Page Entry</el-tag><el-tag v-else-if="draft.scenes[item.code].enabled" size="mini" type="warning">A/B Configured</el-tag></div>
+              <small>{{ item.code }} · {{ draft.scenes[item.code].variants.length }} {{ draft.scenes[item.code].variants.length===1?'group':'groups' }}</small>
+            </button>
+            <p v-if="!filteredCatalog.length" class="muted">No matching paywall entries</p>
+          </div>
+          <template v-if="currentScene">
+            <section class="experiment-panel" data-testid="paywall-ab-editor">
+              <div class="experiment-header">
+                <div><h3>{{ sceneName }}</h3><p>{{ sceneId==='membership'?'Membership & Usage → subscription CTA → default Paywall. No Entitlement Item required.':'Triggered by the matching entitlement gate. Purchase eligibility is checked separately.' }}</p></div>
+                <div class="experiment-switch"><small>A/B Test</small><el-switch v-model="currentScene.enabled" :disabled="currentVariants.length<2" active-text="On" inactive-text="Off" data-testid="ab-enable"/></div>
+              </div>
+              <div class="experiment-fields">
+                <label><span>Experiment name <small>(max 60)</small></span><el-input v-model="currentScene.experimentName" maxlength="60" show-word-limit size="small" data-testid="ab-name"/></label>
+                <div class="experiment-key"><span>Experiment ID</span><code>{{ currentScene.experimentId }}</code></div>
+              </div>
+              <div class="variant-title">
+                <div><h4>Creative groups</h4><p>Each group has its own Banner, title and description in every enabled language.</p></div>
+                <el-button size="small" icon="el-icon-document-copy" :disabled="currentVariants.length>=maxVariants" data-testid="ab-duplicate" @click="duplicateGroup">Duplicate selected group</el-button>
+              </div>
+              <div class="variant-cards">
+                <button v-for="variant in currentVariants" :key="variant.id" type="button" :class="{active:currentVariant && currentVariant.id===variant.id}" class="variant-card" :data-testid="'ab-group-'+variant.id" @click="activeVariantId=variant.id">
+                  <div class="variant-card-top"><span class="variant-letter">{{ variant.id }}</span><strong>{{ variant.name }}</strong></div>
+                  <div class="variant-card-copy">{{ previewCopy(variant) }}</div>
+                  <div class="variant-card-footer"><small>{{ variant.id==='A'?'Control':'Variation' }}</small><b>{{ variant.traffic }}%</b></div>
+                </button>
+              </div>
+              <div v-if="currentVariants.length>1" class="traffic-section">
+                <div class="traffic-header"><strong>Traffic allocation <span :class="{invalid:trafficTotal!==100}">{{ trafficTotal }}% / 100%</span></strong><el-button size="mini" type="text" @click="equalSplit">Equal split</el-button></div>
+                <div class="traffic-items">
+                  <label v-for="variant in currentVariants" :key="variant.id" class="traffic-item"><span>{{ variant.id }} · {{ variant.name }}</span><el-input-number v-model="variant.traffic" size="small" :min="0" :max="100" :step="5" :precision="0" controls-position="right" :data-testid="'ab-traffic-'+variant.id"/><span>%</span></label>
+                </div>
+                <el-alert v-if="currentScene.enabled && (trafficTotal!==100||currentVariants.some(group=>group.traffic<=0))" title="Enabled A/B experiments require 100% total traffic and a positive share for every group." type="error" :closable="false" show-icon/>
+              </div>
+              <div class="assignment-demo">
+                <div><strong>Assignment simulator</strong><p>Local preview only · same test key + experiment ID gives a consistent group</p></div>
+                <div class="assignment-demo-fields"><el-input v-model="sampleUserKey" size="small" placeholder="Sample user key" data-testid="ab-sample-user"/><span v-if="sampleAssignment" class="assignment-chip" data-testid="ab-assignment">{{ sampleAssignment.variantId }} · {{ sampleAssignment.name }}</span></div>
+              </div>
+              <p class="field-help">This is an operations prototype, not a live traffic experiment. Production assignment, audience eligibility, sticky groups, exposure events and experiment reporting require backend integration.</p>
+            </section>
+            <section v-if="currentVariant" class="edit-panel variant-editor" data-testid="ab-creative-editor">
+              <div class="edit-panel-heading">
+                <div><h3>Group {{ currentVariant.id }} · Creative</h3><p class="field-help">Edit {{ locale }} copy for this group. Only the selected group is changed.</p></div>
+                <el-button v-if="currentVariant.id!=='A'" size="mini" type="danger" plain icon="el-icon-delete" @click="deleteGroup">Delete group</el-button>
+              </div>
+              <label>Group name · max 40<el-input v-model="currentVariant.name" maxlength="40" show-word-limit size="small" data-testid="ab-group-name"/></label>
+              <label>Banner · 750 × 320 · required (no overlaid copy)
+                <div class="asset-upload"><img v-if="currentVariant.banner" :src="currentVariant.banner.src" alt="Paywall banner"/><span v-else>No banner</span><div><input type="file" accept="image/png,image/jpeg,image/webp" @change="upload($event,currentVariant,'banner','banner')"/><small v-if="currentVariant.banner && currentVariant.banner.demo">Example image · replace before production</small></div></div>
+              </label>
+              <label>Main title · max 30<el-input v-model="currentVariant.title[locale]" maxlength="30" show-word-limit data-testid="ab-title"/></label>
+              <label>Description · max 120<el-input v-model="currentVariant.description[locale]" type="textarea" :rows="3" maxlength="120" show-word-limit data-testid="ab-description"/></label>
+            </section>
+          </template>
         </template>
       </div>
       <aside v-if="referenceOpen" class="guide-preview" data-testid="annotated-ui-reference">
@@ -113,9 +154,10 @@
           <el-button size="mini" icon="el-icon-arrow-right" @click="referenceOpen=false">Collapse</el-button>
         </div>
         <div class="reference-intro">
-          <span>{{ workspace==='membership'?'Membership & Usage · Free state':'Contextual purchase · Course entry' }}</span>
+          <span>{{ workspace==='membership'?'Membership & Usage · Free state':sceneId==='membership'?'Membership → Default Paywall (shared layout)':'Contextual purchase · Shared Paywall layout' }}</span>
           <a :href="referenceFigmaUrl" target="_blank" rel="noopener noreferrer">View in Figma <i class="el-icon-top-right"/></a>
         </div>
+        <p v-if="workspace==='scenes' && sceneId==='membership'" class="reference-disclaimer">This screenshot is a shared Paywall layout reference from the Course entry. The Membership CTA is shown in <a href="https://www.figma.com/design/2AT0tm9mkFhes8T81YzA2L/V3.0?node-id=9128-2550" target="_blank" rel="noopener noreferrer">Membership &amp; Usage</a>; its Banner, title and description are configured separately here.</p>
         <div class="reference-scroll">
           <div class="reference-screenshot">
             <img :src="referenceScreenshot" :alt="workspace==='membership'?'Figma Membership & Usage screen':'Figma contextual subscription sheet'" loading="lazy"/>
@@ -152,14 +194,19 @@ const safeRead = (key) => { try { return JSON.parse(localStorage.getItem(key)||'
 const snapshot = value => JSON.stringify(value)
 export default {
   name: 'SubscriptionGuidanceConfiguration',
-  data() { return { draft:null, published:null, catalog:[], catalogError:'', workspace:'membership', sectionId:'comparison', sceneId:'', locale:'en', search:'', referenceOpen:false, errors:[], errorsVisible:false, meta:{version:0,publishedAt:null}, savedDraft:'' } },
+  data() { return { draft:null, published:null, catalog:[], catalogError:'', workspace:'membership', sectionId:'comparison', sceneId:'membership', activeVariantId:'A', sampleUserKey:'demo-user-001', locale:'en', search:'', referenceOpen:false, errors:[], errorsVisible:false, meta:{version:0,publishedAt:null}, savedDraft:'' } },
   computed: {
     languages() { return model.LOCALES },
     enabledLocales() { return this.draft ? this.draft.enabledLocales : ['en'] },
     availableLocales() { return this.languages.filter(lang => this.enabledLocales.includes(lang.code)) },
     sectionIds() { return model.SECTION_IDS },
     currentSection() { return this.draft.membership[this.sectionId] },
-    currentScene() { return this.draft.scenes[this.sceneId] || null },
+    currentScene() { return this.draft && this.draft.scenes[this.sceneId] || null },
+    currentVariants() { return this.currentScene ? this.currentScene.variants : [] },
+    currentVariant() { return this.currentVariants.find(variant=>variant.id===this.activeVariantId)||this.currentVariants[0]||null },
+    maxVariants() { return model.MAX_VARIANTS },
+    trafficTotal() { return this.currentVariants.reduce((sum,variant)=>sum+(Number.isInteger(variant.traffic)?variant.traffic:0),0) },
+    sampleAssignment() { return this.draft ? model.assignVariant(this.draft,this.sceneId,this.sampleUserKey) : null },
     filteredCatalog() { const term=this.search.toLowerCase();const items=model.CORE_SCENES.concat(this.catalog.filter(item=>!model.CORE_SCENES.some(known=>known.code===item.code) && !model.UNAVAILABLE_SCENE_CODES.includes(item.code)));return items.filter(item => this.draft.scenes[item.code] && !model.UNAVAILABLE_SCENE_CODES.includes(item.code) && (item.name+' '+item.code).toLowerCase().includes(term)) },
     sceneName() { return (this.filteredCatalog.find(item=>item.code===this.sceneId)||this.catalog.find(item=>item.code===this.sceneId)||model.CORE_SCENES.find(item=>item.code===this.sceneId)||{}).name || this.sceneId },
     dirty() { return this.draft && snapshot(this.draft)!==this.savedDraft },
@@ -175,8 +222,8 @@ export default {
         { number:4, label:'Choose your plan · SDK', description:'套餐、优惠、价格与购买 CTA 按 §4.2 商店 SDK 规则处理，不在此配置。', external:true, top:'84.8%', left:'3.5%', width:'93%', height:'13.0%' }
       ] : [
         { number:1, label:'场景 Banner · 750 × 320', description:'后台配置的横幅图片，原图不包含叠加文案。', top:'32.3%', left:'1%', width:'98%', height:'27.0%' },
-        { number:2, label:'主标题 · max 30', description:'按对应的 Entitlement Item 维护多语言主标题。', top:'40.0%', left:'4%', width:'92%', height:'8.7%' },
-        { number:3, label:'描述 · max 120', description:'对应功能的订阅引导文案，可独立编辑。', top:'48.8%', left:'4%', width:'92%', height:'8.6%' },
+        { number:2, label:'主标题 · max 30', description:'按当前入口单独维护多语言标题；Membership 入口没有 Entitlement Code。', top:'40.0%', left:'4%', width:'92%', height:'8.7%' },
+        { number:3, label:'描述 · max 120', description:'当前入口的订阅引导描述，可针对不同实验组独立编辑。', top:'48.8%', left:'4%', width:'92%', height:'8.6%' },
         { number:4, label:'Choose your plan · SDK', description:'计划选项、商店价格和优惠资格来自 §4.2，不由 Banner 配置决定。', external:true, top:'59.1%', left:'4%', width:'92%', height:'19.3%' },
         { number:5, label:'购买 CTA · SDK', description:'扣费与自动续费文案按选中商店 Offer 计算，不在此配置。', external:true, top:'84.5%', left:'4%', width:'92%', height:'9.5%' }
       ]
@@ -188,13 +235,31 @@ export default {
     this.published=safeRead(PUBLISHED_KEY)
     this.meta=safeRead(META_KEY)||{version:0,publishedAt:null}
     this.savedDraft=snapshot(this.draft)
-    this.sceneId=Object.keys(this.draft.scenes)[0]||''
+    this.sceneId=this.draft.scenes.membership?'membership':Object.keys(this.draft.scenes)[0]||''
+    this.activeVariantId='A'
   },
   beforeRouteLeave(to,from,next) {
     if (!this.dirty) return next()
     this.$confirm('Discard unsaved edits? Saved drafts will remain.', 'Unsaved changes', {confirmButtonText:'Leave',cancelButtonText:'Stay',type:'warning'}).then(()=>next()).catch(()=>next(false))
   },
   methods: {
+    selectScene(code) { this.sceneId=code;this.activeVariantId='A' },
+    previewCopy(variant) { return model.languageText(variant.title,this.locale)||'Untitled creative' },
+    duplicateGroup() {
+      const added=model.addVariant(this.currentScene,this.currentVariant && this.currentVariant.id)
+      if(!added){this.$message.warning('Maximum '+model.MAX_VARIANTS+' creative groups per entry.');return}
+      this.activeVariantId=added.id
+      this.$message.success('Group '+added.id+' created from the selected group. Review its copy before publishing.')
+    },
+    deleteGroup() {
+      const id=this.currentVariant && this.currentVariant.id
+      if(!id||id==='A')return
+      this.$confirm('Remove group '+id+'? The traffic allocation will be redistributed.', 'Delete creative group', {type:'warning'}).then(()=>{
+        model.removeVariant(this.currentScene,id)
+        this.activeVariantId='A'
+      }).catch(()=>{})
+    },
+    equalSplit() { if(this.currentScene)model.rebalanceTraffic(this.currentScene) },
     sectionName(id) { return {comparison:'Benefit Comparison',details:'Benefit Details',faq:'Q&A'}[id] },
     benefitLabel(id) { return (model.BENEFITS.find(item=>item.id===id)||{}).label||id },
     toggleLocale(code,enabled) {
@@ -218,7 +283,7 @@ export default {
       const localized=()=>Object.fromEntries(this.enabledLocales.map(code=>[code,'']))
       this.currentSection.rows.push({id:'faq_'+Date.now(),question:localized(),answer:localized()})
     },
-    resetDraft() { this.$confirm('Discard current edits and reload the last saved draft?', 'Discard changes', {type:'warning'}).then(()=>{this.draft=model.reconcile(safeRead(DRAFT_KEY),this.catalog);this.savedDraft=snapshot(this.draft)}).catch(()=>{}) },
+    resetDraft() { this.$confirm('Discard current edits and reload the last saved draft?', 'Discard changes', {type:'warning'}).then(()=>{this.draft=model.reconcile(safeRead(DRAFT_KEY),this.catalog);this.savedDraft=snapshot(this.draft);this.activeVariantId='A'}).catch(()=>{}) },
     persist(key,data) { try { localStorage.setItem(key,snapshot(data));return true } catch(error) { this.$message.error('Browser storage is full or unavailable. Try smaller image assets.');return false } },
     saveDraft() { if (this.persist(DRAFT_KEY,this.draft)) { this.savedDraft=snapshot(this.draft);this.$message.success('Draft saved in this browser. Published preview unchanged.') } },
     publish() {
@@ -284,4 +349,51 @@ export default {
 .reference-legend-copy .el-button{align-self:flex-start;margin-top:2px;padding:4px 0}
 .reference-disclaimer{font-size:11px;line-height:1.6;color:#8492a6;margin:12px 0 0}
 .locale-menu{display:flex;flex-direction:column;gap:10px}.locale-menu .muted{margin-bottom:8px;line-height:1.5}.error-list{max-height:340px;overflow:auto;color:#a94442;font-size:12px;line-height:1.8;padding-left:20px}@media(max-width:1050px){.guide-layout,.guide-layout.reference-expanded{grid-template-columns:1fr}.guide-preview{position:static}.guide-bar{flex-wrap:wrap}}@media(max-width:650px){.two-fields,.tier-grid{grid-template-columns:1fr}.guide-bar-right{justify-content:flex-start}.asset-upload{grid-template-columns:1fr}.page-header{flex-wrap:wrap}}
+
+/* Scene-specific A/B groups are a review-only configuration surface. */
+.scene-item{max-width:initial;min-width:215px;max-width:310px;gap:4px}
+.scene-item-head{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.scene-item-head strong{line-height:19px}
+.scene-item.active{background:#edf6ff;border-color:#409eff}
+.scene-item small{color:#8390a3;font-size:11px;line-height:17px}
+.experiment-panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:15px}
+.experiment-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding-bottom:15px;border-bottom:1px solid #e9edf3}
+.experiment-header h3{font-size:17px;line-height:24px;margin:0 0 6px;font-weight:650}
+.experiment-header p{color:#8793a3;margin:0;font-size:12px;line-height:19px;max-width:620px}
+.experiment-switch{flex:none;display:flex;align-items:center;gap:10px}
+.experiment-switch small{font-size:12px;color:#627085;font-weight:600}
+.experiment-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,280px);gap:14px;margin:16px 0 24px;align-items:end}
+.experiment-fields label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:#637083}
+.experiment-key{display:flex;flex-direction:column;gap:7px;font-size:12px;color:#637083}
+.experiment-key code{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;border-radius:5px;border:1px solid #e7eaf0;background:#f8fafd;font-size:12px;padding:8px 10px;color:#6e8096}
+.variant-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.variant-title h4{font-size:14px;margin:0 0 4px}
+.variant-title p{color:#8c9aaa;font-size:12px;margin:0}
+.variant-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px}
+.variant-card{text-align:left;display:flex;flex-direction:column;min-width:0;gap:12px;padding:13px;background:#fafbfd;border:1.5px solid #e0e7ef;border-radius:10px;cursor:pointer}
+.variant-card.active{background:#f0f7ff;border-color:#409eff;box-shadow:0 0 0 1px rgba(64,158,255,.15)}
+.variant-card-top{display:flex;align-items:center;gap:8px;min-width:0}
+.variant-card-top strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.variant-letter{border-radius:7px;background:#e0e9f5;color:#2e5c8b;font-size:14px;font-weight:700;display:grid;place-items:center;flex:none;width:28px;height:28px}
+.variant-card.active .variant-letter{color:#fff;background:#409eff}
+.variant-card-copy{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-size:12px;line-height:17px;color:#6f7b89}
+.variant-card-footer{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#7f8c9e}
+.variant-card-footer b{font-size:15px;color:#334a62}
+.traffic-section{background:#f8fafc;border:1px solid #e5eaf1;border-radius:9px;padding:13px;margin-top:15px}
+.traffic-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:12px}
+.traffic-header span{color:#16835b;padding-left:4px}.traffic-header span.invalid{color:#d33c3c}
+.traffic-items{display:flex;flex-wrap:wrap;gap:10px}
+.traffic-item{display:flex;flex-direction:row;align-items:center;gap:7px;padding:6px 8px;background:#fff;border:1px solid #edf0f3;border-radius:8px;font-size:11px;color:#596a7d}
+.traffic-item span:first-child{max-width:110px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.traffic-item >>> .el-input-number{width:83px}
+.traffic-section .el-alert{margin-top:12px}
+.assignment-demo{margin-top:15px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f5f8fc;padding:13px;border-radius:9px}
+.assignment-demo strong{font-size:12px}
+.assignment-demo p{margin:5px 0 0;color:#7b8a9c;font-size:11px;line-height:17px}
+.assignment-demo-fields{display:flex;align-items:center;gap:10px}
+.assignment-demo-fields .el-input{width:160px}
+.assignment-chip{white-space:nowrap;font-size:12px;color:#2563a0;background:#e2f2ff;border:1px solid #c6e6fb;border-radius:6px;padding:8px}
+.variant-editor .edit-panel-heading{align-items:flex-start}
+.variant-editor .edit-panel-heading h3{margin:0 0 5px}
+@media(max-width:850px){.experiment-fields{grid-template-columns:1fr}.variant-title,.experiment-header,.assignment-demo{flex-wrap:wrap}.variant-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
