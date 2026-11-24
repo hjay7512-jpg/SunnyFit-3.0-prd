@@ -146,6 +146,7 @@
               <label>Description · max 120<el-input v-model="currentVariant.description[locale]" type="textarea" :rows="3" maxlength="120" show-word-limit data-testid="ab-description"/></label>
             </section>
           </template>
+        </template>
       </div>
       <aside v-if="referenceOpen" class="guide-preview" data-testid="annotated-ui-reference">
         <div class="preview-heading">
