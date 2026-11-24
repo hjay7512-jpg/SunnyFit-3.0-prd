@@ -94,7 +94,7 @@
           <div class="scene-picker" data-testid="feature-paywall-picker">
             <el-input v-model="search" clearable size="small" prefix-icon="el-icon-search" placeholder="Search paywall entries" />
             <button v-for="item in filteredCatalog" :key="item.code" type="button" class="scene-item" :class="{active:sceneId===item.code}" :data-testid="'paywall-entry-'+item.code" @click="selectScene(item.code)">
-              <div class="scene-item-head"><strong>{{ item.name }}</strong><el-tag v-if="item.code==='membership'" size="mini" type="success">Page Entry</el-tag><el-tag v-else-if="draft.scenes[item.code].enabled" size="mini" type="warning">A/B On</el-tag></div>
+              <div class="scene-item-head"><strong>{{ item.name }}</strong><el-tag v-if="item.code==='membership'" size="mini" type="success">Page Entry</el-tag><el-tag v-else-if="draft.scenes[item.code].enabled" size="mini" type="warning">A/B Configured</el-tag></div>
               <small>{{ item.code }} · {{ draft.scenes[item.code].variants.length }} {{ draft.scenes[item.code].variants.length===1?'group':'groups' }}</small>
             </button>
             <p v-if="!filteredCatalog.length" class="muted">No matching paywall entries</p>
@@ -154,9 +154,10 @@
           <el-button size="mini" icon="el-icon-arrow-right" @click="referenceOpen=false">Collapse</el-button>
         </div>
         <div class="reference-intro">
-          <span>{{ workspace==='membership'?'Membership & Usage · Free state':'Contextual purchase · Course entry' }}</span>
+          <span>{{ workspace==='membership'?'Membership & Usage · Free state':sceneId==='membership'?'Membership → Default Paywall (shared layout)':'Contextual purchase · Shared Paywall layout' }}</span>
           <a :href="referenceFigmaUrl" target="_blank" rel="noopener noreferrer">View in Figma <i class="el-icon-top-right"/></a>
         </div>
+        <p v-if="workspace==='scenes' && sceneId==='membership'" class="reference-disclaimer">This screenshot is a shared Paywall layout reference from the Course entry. The Membership CTA is shown in <a href="https://www.figma.com/design/2AT0tm9mkFhes8T81YzA2L/V3.0?node-id=9128-2550" target="_blank" rel="noopener noreferrer">Membership &amp; Usage</a>; its Banner, title and description are configured separately here.</p>
         <div class="reference-scroll">
           <div class="reference-screenshot">
             <img :src="referenceScreenshot" :alt="workspace==='membership'?'Figma Membership & Usage screen':'Figma contextual subscription sheet'" loading="lazy"/>
@@ -221,8 +222,8 @@ export default {
         { number:4, label:'Choose your plan · SDK', description:'套餐、优惠、价格与购买 CTA 按 §4.2 商店 SDK 规则处理，不在此配置。', external:true, top:'84.8%', left:'3.5%', width:'93%', height:'13.0%' }
       ] : [
         { number:1, label:'场景 Banner · 750 × 320', description:'后台配置的横幅图片，原图不包含叠加文案。', top:'32.3%', left:'1%', width:'98%', height:'27.0%' },
-        { number:2, label:'主标题 · max 30', description:'按对应的 Entitlement Item 维护多语言主标题。', top:'40.0%', left:'4%', width:'92%', height:'8.7%' },
-        { number:3, label:'描述 · max 120', description:'对应功能的订阅引导文案，可独立编辑。', top:'48.8%', left:'4%', width:'92%', height:'8.6%' },
+        { number:2, label:'主标题 · max 30', description:'按当前入口单独维护多语言标题；Membership 入口没有 Entitlement Code。', top:'40.0%', left:'4%', width:'92%', height:'8.7%' },
+        { number:3, label:'描述 · max 120', description:'当前入口的订阅引导描述，可针对不同实验组独立编辑。', top:'48.8%', left:'4%', width:'92%', height:'8.6%' },
         { number:4, label:'Choose your plan · SDK', description:'计划选项、商店价格和优惠资格来自 §4.2，不由 Banner 配置决定。', external:true, top:'59.1%', left:'4%', width:'92%', height:'19.3%' },
         { number:5, label:'购买 CTA · SDK', description:'扣费与自动续费文案按选中商店 Offer 计算，不在此配置。', external:true, top:'84.5%', left:'4%', width:'92%', height:'9.5%' }
       ]
