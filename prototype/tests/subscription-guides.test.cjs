@@ -218,5 +218,5 @@ test('Feature Paywalls editor exposes group selection and traffic controls',()=>
   const fs=require('node:fs'),path=require('node:path')
   const page=fs.readFileSync(path.join(__dirname,'../src/views/commercialization/subscription-guides/index.vue'),'utf8')
   for(const token of ['paywall-entry-','paywall-ab-editor','ab-duplicate','ab-traffic-','ab-group-','ab-sample-user','ab-assignment']) assert.ok(page.includes(token))
-  assert.ok(page.includes('sceneId:\\'membership\\''))
+  assert.ok(page.includes("sceneId:'membership'"))
 })
